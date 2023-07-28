@@ -3,10 +3,10 @@
        xmlns="http://www.springframework.org/schema/beans"
        xsi:schemaLocation="http://www.springframework.org/schema/beans
         http://www.springframework.org/schema/beans/spring-beans.xsd">
-    <bean id="contentDao" class="ru.otus.andrk.dao.TestContentDaoCsvResourceImpl">
+    <bean id="contentDao" class="ru.otus.andrk.dao.ContentDaoCsvResourceImpl">
         <constructor-arg index="0" value="data.csv"/>
     </bean>
-    <bean id="contentService" class="ru.otus.andrk.service.TestContentServiceImpl">
+    <bean id="contentService" class="ru.otus.andrk.service.ContentServiceImpl">
         <constructor-arg index="0" ref="contentDao"/>
     </bean>
 </beans>
