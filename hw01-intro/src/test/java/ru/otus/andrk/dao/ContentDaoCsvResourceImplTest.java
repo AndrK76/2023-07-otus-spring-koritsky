@@ -21,7 +21,7 @@ public class ContentDaoCsvResourceImplTest {
     void shouldCorrectReadDataFromResourceAndReturnNonEmptyList(){
         //TODO: это не пример теста, а "остаток" от разработки реализации ContentDaoCsvResourceImpl
         // просто потом повешено несколько assert, не пропадать же добру
-        // пример теста в ....
+        // пример теста в ContentServiceImplTest
         assertThat(contentDao.getQuestions())
                 .isNotNull()
                 .hasSize(5);

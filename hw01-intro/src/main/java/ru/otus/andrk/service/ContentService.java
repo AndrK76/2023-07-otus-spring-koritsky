@@ -7,4 +7,6 @@ public interface ContentService {
 
     Question getNextQuestion();
 
+    void reset();
+
 }
