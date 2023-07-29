@@ -3,36 +3,24 @@ package ru.otus.andrk.service;
 import ru.otus.andrk.dao.ContentDao;
 import ru.otus.andrk.model.Question;
 
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 public class ContentServiceImpl implements ContentService {
     private final ContentDao dao;
+
     private List<Question> questions;
-    private Integer currentQuestionIndex;
 
     public ContentServiceImpl(ContentDao dao) {
         this.dao = dao;
     }
 
+
     @Override
-    public int countQueries() {
+    public Collection<Question> getQuestions() {
         initQuestions();
-        return questions.size();
-    }
-
-    @Override
-    public Question getNextQuestion() {
-        currentQuestionIndex = currentQuestionIndex == null ? 0 : ++currentQuestionIndex;
-        if (currentQuestionIndex < countQueries()) {
-            return questions.get(currentQuestionIndex);
-        } else {
-            return null;
-        }
-    }
-
-    @Override
-    public void reset() {
-        currentQuestionIndex = null;
+        return Collections.unmodifiableCollection(questions);
     }
 
     private void initQuestions() {

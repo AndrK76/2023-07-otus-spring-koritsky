@@ -3,10 +3,16 @@
        xmlns="http://www.springframework.org/schema/beans"
        xsi:schemaLocation="http://www.springframework.org/schema/beans
         http://www.springframework.org/schema/beans/spring-beans.xsd">
+
     <bean id="contentDao" class="ru.otus.andrk.dao.ContentDaoCsvResourceImpl">
         <constructor-arg index="0" value="data.csv"/>
     </bean>
     <bean id="contentService" class="ru.otus.andrk.service.ContentServiceImpl">
         <constructor-arg index="0" ref="contentDao"/>
+    </bean>
+    <bean id="dialogService" class="ru.otus.andrk.service.DialogServiceStreamImpl"/>
+    <bean id="testSystemService" class="ru.otus.andrk.service.TestSystemServiceImpl">
+        <constructor-arg index="0" ref="contentService"/>
+        <constructor-arg index="1" ref="dialogService"/>
     </bean>
 </beans>

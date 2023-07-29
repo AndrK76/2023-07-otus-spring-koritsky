@@ -1,6 +1,6 @@
 package ru.otus.andrk.dao;
 
-public class ContentLoadException extends RuntimeException{
+public class ContentLoadException extends RuntimeException {
     public ContentLoadException(Throwable cause) {
         super(cause);
     }

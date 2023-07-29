@@ -12,8 +12,11 @@ import java.util.List;
 @Getter
 public class Question {
     private final int num;
+
     private final String queryText;
+
     private final QuestionType queryType;
+
     @Builder.Default
     private final List<Answer> answers = new ArrayList<>();
 }

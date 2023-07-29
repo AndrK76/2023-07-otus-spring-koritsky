@@ -2,11 +2,11 @@ package ru.otus.andrk.service;
 
 import ru.otus.andrk.model.Question;
 
+import java.util.Collection;
+
+
 public interface ContentService {
-    int countQueries();
 
-    Question getNextQuestion();
-
-    void reset();
+    Collection<Question> getQuestions();
 
 }

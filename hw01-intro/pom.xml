@@ -7,6 +7,7 @@
     <groupId>ru.otus.andrk</groupId>
     <artifactId>hw01-intro</artifactId>
     <version>1.0-SNAPSHOT</version>
+    <packaging>jar</packaging>
 
     <properties>
         <maven.compiler.source>17</maven.compiler.source>
@@ -19,6 +20,7 @@
         <checkstyle.version>10.11.0</checkstyle.version>
         <checkstyle.config.url>https://raw.githubusercontent.com/OtusTeam/Spring/master/checkstyle.xml
         </checkstyle.config.url>
+
     </properties>
 
     <dependencyManagement>
@@ -96,6 +98,26 @@
                         <goals>
                             <goal>check</goal>
                         </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+                <version>${spring-boot.version}</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>repackage</goal>
+                        </goals>
+                        <configuration>
+                            <classifier>spring-boot</classifier>
+                            <mainClass>
+                                ru.otus.andrk.Main
+                            </mainClass>
+                            <finalName>${project.artifactId}</finalName>
+                        </configuration>
                     </execution>
                 </executions>
             </plugin>

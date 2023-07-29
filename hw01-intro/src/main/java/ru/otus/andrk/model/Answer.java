@@ -9,6 +9,8 @@ import lombok.Getter;
 @Getter
 public class Answer {
     private int num;
+
     private String answerText;
+
     private Boolean valid;
 }

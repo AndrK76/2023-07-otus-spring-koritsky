@@ -7,7 +7,11 @@ import ru.otus.andrk.model.QuestionType;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.*;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 public class ContentDaoCsvResourceImpl implements ContentDao {
@@ -15,6 +19,7 @@ public class ContentDaoCsvResourceImpl implements ContentDao {
     private static final String DELIMITER = ";";
 
     private final String resourceName;
+
     private final Map<Integer, Question> questions;
 
     public ContentDaoCsvResourceImpl(String resourceName) {
@@ -24,7 +29,7 @@ public class ContentDaoCsvResourceImpl implements ContentDao {
 
     @Override
     public List<Question> getQuestions() {
-        if (questions.isEmpty()){
+        if (questions.isEmpty()) {
             loadFromCsv();
         }
         return questions.values().stream()
