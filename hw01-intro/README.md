@@ -1,11 +1,5 @@
 # Примечания
-1. Скорее всего сервис - ContentService, можно было напрямую из основного сервиса
-вызывать ContentDAO, но мне больше нравится вариант с ContentService, реализация которого кэширует
-обращение к источнику данных, дополнительный уровень абстракции.
-2. ContentDaoCsvResourceImplTest - это не пример теста, а "остаток" от разработки 
-реализации ContentDaoCsvResourceImpl просто потом повешено несколько assert, не пропадать же добру
-пример теста в ContentServiceImplTest
-3. java -jar - через spring-boot-maven-plugin, больше понравился этот вариант
+1. java -jar - через spring-boot-maven-plugin, больше понравился этот вариант
 
 
 # Вопросы

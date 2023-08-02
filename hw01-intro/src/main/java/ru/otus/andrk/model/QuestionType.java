@@ -17,7 +17,7 @@ public enum QuestionType {
 
     public static QuestionType byName(String name) {
         return Arrays.stream(QuestionType.values())
-                .filter(r -> r.getDisplayName().toUpperCase().equals(name.toUpperCase()))
+                .filter(r -> r.getDisplayName().equalsIgnoreCase(name))
                 .findFirst().orElseThrow();
     }
 

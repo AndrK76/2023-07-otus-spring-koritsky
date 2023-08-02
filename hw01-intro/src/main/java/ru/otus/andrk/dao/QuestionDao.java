@@ -4,6 +4,6 @@ import ru.otus.andrk.model.Question;
 
 import java.util.List;
 
-public interface ContentDao {
+public interface QuestionDao {
     List<Question> getQuestions();
 }

@@ -7,13 +7,13 @@ import org.junit.jupiter.api.Test;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @DisplayName("DAO test content in csv resource")
-public class ContentDaoCsvResourceImplTest {
+public class QuestionDaoCsvResourceTest {
 
-    private ContentDao contentDao;
+    private QuestionDao contentDao;
 
     @BeforeEach
     void initDao(){
-        contentDao = new ContentDaoCsvResourceImpl("data.csv");
+        contentDao = new QuestionDaoCsvResource("data.csv");
     }
 
 

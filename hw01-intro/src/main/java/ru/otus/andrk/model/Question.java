@@ -11,8 +11,6 @@ import java.util.List;
 @Builder
 @Getter
 public class Question {
-    private final int num;
-
     private final String queryText;
 
     private final QuestionType queryType;

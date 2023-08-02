@@ -7,14 +7,12 @@ import ru.otus.andrk.model.QuestionType;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
-public class ContentDaoCsvResourceImpl implements ContentDao {
+public class QuestionDaoCsvResource implements QuestionDao {
 
     private static final String DELIMITER = ";";
 
@@ -22,7 +20,7 @@ public class ContentDaoCsvResourceImpl implements ContentDao {
 
     private final Map<Integer, Question> questions;
 
-    public ContentDaoCsvResourceImpl(String resourceName) {
+    public QuestionDaoCsvResource(String resourceName) {
         this.resourceName = resourceName;
         questions = new HashMap<>();
     }
@@ -32,9 +30,7 @@ public class ContentDaoCsvResourceImpl implements ContentDao {
         if (questions.isEmpty()) {
             loadFromCsv();
         }
-        return questions.values().stream()
-                .sorted(Comparator.comparing(Question::getNum))
-                .collect(Collectors.toList());
+        return questions.values().stream().toList();
     }
 
     private void loadFromCsv() {
@@ -73,7 +69,6 @@ public class ContentDaoCsvResourceImpl implements ContentDao {
                 throw new ContentLoadException("Invalid file format, duplicate question");
             }
             questions.put(queryIndex, Question.builder()
-                    .num(queryIndex)
                     .queryText(queryText)
                     .queryType(queryType)
                     .build());
@@ -93,11 +88,7 @@ public class ContentDaoCsvResourceImpl implements ContentDao {
                 throw new ContentLoadException("Invalid file format, no exist query for answer");
             }
             Question question = questions.get(queryIndex);
-            question.getAnswers().add(Answer.builder()
-                    .num(question.getAnswers().size() + 1)
-                    .answerText(answerText)
-                    .valid(isValidAnswer)
-                    .build());
+            question.getAnswers().add(new Answer(answerText, question.getAnswers().size() + 1, isValidAnswer));
         } catch (ContentLoadException e) {
             throw e;
         } catch (Throwable e) {

@@ -121,6 +121,12 @@
                     </execution>
                 </executions>
             </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>${spring-boot.version}</version>
+            </plugin>
         </plugins>
 
     </build>
