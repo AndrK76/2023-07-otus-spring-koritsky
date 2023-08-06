@@ -8,7 +8,5 @@ import lombok.Getter;
 public class Answer {
     private String answerText;
 
-    private int currentIndex;
-
     private boolean valid;
 }
