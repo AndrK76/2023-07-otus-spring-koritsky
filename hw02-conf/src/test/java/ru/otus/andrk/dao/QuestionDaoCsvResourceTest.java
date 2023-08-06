@@ -1,6 +1,5 @@
 package ru.otus.andrk.dao;
 
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -9,10 +8,12 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
-import ru.otus.andrk.config.CsvConfig;
+import ru.otus.andrk.config.QuestionsDaoCsvConfig;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 @ExtendWith(SpringExtension.class)
 @ComponentScan("ru.otus.andrk")
@@ -23,10 +24,12 @@ public class QuestionDaoCsvResourceTest {
 
 
     @Autowired
-    private CsvConfig csvConfig;
+    private QuestionsDaoCsvConfig questionsDaoCsvConfig;
 
     private QuestionDao makeDao(String resourceName) {
-        return new QuestionDaoCsvResource(csvConfig, resourceName);
+        QuestionsDaoCsvConfig currentConfig =
+                new QuestionsDaoCsvConfig(questionsDaoCsvConfig.getCsvDelimiter(), resourceName);
+        return new QuestionDaoCsvResource(currentConfig);
     }
 
 

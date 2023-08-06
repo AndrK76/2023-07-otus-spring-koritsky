@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.Map;
 
 @Service
-public class QueryConverterServiceSimple implements QueryConverterService {
+public class QuestionConverterServiceSimple implements QuestionConverterService {
     @Override
     public String queryToString(Question question) {
         StringBuilder sb = new StringBuilder(question.getQueryText())

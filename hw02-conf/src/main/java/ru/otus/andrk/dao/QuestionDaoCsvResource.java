@@ -1,8 +1,7 @@
 package ru.otus.andrk.dao;
 
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Repository;
-import ru.otus.andrk.config.CsvConfig;
+import ru.otus.andrk.config.QuestionsDaoCsvConfig;
 import ru.otus.andrk.model.Answer;
 import ru.otus.andrk.model.Question;
 import ru.otus.andrk.model.QuestionType;
@@ -18,16 +17,13 @@ import java.util.Map;
 @Repository
 public class QuestionDaoCsvResource implements QuestionDao {
 
-    private final CsvConfig csvConfig;
+    private final QuestionsDaoCsvConfig csvConfig;
 
-    private final String resourceName;
 
     public QuestionDaoCsvResource(
-            CsvConfig csvConfig,
-            @Value("${questions.resource-file}") String resourceName
+            QuestionsDaoCsvConfig csvConfig
     ) {
         this.csvConfig = csvConfig;
-        this.resourceName = resourceName;
     }
 
     @Override
@@ -38,7 +34,7 @@ public class QuestionDaoCsvResource implements QuestionDao {
     private Map<Integer, Question> loadFromCsv() {
         Map<Integer, Question> questions = new HashMap<>();
         try (InputStream srcStream =
-                     getClass().getClassLoader().getResourceAsStream(resourceName);
+                     getClass().getClassLoader().getResourceAsStream(csvConfig.getResourceName());
              BufferedReader br = new BufferedReader(new InputStreamReader(srcStream))) {
             String line;
             while ((line = br.readLine()) != null) {

@@ -5,7 +5,7 @@ import ru.otus.andrk.model.Question;
 
 import java.util.List;
 
-public interface QueryConverterService {
+public interface QuestionConverterService {
 
     String queryToString(Question question);
 
