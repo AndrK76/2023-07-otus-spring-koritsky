@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns="http://www.springframework.org/schema/beans"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+    <bean id="questionDao" class="ru.otus.andrk.dao.QuestionDaoCsvResource">
+        <constructor-arg index="0" value="data.csv"/>
+    </bean>
+    <bean id="converterService" class="ru.otus.andrk.service.ConverterServiceSimple"/>
+    <bean id="dialogService" class="ru.otus.andrk.service.DialogServiceStreamImpl"/>
+    <bean id="testSystemService" class="ru.otus.andrk.service.TestSystemServiceImpl">
+        <constructor-arg index="0" ref="questionDao"/>
+        <constructor-arg index="1" ref="converterService"/>
+        <constructor-arg index="2" ref="dialogService"/>
+    </bean>
+</beans>
