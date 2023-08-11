@@ -3,10 +3,12 @@ package ru.otus.andrk.service;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
+import ru.otus.andrk.config.TestSystemConfig;
+import ru.otus.andrk.dao.QuestionDao;
 import ru.otus.andrk.model.Answer;
 import ru.otus.andrk.model.Question;
-import ru.otus.andrk.service.questions.AnswerValidator;
-import ru.otus.andrk.service.questions.AnswerValidatorImpl;
+import ru.otus.andrk.service.questions.QuestionService;
+import ru.otus.andrk.service.questions.QuestionServiceImpl;
 
 import java.util.List;
 import java.util.Map;
@@ -14,15 +16,17 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.mock;
 
-public class AnswerValidatorImplTest {
-
+public class QuestionServiceImplTest {
 
     @ParameterizedTest
     @MethodSource("getTestParams")
     public void givenAnswersShouldReturnExceptedValue(Question question, List<Answer> answers, boolean expectedResult) {
-        AnswerValidator answerValidator = new AnswerValidatorImpl();
-        var actualResult = answerValidator.checkAnswer(question, answers);
+        TestSystemConfig testSystemConfig = mock(TestSystemConfig.class);
+        QuestionDao questionDao = mock(QuestionDao.class);
+        QuestionService questionService = new QuestionServiceImpl(questionDao, testSystemConfig);
+        var actualResult = questionService.checkAnswer(question, answers);
         assertThat(actualResult).isEqualTo(expectedResult);
     }
 

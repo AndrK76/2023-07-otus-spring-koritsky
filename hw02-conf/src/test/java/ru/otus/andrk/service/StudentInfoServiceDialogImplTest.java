@@ -33,7 +33,7 @@ public class StudentInfoServiceDialogImplTest {
 
     @Test
     public void shouldCallDialogServiceMethodsInExpectingOrder() {
-        studentInfoService.getUserName();
+        studentInfoService.getStudent();
         verify(dialogService,times(2)).readText();
         verify(dialogService,times(2)).displayText(anyString());
         InOrder inOrder = inOrder(dialogService);
@@ -45,7 +45,7 @@ public class StudentInfoServiceDialogImplTest {
 
     @Test
     public void shouldReturnExpectedValue(){
-        var student = studentInfoService.getUserName();
+        var student = studentInfoService.getStudent();
         assertThat(student.firstName()).isEqualTo("first");
         assertThat(student.lastName()).isEqualTo("last");
     }

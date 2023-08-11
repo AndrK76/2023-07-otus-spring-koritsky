@@ -14,6 +14,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static java.util.Objects.isNull;
+
 @Repository
 public class QuestionDaoCsvResource implements QuestionDao {
 
@@ -28,14 +30,17 @@ public class QuestionDaoCsvResource implements QuestionDao {
 
     @Override
     public List<Question> getQuestions() {
-        return loadFromCsv().values().stream().toList();
+        return loadQuestionsFromCsv();
     }
 
-    private Map<Integer, Question> loadFromCsv() {
+    private List<Question> loadQuestionsFromCsv() {
         Map<Integer, Question> questions = new HashMap<>();
         try (InputStream srcStream =
-                     getClass().getClassLoader().getResourceAsStream(csvConfig.getResourceName());
-             BufferedReader br = new BufferedReader(new InputStreamReader(srcStream))) {
+                     getClass().getClassLoader().getResourceAsStream(csvConfig.getResourceName())) {
+            if (isNull(srcStream)) {
+                throw new ContentLoadException("Resource not found");
+            }
+            BufferedReader br = new BufferedReader(new InputStreamReader(srcStream));
             String line;
             while ((line = br.readLine()) != null) {
                 parseLine(line, questions);
@@ -43,7 +48,7 @@ public class QuestionDaoCsvResource implements QuestionDao {
         } catch (IOException | NullPointerException e) {
             throw new ContentLoadException(e);
         }
-        return questions;
+        return questions.values().stream().toList();
     }
 
     void parseLine(String line, Map<Integer, Question> questions) {

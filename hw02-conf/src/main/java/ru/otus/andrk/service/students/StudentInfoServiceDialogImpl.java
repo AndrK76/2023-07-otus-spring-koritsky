@@ -13,11 +13,11 @@ public class StudentInfoServiceDialogImpl implements StudentInfoService {
     }
 
     @Override
-    public Student getUserName() {
+    public Student getStudent() {
         dialogService.displayText("Enter First Name:");
         String firstName = dialogService.readText();
         dialogService.displayText("Enter Last Name:");
         String lastName = dialogService.readText();
-        return new Student(firstName,lastName);
+        return new Student(firstName, lastName);
     }
 }

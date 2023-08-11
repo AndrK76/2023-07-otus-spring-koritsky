@@ -7,6 +7,6 @@ import org.springframework.stereotype.Component;
 @Component
 @Getter
 public class TestSystemConfig {
-    @Value("${test-system.max-queries}")
-    private int maxQueries;
+    @Value("${test-system.max-count-questions-per-test}")
+    private int maxCountQuestionsPerTest;
 }
