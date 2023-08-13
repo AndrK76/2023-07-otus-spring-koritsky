@@ -41,6 +41,11 @@ out
 node_modules/*
 .angular/cache/*
 
+### VS Code ###
+.vscode/ 
 
 #Maven
-target
+target/
+!.mvn/wrapper/maven-wrapper.jar
+!**/src/main/**/target/
+!**/src/test/**/target/
