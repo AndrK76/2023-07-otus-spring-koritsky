@@ -4,8 +4,8 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.ArrayList;
+import java.util.List;
 
 @AllArgsConstructor
 @Builder
@@ -16,5 +16,5 @@ public class Question {
     private final QuestionType queryType;
 
     @Builder.Default
-    private final Map<Integer, Answer> answers = new HashMap<>();
+    private final List<Answer> answers = new ArrayList<>();
 }

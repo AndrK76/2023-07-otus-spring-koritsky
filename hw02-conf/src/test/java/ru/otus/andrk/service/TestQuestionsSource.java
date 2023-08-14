@@ -5,7 +5,7 @@ import ru.otus.andrk.model.Answer;
 import ru.otus.andrk.model.Question;
 import ru.otus.andrk.model.QuestionType;
 
-import java.util.Map;
+import java.util.List;
 
 @Getter
 public class TestQuestionsSource {
@@ -13,29 +13,29 @@ public class TestQuestionsSource {
             .queryText("Query text")
             .queryType(QuestionType.ONE_VALID_ANSWER)
             .answers(
-                    Map.of(
-                            1, new Answer("Answer 1 text", true),
-                            2, new Answer("Answer 2 text", false)
+                    List.of(
+                            new Answer("Answer 1 text", true),
+                            new Answer("Answer 2 text", false)
                     ))
             .build();
     private final Question questionManyValidTypeWithTwoValidAnswer = Question.builder()
             .queryText("Query text")
             .queryType(QuestionType.MANY_VALID_ANSWERS)
             .answers(
-                    Map.of(
-                            1, new Answer("Answer 1 text", true),
-                            2, new Answer("Answer 2 text", false),
-                            3, new Answer("Answer 2 text", true)
+                    List.of(
+                            new Answer("Answer 1 text", true),
+                            new Answer("Answer 2 text", false),
+                            new Answer("Answer 2 text", true)
                     ))
             .build();
     private final Question questionOneValidTypeWithTwoValidAnswer = Question.builder()
             .queryText("Query text")
             .queryType(QuestionType.ONE_VALID_ANSWER)
             .answers(
-                    Map.of(
-                            1, new Answer("Answer 1 text", true),
-                            2, new Answer("Answer 2 text", false),
-                            3, new Answer("Answer 2 text", true)
+                    List.of(
+                            new Answer("Answer 1 text", true),
+                            new Answer("Answer 2 text", false),
+                            new Answer("Answer 2 text", true)
                     ))
             .build();
 

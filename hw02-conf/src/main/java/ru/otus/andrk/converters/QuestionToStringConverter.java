@@ -5,6 +5,8 @@ import org.springframework.core.convert.converter.Converter;
 import org.springframework.stereotype.Component;
 import ru.otus.andrk.model.Question;
 
+import java.util.concurrent.atomic.AtomicInteger;
+
 @Component
 public class QuestionToStringConverter implements Converter<Question, String> {
 
@@ -13,10 +15,11 @@ public class QuestionToStringConverter implements Converter<Question, String> {
         StringBuilder sb = new StringBuilder(question.getQueryText())
                 .append("\n")
                 .append("Answers:\n");
+        AtomicInteger currIndex = new AtomicInteger(0);
         question.getAnswers()
-                .forEach((index, answer) -> sb
+                .forEach((answer) -> sb
                         .append("\t")
-                        .append(index)
+                        .append(currIndex.incrementAndGet())
                         .append(". ")
                         .append(answer.getAnswerText())
                         .append("\n"));

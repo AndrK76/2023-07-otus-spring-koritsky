@@ -9,7 +9,8 @@ import ru.otus.andrk.model.Student;
 import ru.otus.andrk.model.TestResult;
 import ru.otus.andrk.service.dialogs.DialogService;
 import ru.otus.andrk.service.questions.IncorrectAnswerException;
-import ru.otus.andrk.service.questions.QuestionService;
+import ru.otus.andrk.service.questions.AnswerValidatorService;
+import ru.otus.andrk.service.questions.QuestionSourceService;
 import ru.otus.andrk.service.students.StudentInfoService;
 
 import java.util.List;
@@ -18,7 +19,9 @@ import java.util.List;
 @RequiredArgsConstructor
 public class TestSystemServiceImpl implements TestSystemService {
 
-    private final QuestionService questionService;
+    private final QuestionSourceService questionSourceService;
+
+    private final AnswerValidatorService answerValidatorService;
 
     private final DialogService dialogService;
 
@@ -31,18 +34,18 @@ public class TestSystemServiceImpl implements TestSystemService {
         Student student = studentInfoService.getStudent();
         TestResult testResult = new TestResult(student);
 
-        var questions = questionService.getQuestionsForTest();
+        var questions = questionSourceService.getQuestions();
         for (var question : questions) {
             dialogService.displayText(conversionService.convert(question, String.class));
             var studentAnswer = getStudentAnswer(question);
-            testResult.addResult(questionService.checkAnswer(question, studentAnswer));
+            testResult.addResult(answerValidatorService.checkAnswer(question, studentAnswer));
         }
         dialogService.displayText(conversionService.convert(testResult, String.class));
     }
 
     private List<Answer> getStudentAnswer(Question question) {
         try {
-            return questionService.getAnswersFromString(question, dialogService.readText());
+            return answerValidatorService.getAnswersFromString(question, dialogService.readText());
         } catch (IncorrectAnswerException e) {
             dialogService.displayText(e.getMessage() + ", please retry");
             return getStudentAnswer(question);

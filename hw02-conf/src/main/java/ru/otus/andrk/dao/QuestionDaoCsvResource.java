@@ -40,10 +40,11 @@ public class QuestionDaoCsvResource implements QuestionDao {
             if (isNull(srcStream)) {
                 throw new ContentLoadException("Resource not found");
             }
-            BufferedReader br = new BufferedReader(new InputStreamReader(srcStream));
-            String line;
-            while ((line = br.readLine()) != null) {
-                parseLine(line, questions);
+            try (BufferedReader br = new BufferedReader(new InputStreamReader(srcStream))) {
+                String line;
+                while ((line = br.readLine()) != null) {
+                    parseLine(line, questions);
+                }
             }
         } catch (IOException | NullPointerException e) {
             throw new ContentLoadException(e);
@@ -91,7 +92,7 @@ public class QuestionDaoCsvResource implements QuestionDao {
                 throw new ContentLoadException("Invalid file format, no exist query for answer");
             }
             Question question = questions.get(queryIndex);
-            question.getAnswers().put(question.getAnswers().size() + 1, new Answer(answerText, isValidAnswer));
+            question.getAnswers().add(new Answer(answerText, isValidAnswer));
         } catch (ContentLoadException e) {
             throw e;
         } catch (Throwable e) {

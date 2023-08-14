@@ -15,10 +15,10 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 @ExtendWith(SpringExtension.class)
 @ComponentScan("ru.otus.andrk")
-@ContextConfiguration(classes = {QuestionsDaoCsvConfig.class, QuestionDaoCsvResource.class})
+@ContextConfiguration(classes = {QuestionsDaoCsvConfig.class})
 @TestPropertySource("classpath:test.properties")
 @DisplayName("DAO test content in csv resource")
-public class QuestionDaoCsvResourceTest {
+public class QuestionDaoCsvResourceTest_v1 {
 
 
     @Autowired
@@ -39,11 +39,10 @@ public class QuestionDaoCsvResourceTest {
     }
 
     @Test
-    void shouldReadQuestionsWithNonEmptyAnswersAndMinAnswerIndexMustBeOne() {
+    void shouldReadQuestionsWithNonEmptyAnswers() {
         var questions = makeDao("sample.csv").getQuestions();
         assertThat(questions)
-                .allMatch(r -> r.getAnswers().size() > 0)
-                .allMatch(r -> r.getAnswers().keySet().stream().filter(k -> k < 1).toList().isEmpty());
+                .allMatch(r -> r.getAnswers().size() > 0);
     }
 
 
