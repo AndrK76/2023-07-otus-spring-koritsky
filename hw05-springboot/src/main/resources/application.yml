@@ -1,0 +1,24 @@
+spring:
+  output:
+    ansi:
+      enabled: detect
+  messages:
+    basename: messages
+    fallback-to-system-locale: false
+
+
+test-system:
+  questions:
+    resource-folder: data
+    resource-file-name: questions.csv
+    csv-delimiter: ;
+  max-count-questions-per-test: 5
+
+customization:
+  #locale: en-US
+  locale: ru-RU
+  #locale: ru-US
+  #locale: ru
+  #locale: ru-BY
+  #locale: zh
+
