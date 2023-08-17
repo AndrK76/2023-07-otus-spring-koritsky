@@ -5,7 +5,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.InOrder;
 import ru.otus.andrk.service.dialog.DialogService;
-import ru.otus.andrk.service.i18n.MessageService;
+import ru.otus.andrk.service.i18n.MessageProvider;
 import ru.otus.andrk.service.student.StudentInfoService;
 import ru.otus.andrk.service.student.StudentInfoServiceDialogImpl;
 
@@ -24,19 +24,19 @@ public class StudentInfoServiceDialogImplTest {
 
     private DialogService dialogService;
 
-    private MessageService messageService;
+    private MessageProvider messageProvider;
 
     private StudentInfoService studentInfoService;
 
     @BeforeEach
     void initServices() {
         dialogService = mock(DialogService.class);
-        messageService = mock(MessageService.class);
+        messageProvider = mock(MessageProvider.class);
 
 
         when(dialogService.readText()).thenReturn("first").thenReturn("last");
-        when(messageService.getMessage(any())).thenReturn("");
-        studentInfoService = new StudentInfoServiceDialogImpl(dialogService, messageService);
+        when(messageProvider.getMessage(any())).thenReturn("");
+        studentInfoService = new StudentInfoServiceDialogImpl(dialogService, messageProvider);
     }
 
 

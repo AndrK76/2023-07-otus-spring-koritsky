@@ -1,36 +1,52 @@
 package ru.otus.andrk.i18n;
 
 import org.assertj.core.util.Strings;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestPropertySource;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 import ru.otus.andrk.config.QuestionsDaoCsvConfig;
 import ru.otus.andrk.service.i18n.LocaleProvider;
-import ru.otus.andrk.service.i18n.ResourceService;
-import ru.otus.andrk.service.i18n.ResourceServiceImpl;
+import ru.otus.andrk.service.i18n.ResourceProvider;
+import ru.otus.andrk.service.i18n.ResourceProviderImpl;
 
 import java.util.Locale;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
 
-@SpringBootTest
-@ContextConfiguration(classes = {QuestionsDaoCsvConfig.class, ResourceServiceImpl.class})
+@ExtendWith(SpringExtension.class)
+@ContextConfiguration(classes = {ResourceProviderImpl.class})
 @TestPropertySource("classpath:test.properties")
-public class ResourceServiceImplTest {
+public class ResourceProviderImplTest {
 
     @Autowired
-    private ResourceService resourceService;
+    private ResourceProvider resourceProvider;
 
-    @Autowired
+    @MockBean
     private QuestionsDaoCsvConfig questionsDaoCsvConfig;
 
     @MockBean
     private LocaleProvider localeProvider;
+
+    @Value("${test-system.questions.resource-folder}")
+    private String resourceFolder;
+
+    @Value("${test-system.questions.resource-file-name}")
+    private String resourceName;
+
+
+    @BeforeEach
+    void initCsvConfig(){
+        when(questionsDaoCsvConfig.getResourceFolder()).thenReturn(resourceFolder);
+        when(questionsDaoCsvConfig.getResourceName()).thenReturn(resourceName);
+    }
 
 
     void initLocaleProvider(String currentLocale) {
@@ -48,7 +64,7 @@ public class ResourceServiceImplTest {
         String expectedResult = prefix +
                 (Strings.isNullOrEmpty(expectedLangPath) ? "" : "/" + expectedLangPath) +
                 "/" + postfix;
-        String actualResult = resourceService.getLocalizedResourceName(prefix, postfix);
+        String actualResult = resourceProvider.getResourcePath(prefix, postfix);
         assertThat(actualResult).isEqualTo(expectedResult);
     }
 

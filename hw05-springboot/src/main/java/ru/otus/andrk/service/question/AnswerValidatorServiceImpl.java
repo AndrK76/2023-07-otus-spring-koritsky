@@ -22,7 +22,7 @@ public class AnswerValidatorServiceImpl implements AnswerValidatorService {
                     ret.add(answer);
                 }
             } catch (NumberFormatException e) {
-                throw new IncorrectAnswerException("Answer contain invalid characters", e);
+                throw new IncorrectAnswerCharactersException("Answer contain invalid characters", e);
             }
         }
         return ret;
@@ -43,7 +43,7 @@ public class AnswerValidatorServiceImpl implements AnswerValidatorService {
         try {
             return question.getAnswers().get(num - 1);
         } catch (IndexOutOfBoundsException e) {
-            throw new IncorrectAnswerException("No exist answer number", e);
+            throw new IncorrectAnswerNumberException("No exist answer number", e);
         }
     }
 

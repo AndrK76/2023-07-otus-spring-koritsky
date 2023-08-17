@@ -5,7 +5,7 @@ import ru.otus.andrk.config.QuestionsDaoCsvConfig;
 import ru.otus.andrk.model.Answer;
 import ru.otus.andrk.model.Question;
 import ru.otus.andrk.model.QuestionType;
-import ru.otus.andrk.service.i18n.ResourceService;
+import ru.otus.andrk.service.i18n.ResourceProvider;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -23,13 +23,13 @@ public class QuestionDaoCsvResource implements QuestionDao {
 
     private final QuestionsDaoCsvConfig csvConfig;
 
-    private final ResourceService resourceService;
+    private final ResourceProvider resourceProvider;
 
 
     public QuestionDaoCsvResource(
-            QuestionsDaoCsvConfig csvConfig, ResourceService resourceService) {
+            QuestionsDaoCsvConfig csvConfig, ResourceProvider resourceProvider) {
         this.csvConfig = csvConfig;
-        this.resourceService = resourceService;
+        this.resourceProvider = resourceProvider;
     }
 
     @Override
@@ -42,7 +42,7 @@ public class QuestionDaoCsvResource implements QuestionDao {
         try (InputStream srcStream =
                      getClass().getClassLoader()
                              .getResourceAsStream(
-                                     resourceService.getLocalizedResourceName(
+                                     resourceProvider.getResourcePath(
                                              csvConfig.getResourceFolder(),
                                              csvConfig.getResourceName()))) {
             if (isNull(srcStream)) {

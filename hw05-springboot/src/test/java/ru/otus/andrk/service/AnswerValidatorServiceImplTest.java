@@ -24,7 +24,7 @@ public class AnswerValidatorServiceImplTest {
         assertThat(actualResult).isEqualTo(expectedResult);
     }
 
-    private static Stream<? extends Arguments> getTestParams() {
+    private static Stream<Arguments> getTestParams() {
         TestQuestionsSource questionSource = new TestQuestionsSource();
 
         return Stream.of(

@@ -5,17 +5,17 @@ import org.springframework.context.annotation.Lazy;
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.stereotype.Component;
 import ru.otus.andrk.model.Question;
-import ru.otus.andrk.service.i18n.MessageService;
+import ru.otus.andrk.service.i18n.MessageProvider;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
 @Component
 public class QuestionToStringConverter implements Converter<Question, String> {
 
-    private final MessageService messageService;
+    private final MessageProvider messageProvider;
 
-    public QuestionToStringConverter(@Lazy MessageService messageService) {
-        this.messageService = messageService;
+    public QuestionToStringConverter(@Lazy MessageProvider messageProvider) {
+        this.messageProvider = messageProvider;
     }
 
 
@@ -23,7 +23,7 @@ public class QuestionToStringConverter implements Converter<Question, String> {
     public String convert(Question question) {
         StringBuilder sb = new StringBuilder(question.getQueryText())
                 .append("\n")
-                .append(messageService.getMessage("ANSWERS"))
+                .append(messageProvider.getMessage("ANSWERS"))
                 .append("\n");
         AtomicInteger currIndex = new AtomicInteger(0);
         question.getAnswers()
@@ -35,8 +35,8 @@ public class QuestionToStringConverter implements Converter<Question, String> {
                         .append("\n"));
         sb.append(
                 switch (question.getQueryType()) {
-                    case ONE_VALID_ANSWER -> messageService.getMessage("ONE_VALID_ANSWER");
-                    case MANY_VALID_ANSWERS -> messageService.getMessage("MANY_VALID_ANSWERS");
+                    case ONE_VALID_ANSWER -> messageProvider.getMessage("ONE_VALID_ANSWER");
+                    case MANY_VALID_ANSWERS -> messageProvider.getMessage("MANY_VALID_ANSWERS");
                 }
         );
         return sb.toString();

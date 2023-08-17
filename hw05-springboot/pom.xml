@@ -10,9 +10,9 @@
 	</parent>
 
 	<groupId>ru.otus.andrk</groupId>
-	<artifactId>hw05-springboot</artifactId>
+	<artifactId>tester</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>hw05-springboot</name>
+	<name>test-application</name>
 
 	<properties>
 		<java.version>17</java.version>
