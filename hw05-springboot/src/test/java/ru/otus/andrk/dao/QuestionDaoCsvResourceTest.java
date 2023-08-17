@@ -3,21 +3,22 @@ package ru.otus.andrk.dao;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestPropertySource;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 import ru.otus.andrk.config.QuestionsDaoCsvConfig;
-import ru.otus.andrk.service.i18n.ResourceService;
+import ru.otus.andrk.service.i18n.ResourceProvider;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 
-@SpringBootTest
+@ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = {QuestionDaoCsvResource.class})
 @TestPropertySource("classpath:test.properties")
 @DisplayName("DAO test content in csv resource")
@@ -30,7 +31,7 @@ public class QuestionDaoCsvResourceTest {
     private QuestionDao questionDao;
 
     @MockBean
-    private ResourceService resourceService;
+    private ResourceProvider resourceProvider;
 
     @Value("${test-system.questions.resource-folder}")
     private String resourceFolder;
@@ -40,7 +41,7 @@ public class QuestionDaoCsvResourceTest {
 
     @BeforeEach
     void initResourceService() {
-        when(resourceService.getLocalizedResourceName(anyString(), anyString()))
+        when(resourceProvider.getResourcePath(anyString(), anyString()))
                 .thenAnswer(i -> i.getArgument(0) + "/" + i.getArgument(1));
     }
 

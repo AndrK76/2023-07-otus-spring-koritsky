@@ -4,13 +4,13 @@ import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Component;
 
 @Component
-public class MessageServiceLocalizedImpl implements MessageService {
+public class MessageProviderLocalizedImpl implements MessageProvider {
 
     private final LocaleProvider localeProvider;
 
     private final MessageSource messageSource;
 
-    public MessageServiceLocalizedImpl(LocaleProvider localeProvider, MessageSource messageSource) {
+    public MessageProviderLocalizedImpl(LocaleProvider localeProvider, MessageSource messageSource) {
         this.localeProvider = localeProvider;
         this.messageSource = messageSource;
     }

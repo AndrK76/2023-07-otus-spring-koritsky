@@ -10,6 +10,12 @@ public class DialogServiceConfig {
 
     @Bean
     public DialogService dialogService() {
-        return new DialogServiceStreamImpl(System.out, System.in);
+        var console = System.console();
+        if (console == null) {
+            return new DialogServiceStreamImpl(System.out, System.in);
+        } else {
+            return new DialogServiceStreamImpl(System.out, System.in, console.charset());
+        }
+
     }
 }

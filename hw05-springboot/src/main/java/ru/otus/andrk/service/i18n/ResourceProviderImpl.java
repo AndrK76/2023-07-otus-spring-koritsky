@@ -6,16 +6,16 @@ import ru.otus.andrk.dao.ContentLoadException;
 import java.util.List;
 
 @Component
-public class ResourceServiceImpl implements ResourceService {
+public class ResourceProviderImpl implements ResourceProvider {
 
     private final LocaleProvider localeProvider;
 
-    public ResourceServiceImpl(LocaleProvider localeProvider) {
+    public ResourceProviderImpl(LocaleProvider localeProvider) {
         this.localeProvider = localeProvider;
     }
 
     @Override
-    public String getLocalizedResourceName(String resourceRoot, String resourceName) {
+    public String getResourcePath(String resourceRoot, String resourceName) {
         var loader = getClass().getClassLoader();
         var locale = localeProvider.getCurrent();
         var localizePath = List.of(
