@@ -1,6 +1,6 @@
 package ru.otus.andrk.service.question;
 
-public class IncorrectAnswerCharactersException extends AbstractIncorrectAnswerException {
+public class IncorrectAnswerCharactersException extends IncorrectAnswerException {
     public IncorrectAnswerCharactersException(String message) {
         super(message);
     }

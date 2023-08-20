@@ -6,7 +6,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
@@ -19,19 +18,19 @@ import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(SpringExtension.class)
-@ContextConfiguration(classes = {QuestionDaoCsvResource.class})
+@ContextConfiguration(classes = {QuestionDaoCsvResource.class, QuestionDaoCsvResourceTestConfig.class})
 @TestPropertySource("classpath:test.properties")
 @DisplayName("DAO test content in csv resource")
 public class QuestionDaoCsvResourceTest {
 
-    @MockBean
+    @Autowired
     private QuestionsDaoCsvConfig questionsDaoCsvConfig;
 
     @Autowired
-    private QuestionDao questionDao;
-
-    @MockBean
     private ResourceProvider resourceProvider;
+
+    @Autowired
+    private QuestionDao questionDao;
 
     @Value("${test-system.questions.resource-folder}")
     private String resourceFolder;
@@ -39,14 +38,15 @@ public class QuestionDaoCsvResourceTest {
     @Value("${test-system.questions.csv-delimiter}")
     private String csvDelimiter;
 
+
     @BeforeEach
-    void initResourceService() {
+    private void initResourceService() {
         when(resourceProvider.getResourcePath(anyString(), anyString()))
                 .thenAnswer(i -> i.getArgument(0) + "/" + i.getArgument(1));
     }
 
     @BeforeEach
-    void initCsvConfig() {
+    private void initCsvConfig() {
         when(questionsDaoCsvConfig.getCsvDelimiter()).thenReturn(csvDelimiter);
         when(questionsDaoCsvConfig.getResourceFolder()).thenReturn(resourceFolder);
     }

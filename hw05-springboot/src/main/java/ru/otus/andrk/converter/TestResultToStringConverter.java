@@ -1,6 +1,5 @@
 package ru.otus.andrk.converter;
 
-import org.springframework.context.annotation.Lazy;
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.stereotype.Service;
 import ru.otus.andrk.model.TestResult;
@@ -11,7 +10,7 @@ public class TestResultToStringConverter implements Converter<TestResult, String
 
     private final MessageProvider messageProvider;
 
-    public TestResultToStringConverter(@Lazy MessageProvider messageProvider) {
+    public TestResultToStringConverter(MessageProvider messageProvider) {
         this.messageProvider = messageProvider;
     }
 

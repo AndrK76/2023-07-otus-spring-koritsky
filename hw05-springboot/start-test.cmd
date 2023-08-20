@@ -1,0 +1,1 @@
+java -jar .\target\tester.jar --test-system.run-mode.use-console=true

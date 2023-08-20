@@ -1,7 +1,16 @@
 package ru.otus.andrk.service.dialog;
 
-public interface DialogService {
-    void displayText(String textForDisplay);
+import ru.otus.andrk.model.Question;
+import ru.otus.andrk.model.TestResult;
+import ru.otus.andrk.service.question.IncorrectAnswerException;
 
-    String readText();
+public interface DialogService {
+    void showQuestion(Question question);
+
+    String getAnswerText();
+
+    void showRetryTextOnError(IncorrectAnswerException cause);
+
+    void showTestResult(TestResult testResult);
+
 }

@@ -1,7 +1,6 @@
 package ru.otus.andrk.converter;
 
 
-import org.springframework.context.annotation.Lazy;
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.stereotype.Component;
 import ru.otus.andrk.model.Question;
@@ -14,7 +13,7 @@ public class QuestionToStringConverter implements Converter<Question, String> {
 
     private final MessageProvider messageProvider;
 
-    public QuestionToStringConverter(@Lazy MessageProvider messageProvider) {
+    public QuestionToStringConverter(MessageProvider messageProvider) {
         this.messageProvider = messageProvider;
     }
 
@@ -33,12 +32,6 @@ public class QuestionToStringConverter implements Converter<Question, String> {
                         .append(". ")
                         .append(answer.getAnswerText())
                         .append("\n"));
-        sb.append(
-                switch (question.getQueryType()) {
-                    case ONE_VALID_ANSWER -> messageProvider.getMessage("ONE_VALID_ANSWER");
-                    case MANY_VALID_ANSWERS -> messageProvider.getMessage("MANY_VALID_ANSWERS");
-                }
-        );
         return sb.toString();
     }
 

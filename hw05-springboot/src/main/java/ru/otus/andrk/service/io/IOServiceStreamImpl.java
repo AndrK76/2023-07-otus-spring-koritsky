@@ -1,4 +1,4 @@
-package ru.otus.andrk.service.dialog;
+package ru.otus.andrk.service.io;
 
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -6,27 +6,19 @@ import java.io.PrintStream;
 import java.nio.charset.Charset;
 import java.util.Scanner;
 
-
-public class DialogServiceStreamImpl implements DialogService {
+public class IOServiceStreamImpl implements IOService {
 
     private final PrintStream outStream;
 
     private final Scanner scanner;
 
-    public DialogServiceStreamImpl(OutputStream outStream, InputStream inStream, Charset charset) {
+    public IOServiceStreamImpl(OutputStream outStream, InputStream inStream, Charset charset) {
         this.outStream = new PrintStream(outStream,true, charset);
         this.scanner = new Scanner(inStream, charset);
     }
 
-    public DialogServiceStreamImpl(OutputStream outStream, InputStream inStream) {
-        this.outStream = new PrintStream(outStream);
-        this.scanner = new Scanner(inStream);
-    }
-
     @Override
     public void displayText(String textForDisplay) {
-
-
         outStream.println(textForDisplay);
     }
 

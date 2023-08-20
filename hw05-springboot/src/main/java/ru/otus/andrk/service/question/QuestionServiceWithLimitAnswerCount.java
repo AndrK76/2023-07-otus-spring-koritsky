@@ -35,6 +35,4 @@ public class QuestionServiceWithLimitAnswerCount implements QuestionSourceServic
             return ret.values().stream().toList();
         }
     }
-
-
 }

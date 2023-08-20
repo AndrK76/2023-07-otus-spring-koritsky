@@ -13,6 +13,11 @@ test-system:
     resource-file-name: questions.csv
     csv-delimiter: ;
   max-count-questions-per-test: 5
+  run-mode:
+    use-console: false
+
+
+
 
 customization:
   #locale: en-US
