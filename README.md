@@ -8,4 +8,5 @@
 
 #### Папки:
 - **hw01-intro** - ДЗ к 1.Введение в Spring Framework
-- **hw02-conf**  - ДЗ к 2.Конфигурирование Spring-приложений 
+- **hw02-conf**  - ДЗ к 2.Конфигурирование Spring-приложений
+- **hw03-springboot**  - ДЗ к 5."Чёрная магия" Spring Boot 
