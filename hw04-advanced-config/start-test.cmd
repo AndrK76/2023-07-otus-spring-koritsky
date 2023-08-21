@@ -1,0 +1,1 @@
+java -jar .\target\test-application.jar
