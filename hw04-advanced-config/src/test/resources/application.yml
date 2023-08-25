@@ -1,0 +1,27 @@
+spring:
+  shell:
+    interactive:
+      enabled: false
+  main:
+    allow-circular-references: true
+  messages:
+    basename: messages
+    fallback-to-system-locale: false
+
+test-system:
+  questions:
+    resource-folder: data
+    resource-file-name: questions.csv
+    csv-delimiter: ;
+  max-count-questions-per-test: 5
+  run-mode:
+    use-console: false
+
+
+customization:
+  #locale: en-US
+  locale: ru-RU
+  #locale: ru-US
+  #locale: ru
+  #locale: ru-BY
+  #locale: zh

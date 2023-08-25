@@ -1,0 +1,31 @@
+1;Q;One;Jeto vopros № 1
+1;A;1;Pravil'nyj otvet
+1;A;0;Variant 2
+1;A;0;Variant 3
+2;Q;One;Jeto vopros nomer 2 (sjurpriz)
+2;A;1;Pravil'nyj otvet
+2;A;0;Option 2
+2;A;1;Tozhe pravil'nyj otvet
+2;A;1;I eshhjo 1 pravil'nyj otvet
+3;Q;Many;Jeto vopros nomer tri
+3;A;1;Pravil'nyj otvet
+3;A;1;Pravil'nyj otvet
+4;Q;One;Jeto vopros nomer № 4
+4;A;0;Option 1
+4;A;0;Option 3
+4;A;1;Pravil'nyj otvet 999
+5;Q;One;Vopros pod nomerom 6
+5;A;0;Option 0
+5;A;0;Option 18
+5;A;0;Option Two Billion
+5;A;1;Pravil'nyj otvet
+6;Q;One;Real'no shestoj vopros
+6;A;0;Option 0
+6;A;0;Option 18
+6;A;0;Option Two Billion
+6;A;1;Pravil'nyj otvet 76
+7;Q;Many;Sed'moj vopros
+7;A;1;Option 0
+7;A;0;Option 18
+7;A;0;Option Two Billion
+7;A;1;76 budet pravil'nym otvetom
