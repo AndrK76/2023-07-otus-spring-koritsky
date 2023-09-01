@@ -10,4 +10,5 @@
 - **hw01-intro** - ДЗ к 01.Введение в Spring Framework
 - **hw02-conf**  - ДЗ к 02.Конфигурирование Spring-приложений
 - **hw03-springboot**  - ДЗ к 05."Чёрная магия" Spring Boot 
-- **hw04-advanced-config**  ДЗ к 07. Продвинутая конфигурация (часть 2) - Conditionals, Events, тестирование 
+- **hw04-advanced-config**  - ДЗ к 07. Продвинутая конфигурация (часть 2) - Conditionals, Events, тестирование
+- **hw05-jdbc**  - ДЗ к 09. DAO на Spring JDBC 
