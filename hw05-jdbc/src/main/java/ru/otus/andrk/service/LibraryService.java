@@ -5,5 +5,11 @@ import ru.otus.andrk.model.Book;
 import java.util.List;
 
 public interface LibraryService {
-    List<Book> getAllBooks();
+    LibraryManipulationResult getAllBooks();
+
+    LibraryManipulationResult getBookById(long id);
+
+    LibraryManipulationResult addBook(Book book);
+
+    void modifyBook(Book book);
 }
