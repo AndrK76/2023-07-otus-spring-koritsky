@@ -1,15 +1,23 @@
 package ru.otus.andrk.service;
 
+import ru.otus.andrk.model.Author;
 import ru.otus.andrk.model.Book;
+import ru.otus.andrk.model.Genre;
 
 import java.util.List;
 
 public interface LibraryService {
-    LibraryManipulationResult getAllBooks();
+    List<Book> getAllBooks();
 
-    LibraryManipulationResult getBookById(long id);
+    Book getBookById(long id);
 
-    LibraryManipulationResult addBook(Book book);
+    Book addBook(Book book);
 
-    void modifyBook(Book book);
+    Book modifyBook(Book book);
+
+    void deleteBook(long id);
+
+    List<Author> getAllAuthors();
+
+    List<Genre> getAllGenres();
 }

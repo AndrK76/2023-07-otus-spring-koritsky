@@ -3,7 +3,6 @@ package ru.otus.andrk.dao;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcOperations;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Repository;
 import ru.otus.andrk.model.Genre;
@@ -17,9 +16,9 @@ import java.util.Map;
 @RequiredArgsConstructor
 @Repository
 public class GenreDaoJdbc implements GenreDao {
-    private final NamedParameterJdbcTemplate jdbc;
-
     private static final String SELECT_PHRASE = "select id, name from genres";
+
+    private final NamedParameterJdbcTemplate jdbc;
 
     @Override
     public List<Genre> getAll() {

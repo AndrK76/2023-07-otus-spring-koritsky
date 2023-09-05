@@ -26,48 +26,47 @@ public class LibraryServiceDao implements LibraryService {
     private final AuthorDao authorDao;
 
     @Override
-    public LibraryManipulationResult getAllBooks() {
-        try{
-            var data = bookDao.getAll();
-            return new LibraryManipulationResult(true,data, null);
-        } catch (Exception e){
+    public List<Book> getAllBooks() {
+        try {
+            return bookDao.getAll();
+        } catch (Exception e) {
             log.error(e);
-            return makeFailureResult("Can't get all book, see log for details");
+            throw new OtherBookManipulationException();
         }
     }
 
     @Override
-    public LibraryManipulationResult getBookById(long id) {
-        try{
-            var data = bookDao.getById(id);
-            return new LibraryManipulationResult(true,data, null);
-        } catch (Exception e){
+    public Book getBookById(long id) {
+        try {
+            return bookDao.getById(id);
+        } catch (Exception e) {
             log.error(e);
-            return makeFailureResult("Can't get book, see log for details");
+            throw new OtherBookManipulationException();
         }
 
     }
 
     @Override
-    public LibraryManipulationResult addBook(Book book) {
+    public Book addBook(Book book) {
         try {
             fillIfExistAuthorAndGenreValuesFromLibrary(book);
             bookDao.insert(book);
-            return new LibraryManipulationResult(true,bookDao.getById(book.getId()),"Book added to library");
+            return book;
         } catch (AlreadyExistObjectException e) {
             log.error(e);
-            return makeFailureResult("Book with id=" + book.getId() + " already exist in library");
+            throw new AddAlreadyExistBookException();
         } catch (Exception e) {
             log.error(e);
-            return makeFailureResult("Can't add book to library, see log for detail");
+            throw new OtherBookManipulationException();
         }
     }
 
     @Override
-    public void modifyBook(Book book) {
+    public Book modifyBook(Book book) {
         try {
             fillIfExistAuthorAndGenreValuesFromLibrary(book);
             bookDao.update(book);
+            return book;
         } catch (NoExistObjectException e) {
             log.error(e);
             throw new ModifyNoExistBookException();
@@ -77,14 +76,37 @@ public class LibraryServiceDao implements LibraryService {
         }
     }
 
-    private LibraryManipulationResult makeFailureResult(String message){
-        return new LibraryManipulationResult(false,null,message);
+    @Override
+    public void deleteBook(long id) {
+        try {
+            bookDao.delete(id);
+        } catch (Exception e) {
+            log.error(e);
+            throw new OtherBookManipulationException();
+        }
     }
 
+    @Override
+    public List<Author> getAllAuthors() {
+        try {
+            return authorDao.getAll();
+        } catch (Exception e) {
+            log.error(e);
+            throw new OtherBookManipulationException();
+        }
+    }
 
+    @Override
+    public List<Genre> getAllGenres() {
+        try {
+            return genreDao.getAll();
+        } catch (Exception e) {
+            log.error(e);
+            throw new OtherBookManipulationException();
+        }
+    }
 
-
-    private void fillIfExistAuthorAndGenreValuesFromLibrary(Book book){
+    private void fillIfExistAuthorAndGenreValuesFromLibrary(Book book) {
         if (book.getAuthor() != null) {
             book.setAuthor(getAuthorByIdAndAddToLibraryWhenNoExist(book.getAuthor()));
         }

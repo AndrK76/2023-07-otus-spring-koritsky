@@ -10,11 +10,11 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 public class BookApplication {
 
     public static void main(String[] args) {
-//        try {
-//            Console.main(args);
-//        } catch (Exception e) {
-//            log.error(e);
-//        }
+        try {
+            Console.main(args);
+        } catch (Exception e) {
+            log.error(e);
+        }
         SpringApplication.run(BookApplication.class, args);
     }
 

@@ -6,7 +6,6 @@ import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Repository;
 import ru.otus.andrk.model.Author;
-import ru.otus.andrk.model.Genre;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -16,9 +15,9 @@ import java.util.Map;
 @RequiredArgsConstructor
 @Repository
 public class AuthorDaoJdbc implements AuthorDao {
-    private final NamedParameterJdbcTemplate jdbc;
-
     private static final String SELECT_PHRASE = "select id, name from authors";
+
+    private final NamedParameterJdbcTemplate jdbc;
 
     @Override
     public List<Author> getAll() {

@@ -58,8 +58,8 @@ public class BookDaoJdbc implements BookDao {
     }
 
     @Override
-    public void delete(Book book) {
-        jdbc.update("delete from books where id=:id", Map.of("id", book.getId()));
+    public void delete(long id) {
+        jdbc.update("delete from books where id=:id", Map.of("id", id));
     }
 
     private String makeCommonSelectPhrase() {
