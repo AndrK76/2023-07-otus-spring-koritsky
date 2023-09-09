@@ -5,27 +5,33 @@ import org.springframework.core.convert.ConversionService;
 import org.springframework.shell.standard.ShellComponent;
 import org.springframework.shell.standard.ShellMethod;
 import org.springframework.shell.standard.ShellOption;
+import ru.otus.andrk.exception.NoExistAuthorException;
+import ru.otus.andrk.exception.NoExistBookException;
+import ru.otus.andrk.exception.NoExistGenreException;
+import ru.otus.andrk.exception.OtherLibraryManipulationException;
 import ru.otus.andrk.model.Author;
-import ru.otus.andrk.model.Book;
 import ru.otus.andrk.model.Genre;
-import ru.otus.andrk.service.AddAlreadyExistBookException;
-import ru.otus.andrk.service.LibraryService;
-import ru.otus.andrk.service.ModifyNoExistBookException;
-import ru.otus.andrk.service.OtherBookManipulationException;
+import ru.otus.andrk.service.AuthorService;
+import ru.otus.andrk.service.BookService;
+import ru.otus.andrk.service.GenreService;
 
 @ShellComponent
 @RequiredArgsConstructor
 public class BookAppCommands {
-    private final LibraryService libraryService;
+    private final BookService bookService;
+
+    private final AuthorService authorService;
+
+    private final GenreService genreService;
 
     private final ConversionService conversionService;
 
     @ShellMethod(value = "List all books", key = {"list all books", "all books", "all", "list"})
     public String getAllBooks() {
         try {
-            var allBooks = libraryService.getAllBooks();
+            var allBooks = bookService.getAllBooks();
             return conversionService.convert(allBooks, String.class);
-        } catch (OtherBookManipulationException e) {
+        } catch (OtherLibraryManipulationException e) {
             return "Error, can't get book list from library, see log for detail";
         }
     }
@@ -33,34 +39,28 @@ public class BookAppCommands {
     @ShellMethod(value = "Get book by id", key = {"get book", "book", "get"})
     public String getBookById(@ShellOption(help = "Book Id") long bookId) {
         try {
-            var book = libraryService.getBookById(bookId);
+            var book = bookService.getBookById(bookId);
             return conversionService.convert(book, String.class);
-        } catch (OtherBookManipulationException e) {
+        } catch (OtherLibraryManipulationException e) {
             return "Error, can't get book by id from library, see log for detail";
         }
     }
 
     @ShellMethod(value = "Add new book", key = {"add book", "add", "new"})
     public String addBook(
-            @ShellOption(help = "Book Id") long bookId,
             @ShellOption(help = "Book Name") String bookName,
             @ShellOption(help = "Author Id", defaultValue = "") Long authorId,
-            @ShellOption(help = "Author Name", defaultValue = "") String authorName,
-            @ShellOption(help = "Genre Id", defaultValue = "") Long genreId,
-            @ShellOption(help = "Genre Name", defaultValue = "") String genreName) {
-        Book book = new Book(bookId, bookName);
-        if (authorId != null) {
-            book.setAuthor(new Author(authorId, authorName));
-        }
-        if (genreId != null) {
-            book.setGenre(new Genre(genreId, genreName));
-        }
+            @ShellOption(help = "Genre Id", defaultValue = "") Long genreId) {
         try {
-            var storedBook = libraryService.addBook(book);
+            var author = authorId == null ? null : authorService.getAuthorById(authorId);
+            var genre = genreId == null ? null : genreService.getGenreById(genreId);
+            var storedBook = bookService.addBook(bookName, author, genre);
             return "Book added to library\n" + conversionService.convert(storedBook, String.class);
-        } catch (AddAlreadyExistBookException e) {
-            return "Error, Book with id=" + bookId + " already exist in library";
-        } catch (OtherBookManipulationException e) {
+        } catch (NoExistAuthorException e) {
+            return "Error, Author with id=" + authorId + " not exist in library";
+        } catch (NoExistGenreException e) {
+            return "Error, Genre with id=" + genreId + " not exist in library";
+        } catch (OtherLibraryManipulationException e) {
             return "Error, can't add book to library, see log for detail";
         }
     }
@@ -70,23 +70,20 @@ public class BookAppCommands {
             @ShellOption(help = "Book Id") long bookId,
             @ShellOption(help = "Book Name", defaultValue = "") String bookName,
             @ShellOption(help = "Author Id", defaultValue = "") Long authorId,
-            @ShellOption(help = "Author Name", defaultValue = "") String authorName,
-            @ShellOption(help = "Genre Id", defaultValue = "") Long genreId,
-            @ShellOption(help = "Genre Name", defaultValue = "") String genreName) {
-        Book book = new Book(bookId, bookName);
-        if (authorId != null) {
-            book.setAuthor(new Author(authorId, authorName));
-        }
-        if (genreId != null) {
-            book.setGenre(new Genre(genreId, genreName));
-        }
+            @ShellOption(help = "Genre Id", defaultValue = "") Long genreId) {
+        var author = authorId == null ? null : authorService.getAuthorById(authorId);
+        var genre = genreId == null ? null : genreService.getGenreById(genreId);
         try {
-            var storedBook = libraryService.modifyBook(book);
+            var storedBook = bookService.modifyBook(bookId, bookName, author, genre);
             return "Book changed, new state\n"
                     + conversionService.convert(storedBook, String.class);
-        } catch (ModifyNoExistBookException e) {
+        } catch (NoExistBookException e) {
             return "Error, Book with id=" + bookId + " not exist in library";
-        } catch (OtherBookManipulationException e) {
+        } catch (NoExistAuthorException e) {
+            return "Error, Author with id=" + authorId + " not exist in library";
+        } catch (NoExistGenreException e) {
+            return "Error, Genre with id=" + genreId + " not exist in library";
+        } catch (OtherLibraryManipulationException e) {
             return "Error, can't add book to library, see log for detail";
         }
     }
@@ -96,30 +93,58 @@ public class BookAppCommands {
             @ShellOption(help = "Book Id") long bookId
     ) {
         try {
-            libraryService.deleteBook(bookId);
+            bookService.deleteBook(bookId);
             return "Book with id=" + bookId + " removed from library";
-        } catch (OtherBookManipulationException e) {
-            return "Error, can't add book to library, see log for detail";
+        } catch (OtherLibraryManipulationException e) {
+            return "Error, can't remove book to library, see log for detail";
         }
     }
 
-    @ShellMethod(value = "List all authors", key = {"list all authors", "all authors", "list authors", "authors"})
+    @ShellMethod(value = "Add new author", key = {"add author", "new author"})
+    public String addAuthor(
+            String authorName
+    ) {
+        try {
+            Author author = authorService.addAuthor(authorName);
+            return conversionService.convert(author, String.class);
+        } catch (OtherLibraryManipulationException e) {
+            return "Error, can't add author to library, see log for detail";
+        }
+    }
+
+    @ShellMethod(
+            value = "List all authors",
+            key = {"list all authors", "all authors", "list authors", "authors", "list author"})
     public String getAllAuthors() {
         try {
-            var allAuthors = libraryService.getAllAuthors();
+            var allAuthors = authorService.getAllAuthors();
             return conversionService.convert(allAuthors, String.class);
-        } catch (OtherBookManipulationException e) {
-            return "Error, can't get book list from library, see log for detail";
+        } catch (OtherLibraryManipulationException e) {
+            return "Error, can't get author list from library, see log for detail";
         }
     }
 
-    @ShellMethod(value = "List all genres", key = {"list all genres", "all genres", "list genres", "genres"})
+    @ShellMethod(value = "Add new genre", key = {"add genre", "new genre"})
+    public String addGenre(
+            String genreName
+    ) {
+        try {
+            Genre genre = genreService.addGenre(genreName);
+            return conversionService.convert(genre, String.class);
+        } catch (OtherLibraryManipulationException e) {
+            return "Error, can't add genre to library, see log for detail";
+        }
+    }
+
+    @ShellMethod(
+            value = "List all genres",
+            key = {"list all genres", "all genres", "list genres", "genres", "list genre"})
     public String getAllGenres() {
         try {
-            var allGenres = libraryService.getAllGenres();
+            var allGenres = genreService.getAllGenres();
             return conversionService.convert(allGenres, String.class);
-        } catch (OtherBookManipulationException e) {
-            return "Error, can't get book list from library, see log for detail";
+        } catch (OtherLibraryManipulationException e) {
+            return "Error, can't get genre list from library, see log for detail";
         }
     }
 

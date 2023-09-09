@@ -6,18 +6,15 @@ import ru.otus.andrk.model.Genre;
 
 import java.util.List;
 
-public interface LibraryService {
+public interface BookService {
     List<Book> getAllBooks();
 
     Book getBookById(long id);
 
-    Book addBook(Book book);
+    Book addBook(String bookName, Author author, Genre genre);
 
-    Book modifyBook(Book book);
+    Book modifyBook(long bookId, String newName, Author newAuthor, Genre newGenre);
 
     void deleteBook(long id);
 
-    List<Author> getAllAuthors();
-
-    List<Genre> getAllGenres();
 }

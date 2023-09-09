@@ -9,5 +9,5 @@ public interface AuthorDao {
 
     Author getById(long id);
 
-    void insert(Author author);
+    long insert(Author author);
 }

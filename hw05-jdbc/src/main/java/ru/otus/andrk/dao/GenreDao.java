@@ -9,6 +9,6 @@ public interface GenreDao {
 
     Genre getById(long id);
 
-    void insert(Genre genre);
+    long insert(Genre genre);
 
 }

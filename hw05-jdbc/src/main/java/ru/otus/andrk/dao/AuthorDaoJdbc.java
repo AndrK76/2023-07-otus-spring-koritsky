@@ -3,7 +3,10 @@ package ru.otus.andrk.dao;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
+import org.springframework.jdbc.support.GeneratedKeyHolder;
+import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 import ru.otus.andrk.model.Author;
 
@@ -15,19 +18,18 @@ import java.util.Map;
 @RequiredArgsConstructor
 @Repository
 public class AuthorDaoJdbc implements AuthorDao {
-    private static final String SELECT_PHRASE = "select id, name from authors";
-
     private final NamedParameterJdbcTemplate jdbc;
 
     @Override
     public List<Author> getAll() {
-        return jdbc.query(SELECT_PHRASE, new AuthorMapper());
+        return jdbc.query("select id, name from authors",
+                new AuthorMapper());
     }
 
     @Override
     public Author getById(long id) {
         try {
-            return jdbc.queryForObject(SELECT_PHRASE + " where id=:id",
+            return jdbc.queryForObject("select id, name from authors where id=:id",
                     Map.of("id", id), new AuthorMapper());
         } catch (EmptyResultDataAccessException e) {
             return null;
@@ -35,9 +37,12 @@ public class AuthorDaoJdbc implements AuthorDao {
     }
 
     @Override
-    public void insert(Author author) {
-        Map<String, Object> params = Map.of("id", author.id(), "name", author.name());
-        jdbc.update("insert into authors (id,name) values (:id, :name)", params);
+    public long insert(Author author) {
+        MapSqlParameterSource params = new MapSqlParameterSource("name", author.name());
+        KeyHolder keyHolder = new GeneratedKeyHolder();
+        jdbc.update("insert into authors (name) values (:name)", params,
+                keyHolder, new String[]{"id"});
+        return keyHolder.getKey().longValue();
     }
 
     private static class AuthorMapper implements RowMapper<Author> {

@@ -6,27 +6,23 @@ import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.JdbcTest;
 import org.springframework.context.annotation.Import;
-import org.springframework.dao.EmptyResultDataAccessException;
-import org.springframework.transaction.annotation.Transactional;
 import ru.otus.andrk.model.Genre;
 
 import java.util.Map;
 import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 @JdbcTest
 @Import(GenreDaoJdbc.class)
-@Transactional
 public class GenreDaoJdbcTest {
 
     @Autowired
     private GenreDaoJdbc dao;
 
     private final Map<Long, String> expectedGenres = Map.of(
-            0L, "unknown",
-            1L, "known");
+            1L, "unknown",
+            2L, "known");
 
     @Test
     public void shouldReturnExpectedGenreList() {
@@ -41,7 +37,7 @@ public class GenreDaoJdbcTest {
     }
 
     @ParameterizedTest
-    @ValueSource(longs = {0, 1})
+    @ValueSource(longs = {1, 2})
     public void shouldReturnExpectedGenreById(long expectedId) {
         var expectedGenre = new Genre(expectedId, expectedGenres.get(expectedId));
         var actualGenre = dao.getById(expectedId);
@@ -49,7 +45,7 @@ public class GenreDaoJdbcTest {
     }
 
     @Test
-    public void shouldReturnNullForNoExistId(){
+    public void shouldReturnNullForNoExistId() {
         var actualGenre = dao.getById(9);
         assertThat(actualGenre).isNull();
     }
@@ -58,7 +54,8 @@ public class GenreDaoJdbcTest {
     public void shouldAddAndReturnExpectedResult() {
         var expectedGenre = new Genre(3, "test");
         assertThat(dao.getById(3L)).isNull();
-        dao.insert(expectedGenre);
+        var newId = dao.insert(expectedGenre);
+        expectedGenre = new Genre(newId, expectedGenre.name());
         var actualGenre = dao.getById(3L);
         assertThat(actualGenre).isEqualTo(expectedGenre);
     }

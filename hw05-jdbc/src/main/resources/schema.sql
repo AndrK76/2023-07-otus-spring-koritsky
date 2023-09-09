@@ -1,6 +1,6 @@
 create table books
 (
-    id        long primary key,
+    id        IDENTITY primary key,
     name      varchar(255),
     author_id long,
     genre_id  long
@@ -8,13 +8,13 @@ create table books
 
 create table genres
 (
-    id   long primary key,
+    id   IDENTITY primary key,
     name varchar(255)
 );
 
 create table authors
 (
-    id   long primary key,
+    id   IDENTITY primary key,
     name varchar(255)
 );
 
