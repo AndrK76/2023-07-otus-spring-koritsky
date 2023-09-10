@@ -9,8 +9,8 @@ public class GenreToStringConverter implements Converter<Genre, String> {
     @Override
     public String convert(Genre genre) {
         StringBuilder sb = new StringBuilder();
-        sb.append("Id: ").append(genre.id())
-                .append("\tName: ").append(genre.name());
+        sb.append("Id: ").append(genre.getId())
+                .append("\tName: ").append(genre.getName());
         return sb.toString();
     }
 }

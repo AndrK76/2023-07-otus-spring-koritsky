@@ -12,13 +12,13 @@ public class BookToStringConverter implements Converter<Book, String> {
         sb.append("Id: ").append(book.getId())
                 .append("\tName: ").append(book.getName());
         if (book.getAuthor() != null) {
-            sb.append("\tAuthor: {Id: ").append(book.getAuthor().id())
-                    .append(", Name: ").append(book.getAuthor().name())
+            sb.append("\tAuthor: {Id: ").append(book.getAuthor().getId())
+                    .append(", Name: ").append(book.getAuthor().getName())
                     .append("}");
         }
         if (book.getGenre() != null) {
-            sb.append("\tGenre: {Id: ").append(book.getGenre().id())
-                    .append(", Name: ").append(book.getGenre().name())
+            sb.append("\tGenre: {Id: ").append(book.getGenre().getId())
+                    .append(", Name: ").append(book.getGenre().getName())
                     .append("}");
         }
         return sb.toString();

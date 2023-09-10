@@ -9,8 +9,8 @@ public class AuthorToStringConverter implements Converter<Author, String> {
     @Override
     public String convert(Author author) {
         StringBuilder sb = new StringBuilder();
-        sb.append("Id: ").append(author.id())
-                .append("\tName: ").append(author.name());
+        sb.append("Id: ").append(author.getId())
+                .append("\tName: ").append(author.getName());
         return sb.toString();
     }
 }
