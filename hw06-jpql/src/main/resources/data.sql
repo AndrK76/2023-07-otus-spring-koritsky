@@ -1,0 +1,14 @@
+insert into genres (name)
+values ('Не указан'),
+       ('Стихи'),
+       ('Проза')
+;
+insert into authors (name)
+values ('А.С. Пушкин'),
+       ('D.E. Knuth')
+;
+insert into books (name, author_id, genre_id)
+values ('test', null, 3),
+       ('Евгений онегин', 1, 2),
+       ('The Art of Computer Programming', 2, 1)
+;
