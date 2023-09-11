@@ -1,15 +1,20 @@
 package ru.otus.andrk.converter;
 
-import lombok.RequiredArgsConstructor;
+import org.springframework.context.annotation.Lazy;
+import org.springframework.core.convert.ConversionService;
 import org.springframework.core.convert.converter.Converter;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 import ru.otus.andrk.dto.BookDto;
+import ru.otus.andrk.dto.CommentDto;
 import ru.otus.andrk.model.Book;
 
-@Component
-@RequiredArgsConstructor
+@Service
 public class BookToBookDtoConverter implements Converter<Book, BookDto> {
-    private final CommentToCommentDtoConverter commentConverter;
+    private final ConversionService conversionService;
+
+    public BookToBookDtoConverter(@Lazy ConversionService conversionService) {
+        this.conversionService = conversionService;
+    }
 
     @Override
     public BookDto convert(Book book) {
@@ -20,7 +25,8 @@ public class BookToBookDtoConverter implements Converter<Book, BookDto> {
                 .genre(book.getGenre())
                 .build();
         if (book.getComments() != null) {
-            ret.setComments(book.getComments().stream().map(commentConverter::convert).toList());
+            ret.setComments(book.getComments().stream()
+                    .map(r -> conversionService.convert(r, CommentDto.class)).toList());
         }
         return ret;
     }

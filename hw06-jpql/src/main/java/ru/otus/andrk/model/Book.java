@@ -41,6 +41,7 @@ public class Book implements Copyable<Book> {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     @Setter(AccessLevel.PRIVATE)
+    @Builder.Default
     private long id = 0;
 
     @Column(name = "name")

@@ -1,16 +1,14 @@
 package ru.otus.andrk.converter;
 
 import org.springframework.core.convert.converter.Converter;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 import ru.otus.andrk.model.Genre;
 
-@Component
+@Service
 public class GenreToStringConverter implements Converter<Genre, String> {
     @Override
     public String convert(Genre genre) {
-        StringBuilder sb = new StringBuilder();
-        sb.append("Id: ").append(genre.getId())
-                .append("\tName: ").append(genre.getName());
-        return sb.toString();
+        return "Id: " + genre.getId() +
+                "\tName: " + genre.getName();
     }
 }

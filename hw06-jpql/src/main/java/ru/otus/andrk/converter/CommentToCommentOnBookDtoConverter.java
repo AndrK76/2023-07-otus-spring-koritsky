@@ -1,12 +1,12 @@
 package ru.otus.andrk.converter;
 
 import org.springframework.core.convert.converter.Converter;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 import ru.otus.andrk.dto.CommentOnBookDto;
 import ru.otus.andrk.model.Book;
 import ru.otus.andrk.model.Comment;
 
-@Component
+@Service
 public class CommentToCommentOnBookDtoConverter implements Converter<Comment, CommentOnBookDto> {
     @Override
     public CommentOnBookDto convert(Comment comment) {
