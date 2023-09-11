@@ -30,7 +30,7 @@ public class AuthorRepositoryJpaTest {
 
     @ParameterizedTest
     @ValueSource(longs = {1L, 2L})
-    void shouldFindExpectedAuthorById(long id) {
+    public void shouldFindExpectedAuthorById(long id) {
         var expectedAuthor = em.find(Author.class, id);
         var actualAuthor = repo.findById(id);
         assertThat(actualAuthor).isPresent()
@@ -38,7 +38,7 @@ public class AuthorRepositoryJpaTest {
     }
 
     @Test
-    void shouldReturnCorrectAuthorsList() {
+    public void shouldReturnCorrectAuthorsList() {
         var actualList = repo.findAll();
         var expectedList = expectedAuthors.entrySet().stream()
                 .map(r -> new Author(r.getKey(), r.getValue())).toList();

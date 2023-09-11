@@ -12,3 +12,7 @@ values ('test', null, 3),
        ('Евгений онегин', 1, 2),
        ('The Art of Computer Programming', 2, 1)
 ;
+
+insert into comments (text, book_id)
+values ('Клёва', 2),
+       ('Нудно', 2);

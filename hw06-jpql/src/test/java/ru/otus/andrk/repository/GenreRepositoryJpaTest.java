@@ -30,7 +30,7 @@ public class GenreRepositoryJpaTest {
 
     @ParameterizedTest
     @ValueSource(longs = {1L, 2L})
-    void shouldFindExpectedGenreById(long id) {
+    public void shouldFindExpectedGenreById(long id) {
         var expectedGenre = em.find(Genre.class, id);
         var actualGenre = repo.findById(id);
         assertThat(actualGenre).isPresent()
@@ -38,7 +38,7 @@ public class GenreRepositoryJpaTest {
     }
 
     @Test
-    void shouldReturnCorrectGenresList() {
+    public void shouldReturnCorrectGenresList() {
         var actualList = repo.findAll();
         var expectedList = expectedGenres.entrySet().stream()
                 .map(r -> new Genre(r.getKey(), r.getValue())).toList();

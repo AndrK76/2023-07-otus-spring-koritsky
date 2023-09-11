@@ -9,13 +9,14 @@ import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import ru.otus.andrk.interfaces.Copyable;
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "authors")
 @Entity
-public class Author implements Copyable<Author>{
+public class Author implements Copyable<Author> {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")

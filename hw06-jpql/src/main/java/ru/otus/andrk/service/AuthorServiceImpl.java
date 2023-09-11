@@ -40,6 +40,11 @@ public class AuthorServiceImpl implements AuthorService {
 
     @Override
     public Author getAuthorById(long authorId) {
-        return repo.findById(authorId).orElse(null);
+        try {
+            return repo.findById(authorId).orElse(null);
+        } catch (Exception e) {
+            log.error(e);
+            throw new OtherLibraryManipulationException(e);
+        }
     }
 }
