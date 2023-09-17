@@ -12,3 +12,5 @@
 - **hw03-springboot**  - ДЗ к 05."Чёрная магия" Spring Boot 
 - **hw04-advanced-config**  - ДЗ к 07. Продвинутая конфигурация (часть 2) - Conditionals, Events, тестирование
 - **hw05-jdbc**  - ДЗ к 09. DAO на Spring JDBC 
+- **hw06-jpql**  - ДЗ к 11. JPQL, Spring ORM, DAO на основе Spring ORM + JPA
+- **hw07-jpa**  - ДЗ к 13. "Белая магия" Spring Data: Spring Data JPA
