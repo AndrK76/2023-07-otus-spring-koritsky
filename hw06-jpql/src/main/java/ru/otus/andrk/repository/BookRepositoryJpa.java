@@ -9,6 +9,7 @@ import org.springframework.stereotype.Repository;
 import ru.otus.andrk.model.Book;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import static org.springframework.data.jpa.repository.EntityGraph.EntityGraphType.FETCH;
@@ -21,27 +22,20 @@ public class BookRepositoryJpa implements BookRepository {
 
     @Override
     public Book save(Book book) {
-        if (book.getId() == 0) {
-            var bookCopy = book.copy();
-            em.persist(bookCopy);
-            return bookCopy;
-        }
         return em.merge(book);
     }
 
     @Override
     public List<Book> findAll() {
         TypedQuery<Book> query = em.createQuery("select b from Book b", Book.class);
-        setHintsToQuery(query);
+        query.setHint(FETCH.getKey(), getGraphForQueryWithAuthorAndGenre());
         return query.getResultList();
     }
 
     @Override
     public Optional<Book> findById(long id) {
-        TypedQuery<Book> query = em.createQuery("select b from Book b where b.id=:id", Book.class);
-        setHintsToQuery(query);
-        query.setParameter("id", id);
-        return query.getResultList().stream().findFirst();
+        return Optional.ofNullable(
+                em.find(Book.class, id, Map.of(FETCH.getKey(), getGraphForQueryWithAuthorAndGenre())));
     }
 
     @Override
@@ -49,8 +43,8 @@ public class BookRepositoryJpa implements BookRepository {
         em.remove(book);
     }
 
-    private void setHintsToQuery(TypedQuery<Book> query) {
-        EntityGraph<?> entityGraph = em.getEntityGraph("books-detail-entity-graph");
-        query.setHint(FETCH.getKey(), entityGraph);
+    private EntityGraph<?> getGraphForQueryWithAuthorAndGenre() {
+        return em.getEntityGraph("books-detail-entity-graph");
     }
+
 }

@@ -84,17 +84,15 @@ public class BookServiceImpl implements BookService {
 
     private BookDto saveBook(long oldBookId, String newName, Long newAuthorId, Long newGenreId) {
         try {
-            if (oldBookId != 0L) {
-                bookRepo.findById(oldBookId).orElseThrow(NoExistBookException::new);
-            }
+            Book book = (oldBookId == 0L) ? new Book() :
+                    bookRepo.findById(oldBookId).orElseThrow(NoExistBookException::new);
             Author newAuthor = newAuthorId == null ? null :
                     authorRepo.findById(newAuthorId).orElseThrow(NoExistAuthorException::new);
             Genre newGenre = newGenreId == null ? null :
                     genreRepo.findById(newGenreId).orElseThrow(NoExistGenreException::new);
-            Book book = Book.builder()
-                    .id(oldBookId).name(newName)
-                    .author(newAuthor).genre(newGenre)
-                    .build();
+            book.setName(newName);
+            book.setAuthor(newAuthor);
+            book.setGenre(newGenre);
             var savedBook = Optional.of(bookRepo.save(book));
             return savedBook.map(v -> conversionService.convert(v, BookDto.class))
                     .orElse(null);
@@ -106,5 +104,4 @@ public class BookServiceImpl implements BookService {
             throw new OtherLibraryManipulationException(e);
         }
     }
-
 }

@@ -14,16 +14,12 @@ import jakarta.persistence.NamedEntityGraph;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.BatchSize;
-import ru.otus.andrk.interfaces.Copyable;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @NamedEntityGraph(name = "books-detail-entity-graph",
         attributeNodes = {@NamedAttributeNode("author"), @NamedAttributeNode("genre")})
@@ -31,17 +27,14 @@ import java.util.stream.Collectors;
 @Getter
 @Setter
 @NoArgsConstructor
-@AllArgsConstructor(access = AccessLevel.PRIVATE)
-@Builder
 @Table(name = "books")
 @Entity
-public class Book implements Copyable<Book> {
+public class Book {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     @Setter(AccessLevel.PRIVATE)
-    @Builder.Default
     private long id = 0;
 
     @Column(name = "name")
@@ -64,23 +57,10 @@ public class Book implements Copyable<Book> {
         this.name = name;
     }
 
-    @Override
-    public Book copy() {
-        var ret = builder()
-                .id(this.id)
-                .name(this.name)
-                .author(this.author == null ? null : this.author.copy())
-                .genre(this.genre == null ? null : this.genre.copy())
-                .build();
-        if (this.comments != null) {
-            ret.comments = this.comments.stream()
-                    .map(c -> {
-                        var comm = c.copy();
-                        comm.setBook(ret);
-                        return comm;
-                    }).collect(Collectors.toList());
-        }
-        return ret;
+    public Book(String name, Author author, Genre genre) {
+        this.name = name;
+        this.author = author;
+        this.genre = genre;
     }
 
     @Override
@@ -116,18 +96,21 @@ public class Book implements Copyable<Book> {
         if (getName() != null ? !getName().equals(book.getName()) : book.getName() != null) {
             return false;
         }
-        if (getAuthor() != null ? !getAuthor().equals(book.getAuthor()) : book.getAuthor() != null) {
+        if (getAuthor() != null ? getAuthor().getId() != book.getAuthor().getId() : book.getAuthor() != null) {
             return false;
         }
-        return getGenre() != null ? getGenre().equals(book.getGenre()) : book.getGenre() == null;
+        if (getGenre() != null ? getGenre().getId() != book.getGenre().getId() : book.getGenre() != null) {
+            return false;
+        }
+        return true;
     }
 
     @Override
     public int hashCode() {
         int result = (int) (getId() ^ (getId() >>> 32));
         result = 31 * result + (getName() != null ? getName().hashCode() : 0);
-        result = 31 * result + (getAuthor() != null ? getAuthor().hashCode() : 0);
-        result = 31 * result + (getGenre() != null ? getGenre().hashCode() : 0);
+        result = 31 * result + (getAuthor() != null ? ((Long) (getAuthor().getId())).hashCode() : 0);
+        result = 31 * result + (getGenre() != null ? ((Long) (getGenre().getId())).hashCode() : 0);
         return result;
     }
 }

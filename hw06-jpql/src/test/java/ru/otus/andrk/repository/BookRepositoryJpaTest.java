@@ -14,12 +14,13 @@ import ru.otus.andrk.model.Comment;
 import ru.otus.andrk.model.Genre;
 
 import java.lang.reflect.Field;
-import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static ru.otus.andrk.repository.BookDataHelper.getPredefinedBooks;
-import static ru.otus.andrk.repository.BookDataHelper.setCommentId;
+import static ru.otus.andrk.repository.RepositoryTestHelper.copyBook;
+import static ru.otus.andrk.repository.RepositoryTestHelper.getPredefinedBooks;
+import static ru.otus.andrk.repository.RepositoryTestHelper.setBookId;
+import static ru.otus.andrk.repository.RepositoryTestHelper.setCommentId;
 
 @DataJpaTest
 @Import(BookRepositoryJpa.class)
@@ -33,15 +34,29 @@ public class BookRepositoryJpaTest {
     @Autowired
     private TestEntityManager em;
 
-
     @Test
     public void shouldReturnCorrectBooksList() {
         var expectedList = getPredefinedBooks();
         var actualList = repo.findAll();
+        actualList.forEach(em::detach);
         assertThat(actualList)
                 .isNotNull()
                 .hasSize(EXPECTED_BOOK_COUNT)
                 .containsAll(expectedList);
+    }
+
+    @Test
+    public void shouldLoadCorrectCommentsForListWhenNeeded() {
+        var expectedList = getPredefinedBooks();
+        var actualList = repo.findAll();
+        actualList.forEach(r -> r.getComments().forEach(em::detach));
+        actualList.forEach(em::detach);
+        actualList.forEach(r -> {
+            var expectedBook = expectedList.stream()
+                    .filter(e -> e.getId() == r.getId())
+                    .findFirst().orElseThrow();
+            checkCommentForBook(r, expectedBook);
+        });
     }
 
 
@@ -52,7 +67,6 @@ public class BookRepositoryJpaTest {
                 .filter(r -> r.getId() == expectedId).findFirst().orElseThrow();
         var actualBook = repo.findById(expectedId);
         assertThat(actualBook).isPresent().get().isEqualTo(expectedBook);
-        assertThat(actualBook.get().getComments().size()).isEqualTo(expectedBook.getComments().size());
     }
 
     @Test
@@ -61,9 +75,20 @@ public class BookRepositoryJpaTest {
         assertThat(actualBook).isEmpty();
     }
 
+    @ParameterizedTest
+    @ValueSource(longs = {1, 2, 3, 4})
+    public void shouldLoadExpectedCommentsForBookWhenNeeded(long expectedBookId) {
+        var expectedBook = getPredefinedBooks().stream()
+                .filter(r -> r.getId() == expectedBookId).findFirst().orElseThrow();
+        var actualBook = repo.findById(expectedBookId);
+        assertThat(actualBook).isPresent();
+        actualBook.get().getComments().forEach(em::detach);
+        checkCommentForBook(actualBook.get(), expectedBook);
+    }
+
     @Test
     public void shouldAddAndReturnExpectedResult() {
-        var srcBook = getPredefinedBooks().get(0).copy();
+        var srcBook = copyBook(getPredefinedBooks().get(0));
         setBookId(srcBook, 0L);
         srcBook.getComments().forEach(c -> setCommentId(c, 0));
 
@@ -73,6 +98,7 @@ public class BookRepositoryJpaTest {
         assertThat(insertedBook.getId()).isNotEqualTo(0L);
         em.detach(insertedBook);
         em.detach(srcBook);
+
         var storedBook = em.find(Book.class, insertedBook.getId());
         assertThat(storedBook).isEqualTo(insertedBook);
     }
@@ -148,7 +174,6 @@ public class BookRepositoryJpaTest {
                 .hasMessageContaining("GENRE");
     }
 
-
     @Test
     public void shouldThrowConstraintViolationExceptionWhenAddingBookWithNoExistAuthor() {
         var srcBook = getPredefinedBooks().get(0);
@@ -214,14 +239,13 @@ public class BookRepositoryJpaTest {
         }
     }
 
-
-    private void setBookId(Book book, long newId) {
-        try {
-            Field idField = Book.class.getDeclaredField("id");
-            idField.setAccessible(true);
-            idField.set(book, newId);
-        } catch (NoSuchFieldException | IllegalAccessException e) {
-            throw new RuntimeException(e);
+    private void checkCommentForBook(Book actualBook, Book expectedBook) {
+        if (expectedBook.getComments() == null || expectedBook.getComments().isEmpty()) {
+            assertThat(actualBook.getComments()).isEmpty();
+        } else {
+            assertThat(actualBook.getComments())
+                    .hasSize(expectedBook.getComments().size())
+                    .containsAll(expectedBook.getComments());
         }
     }
 

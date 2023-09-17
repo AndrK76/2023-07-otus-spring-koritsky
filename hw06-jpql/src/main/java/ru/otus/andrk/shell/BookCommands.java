@@ -5,6 +5,7 @@ import org.springframework.core.convert.ConversionService;
 import org.springframework.shell.standard.ShellComponent;
 import org.springframework.shell.standard.ShellMethod;
 import org.springframework.shell.standard.ShellOption;
+import ru.otus.andrk.converter.ListToStringConversionService;
 import ru.otus.andrk.excepton.NoExistAuthorException;
 import ru.otus.andrk.excepton.NoExistBookException;
 import ru.otus.andrk.excepton.NoExistGenreException;
@@ -18,11 +19,13 @@ public class BookCommands {
 
     private final ConversionService conversionService;
 
+    private final ListToStringConversionService listToStringConversionService;
+
     @ShellMethod(value = "List all books", key = {"list all books", "all books", "all", "list"})
     public String getAllBooks() {
         try {
             var allBooks = bookService.getAllBooks();
-            return conversionService.convert(allBooks, String.class);
+            return listToStringConversionService.convert(allBooks);
         } catch (OtherLibraryManipulationException e) {
             return "Error, can't get book list from library, see log for detail";
         }
@@ -32,7 +35,8 @@ public class BookCommands {
     public String getBookById(@ShellOption(help = "Book Id") long bookId) {
         try {
             var book = bookService.getBookById(bookId);
-            return conversionService.convert(book, String.class);
+            var ret = conversionService.convert(book, String.class);
+            return ret == null ? "" : ret;
         } catch (OtherLibraryManipulationException e) {
             return "Error, can't get book by id from library, see log for detail";
         }

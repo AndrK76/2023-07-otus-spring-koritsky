@@ -7,7 +7,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import org.springframework.context.annotation.Import;
-import ru.otus.andrk.model.Author;
 import ru.otus.andrk.model.Genre;
 
 import java.util.Map;
@@ -57,7 +56,7 @@ public class GenreRepositoryJpaTest {
     @Test
     public void shouldAddAndReturnExpectedResult() {
         var expectedGenre = new Genre(0, "test");
-        var storedResult = repo.save(expectedGenre.copy());
+        var storedResult = repo.save(expectedGenre);
         assertThat(storedResult.getName()).isEqualTo(expectedGenre.getName());
         var storedId = storedResult.getId();
         assertThat(storedId).isNotEqualTo(0L);

@@ -1,18 +1,15 @@
 package ru.otus.andrk.converter;
 
-import org.springframework.context.annotation.Lazy;
-import org.springframework.core.convert.ConversionService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.core.convert.converter.Converter;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 import ru.otus.andrk.dto.BookDto;
 
-@Service
+@Component
+@RequiredArgsConstructor
 public class BookDtoToStringConverter implements Converter<BookDto, String> {
-    private final ConversionService conversionService;
 
-    public BookDtoToStringConverter(@Lazy ConversionService conversionService) {
-        this.conversionService = conversionService;
-    }
+    private final CommentDtoToStringConverter commentConverter;
 
     @Override
     public String convert(BookDto book) {
@@ -30,11 +27,11 @@ public class BookDtoToStringConverter implements Converter<BookDto, String> {
                     .append("}");
         }
         if (book.getComments() != null && !book.getComments().isEmpty()) {
-            sb.append("\n\tComments: [\n\t\t");
-            var comments = conversionService.convert(book.getComments(), String.class)
-                    .replace("\n", "\n\t\t");
-            comments = comments.substring(0, comments.length() - "\n\t\t".length());
-            sb.append(comments);
+            sb.append("\n\tComments: [");
+            book.getComments().forEach(
+                    r -> sb.append("\n\t\t")
+                            .append(commentConverter.convert(r))
+            );
             sb.append("\n\t]");
         }
         return sb.toString();

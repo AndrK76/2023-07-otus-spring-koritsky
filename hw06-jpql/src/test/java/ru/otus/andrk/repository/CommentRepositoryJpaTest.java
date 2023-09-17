@@ -11,8 +11,8 @@ import ru.otus.andrk.model.Book;
 import ru.otus.andrk.model.Comment;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static ru.otus.andrk.repository.BookDataHelper.getPredefinedBooks;
-import static ru.otus.andrk.repository.BookDataHelper.setCommentId;
+import static ru.otus.andrk.repository.RepositoryTestHelper.getPredefinedBooks;
+import static ru.otus.andrk.repository.RepositoryTestHelper.setCommentId;
 
 @DataJpaTest
 @Import(CommentRepositoryJpa.class)
@@ -26,6 +26,7 @@ public class CommentRepositoryJpaTest {
     @Test
     public void shouldReturnCorrectCommentsListForBook() {
         var expectedBookList = getPredefinedBooks();
+        expectedBookList.forEach(em::merge);
         for (var book : expectedBookList) {
             var expectedList = book.getComments();
             var actualList = repo.findCommentsForBook(book);
@@ -97,8 +98,8 @@ public class CommentRepositoryJpaTest {
     }
 
     @Test
-    public void shouldDontChangeBookWhenRemovingComment(){
-        var commentId =  getPredefinedBooks().get(0).getComments().get(0).getId();
+    public void shouldDontChangeBookWhenRemovingComment() {
+        var commentId = getPredefinedBooks().get(0).getComments().get(0).getId();
         var commentForDelete = em.find(Comment.class, commentId);
         var bookBeforeDelete = commentForDelete.getBook();
         var hash = bookBeforeDelete.hashCode();
@@ -109,7 +110,7 @@ public class CommentRepositoryJpaTest {
         em.detach(commentForDelete);
 
         var bookAfterDelete = em.find(Book.class, bookBeforeDelete.getId());
-        assertThat(bookBeforeDelete==bookAfterDelete).isFalse();
+        assertThat(bookBeforeDelete == bookAfterDelete).isFalse();
         assertThat(bookBeforeDelete).isEqualTo(bookAfterDelete);
     }
 }

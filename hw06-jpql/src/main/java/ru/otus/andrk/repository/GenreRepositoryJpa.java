@@ -19,12 +19,7 @@ public class GenreRepositoryJpa implements GenreRepository {
 
     @Override
     public Genre save(Genre genre) {
-        var stored = genre.copy();
-        if (genre.getId() == 0) {
-            em.persist(stored);
-            return stored;
-        }
-        return em.merge(stored);
+        return em.merge(genre);
     }
 
     @Override

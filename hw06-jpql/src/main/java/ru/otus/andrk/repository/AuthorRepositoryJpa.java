@@ -18,12 +18,7 @@ public class AuthorRepositoryJpa implements AuthorRepository {
 
     @Override
     public Author save(Author author) {
-        var stored = author.copy();
-        if (author.getId() == 0) {
-            em.persist(stored);
-            return stored;
-        }
-        return em.merge(stored);
+        return em.merge(author);
     }
 
     @Override

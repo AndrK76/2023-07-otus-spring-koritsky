@@ -1,10 +1,10 @@
 package ru.otus.andrk.converter;
 
 import org.springframework.core.convert.converter.Converter;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 import ru.otus.andrk.model.Genre;
 
-@Service
+@Component
 public class GenreToStringConverter implements Converter<Genre, String> {
     @Override
     public String convert(Genre genre) {

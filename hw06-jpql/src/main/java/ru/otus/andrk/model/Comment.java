@@ -8,18 +8,12 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-import jakarta.persistence.NamedAttributeNode;
-import jakarta.persistence.NamedEntityGraph;
 import jakarta.persistence.Table;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import ru.otus.andrk.interfaces.Copyable;
-
-@NamedEntityGraph(name = "comment-book-entity-graph",
-        attributeNodes = {@NamedAttributeNode("book")})
 
 @Getter
 @Setter
@@ -27,7 +21,7 @@ import ru.otus.andrk.interfaces.Copyable;
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @Table(name = "comments")
 @Entity
-public class Comment implements Copyable<Comment> {
+public class Comment {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
@@ -45,11 +39,6 @@ public class Comment implements Copyable<Comment> {
         this();
         this.setBook(book);
         this.setText(text);
-    }
-
-    @Override
-    public Comment copy() {
-        return new Comment(this.id, this.text, this.book);
     }
 
     @Override

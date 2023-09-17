@@ -5,6 +5,7 @@ import org.springframework.core.convert.ConversionService;
 import org.springframework.shell.standard.ShellComponent;
 import org.springframework.shell.standard.ShellMethod;
 import org.springframework.shell.standard.ShellOption;
+import ru.otus.andrk.converter.ListToStringConversionService;
 import ru.otus.andrk.excepton.NoExistBookException;
 import ru.otus.andrk.excepton.NoExistCommentException;
 import ru.otus.andrk.excepton.OtherLibraryManipulationException;
@@ -17,12 +18,14 @@ public class CommentCommands {
 
     private final ConversionService conversionService;
 
+    private final ListToStringConversionService listToStringConversionService;
+
     @ShellMethod(value = "List all comments for book",
             key = {"list all comments", "all comments", "list comments", "list comment", "comments"})
     public String getCommentsForBook(@ShellOption(help = "Book Id") long bookId) {
         try {
             var allComments = commentService.getCommentsForBook(bookId);
-            return conversionService.convert(allComments, String.class);
+            return listToStringConversionService.convert(allComments);
         } catch (NoExistBookException e) {
             return "Error, Book with id=" + bookId + " not exist in library";
         } catch (OtherLibraryManipulationException e) {
@@ -34,7 +37,8 @@ public class CommentCommands {
     public String getCommentById(@ShellOption(help = "Comment Id") long commentId) {
         try {
             var comment = commentService.getCommentById(commentId);
-            return conversionService.convert(comment, String.class);
+            var ret = conversionService.convert(comment, String.class);
+            return ret == null ? "" : ret;
         } catch (OtherLibraryManipulationException e) {
             return "Error, can't get comment by id, see log for detail";
         }

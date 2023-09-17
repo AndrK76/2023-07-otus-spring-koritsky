@@ -9,14 +9,13 @@ import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import ru.otus.andrk.interfaces.Copyable;
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "genres")
 @Entity
-public class Genre implements Copyable<Genre> {
+public class Genre {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
@@ -24,9 +23,4 @@ public class Genre implements Copyable<Genre> {
 
     @Column(name = "name")
     private String name;
-
-    @Override
-    public Genre copy() {
-        return new Genre(id, name);
-    }
 }

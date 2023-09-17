@@ -1,10 +1,10 @@
 package ru.otus.andrk.converter;
 
 import org.springframework.core.convert.converter.Converter;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 import ru.otus.andrk.model.Author;
 
-@Service
+@Component
 public class AuthorToStringConverter implements Converter<Author, String> {
     @Override
     public String convert(Author author) {

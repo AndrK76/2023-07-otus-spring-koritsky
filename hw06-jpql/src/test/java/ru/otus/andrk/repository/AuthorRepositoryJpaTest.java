@@ -10,7 +10,6 @@ import org.springframework.context.annotation.Import;
 import ru.otus.andrk.model.Author;
 
 import java.util.Map;
-import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -57,7 +56,7 @@ public class AuthorRepositoryJpaTest {
     @Test
     public void shouldAddAndReturnExpectedResult() {
         var expectedAuthor = new Author(0, "test");
-        var storedResult = repo.save(expectedAuthor.copy());
+        var storedResult = repo.save(expectedAuthor);
         assertThat(storedResult.getName()).isEqualTo(expectedAuthor.getName());
         var storedId = storedResult.getId();
         assertThat(storedId).isNotEqualTo(0L);

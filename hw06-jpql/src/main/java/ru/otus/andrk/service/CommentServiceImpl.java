@@ -51,9 +51,13 @@ public class CommentServiceImpl implements CommentService {
     @Transactional(readOnly = true)
     public CommentOnBookDto getCommentById(long id) {
         try {
-            return repo.findCommentById(id)
-                    .map(r -> conversionService.convert(r, CommentOnBookDto.class))
-                    .orElse(null);
+            var comment = repo.findCommentById(id).orElse(null);
+            if (comment != null) {
+                var book = bookRepo.findById(comment.getBook().getId());
+                return conversionService.convert(comment, CommentOnBookDto.class);
+            } else {
+                return null;
+            }
         } catch (Exception e) {
             log.error(e);
             throw new OtherLibraryManipulationException(e);
