@@ -1,0 +1,25 @@
+spring:
+  shell:
+    interactive:
+      enabled: false
+  main:
+    allow-circular-references: true
+  datasource:
+    url: dbc:h2:mem:testdb
+  sql:
+    init:
+      mode: always
+      data-locations: data.sql
+  jpa:
+    generate-ddl: false
+    hibernate:
+      ddl-auto: none
+    show-sql: true
+logging:
+  level:
+    root: warn
+    #org.springframework.jdbc.core.JdbcTemplate: debug
+    ru.otus.andrk: debug
+
+
+
