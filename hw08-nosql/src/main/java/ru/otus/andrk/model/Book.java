@@ -1,15 +1,46 @@
 package ru.otus.andrk.model;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.annotation.Transient;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-@AllArgsConstructor
-@Data
-@Document
+@NoArgsConstructor
+@Document(collection = "books")
+@Getter
+@ToString
 public class Book {
+
+    @Transient
+    public static final String SEQUENCE_NAME = "books_seq";
+
     @Id
-    private String id;
+    private long id;
+
+    @Setter
     private String name;
+
+    @Setter
+    private Author author;
+
+    @Setter
+    private Genre genre;
+
+    public Book(String name, Author author, Genre genre) {
+        this.name = name;
+        this.author = author;
+        this.genre = genre;
+    }
+
+    public Book(long id, String name, Author author, Genre genre) {
+        this.id = id;
+        this.name = name;
+        this.author = author;
+        this.genre = genre;
+    }
+
+
 }
