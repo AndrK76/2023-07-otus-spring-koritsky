@@ -21,6 +21,7 @@ public class Comment {
     @Id
     private long id;
 
+    @Setter
     private String text;
 
     @DBRef

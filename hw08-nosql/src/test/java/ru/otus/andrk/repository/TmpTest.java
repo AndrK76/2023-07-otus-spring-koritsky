@@ -4,17 +4,19 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.data.mongo.DataMongoTest;
 import org.springframework.context.annotation.ComponentScan;
+import org.springframework.data.mongodb.core.MongoTemplate;
 import ru.otus.andrk.model.Author;
 import ru.otus.andrk.model.Book;
 import ru.otus.andrk.model.Comment;
 import ru.otus.andrk.model.Genre;
 import ru.otus.andrk.service.AuthorService;
 import ru.otus.andrk.service.BookService;
+import ru.otus.andrk.service.CommentService;
 import ru.otus.andrk.service.GenreService;
 
 @DataMongoTest
 @ComponentScan({"ru.otus.andrk.repository", "ru.otus.andrk.service",
-        "ru.otus.andrk.config", "ru.otus.andrk.converter"})
+        "ru.otus.andrk.config", "ru.otus.andrk.converter", "ru.otus.andrk.dto"})
 public class TmpTest {
 
     @Autowired
@@ -37,6 +39,13 @@ public class TmpTest {
 
     @Autowired
     private CommentRepository commentRepo;
+
+    @Autowired
+    private CommentService commentService;
+
+    @Autowired
+    private MongoTemplate template;
+
 
     @Test
     public void test() {
@@ -118,6 +127,44 @@ public class TmpTest {
         book = comment.getBook();
         System.out.println(comment);
         System.out.println("new:" + book);
+    }
 
+    @Test
+    public void test4() {
+        System.out.println("var. 1");
+        var book = bookRepo.findById(3L).orElse(null);
+        var res = commentRepo.findCommentsByBook(book);
+        System.out.println("len=" + res.size());
+        res.forEach(System.out::println);
+        System.out.println("\nvar. 2");
+        res = commentRepo.findCommentsByBookId(3L);
+        System.out.println("len=" + res.size());
+        res.forEach(System.out::println);
+    }
+
+    @Test
+    public void test5(){
+        var res = commentService.getCommentsForBook(2L);
+        res.forEach(System.out::println);
+    }
+
+    @Test
+    public void test6(){
+        var res =  commentService.addCommentForBook(2L,"Клёва");
+        System.out.println(res);
+        res  = commentService.modifyComment(3L, "Новый текст");
+        System.out.println(res);
+        commentService.deleteComment(1L);
+    }
+
+    @Test
+    public void test7(){
+        System.out.println(bookService.getBookByIdWithDetails(3L));
+    }
+
+    @Test
+    public void test8(){
+        bookService.deleteBook(3L);
+        System.out.println(template);
     }
 }

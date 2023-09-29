@@ -1,6 +1,7 @@
 package ru.otus.andrk.service;
 
 import ru.otus.andrk.dto.BookDto;
+import ru.otus.andrk.dto.BookWithCommentsDto;
 
 import java.util.List;
 
@@ -8,6 +9,8 @@ public interface BookService {
     List<BookDto> getAllBooks();
 
     BookDto getBookById(long id);
+
+    BookWithCommentsDto getBookByIdWithDetails(long id);
 
     BookDto addBook(String bookName, Long authorId, Long genreId);
 
