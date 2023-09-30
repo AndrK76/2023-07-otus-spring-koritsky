@@ -11,9 +11,6 @@ import ru.otus.andrk.repository.AuthorRepository;
 import ru.otus.andrk.repository.BookRepository;
 import ru.otus.andrk.repository.CommentRepository;
 import ru.otus.andrk.repository.GenreRepository;
-import ru.otus.andrk.service.AuthorService;
-import ru.otus.andrk.service.BookService;
-import ru.otus.andrk.service.CommentService;
 
 import java.util.HashMap;
 import java.util.Map;

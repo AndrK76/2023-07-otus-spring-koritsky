@@ -13,5 +13,6 @@ import org.springframework.data.mongodb.core.mapping.Document;
 public class DatabaseSequence {
     @Id
     private String id;
+
     private long value;
 }

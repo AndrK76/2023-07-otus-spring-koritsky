@@ -64,7 +64,7 @@ public class CommentServiceImpl implements CommentService {
     public CommentOnBookDto addCommentForBook(long bookId, String text) {
         try {
             var comment = bookRepo.findById(bookId)
-                    .map(c-> new Comment(text, c))
+                    .map(c -> new Comment(text, c))
                     .orElseThrow(NoExistBookException::new);
             return saveComment(comment);
         } catch (KnownLibraryManipulationException e) {
@@ -77,6 +77,7 @@ public class CommentServiceImpl implements CommentService {
     }
 
     @Override
+    @Transactional
     public CommentOnBookDto modifyComment(long commentId, String newText) {
         try {
             var comment = repo.findById(commentId).orElse(null);
@@ -95,6 +96,7 @@ public class CommentServiceImpl implements CommentService {
     }
 
     @Override
+    @Transactional
     public void deleteComment(long id) {
         var comment = repo.findById(id);
         comment.ifPresent(repo::delete);

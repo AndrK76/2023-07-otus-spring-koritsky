@@ -13,7 +13,6 @@ mongock:
       journal: false
     read-concern: local
 
-
 logging:
   level:
     root: error

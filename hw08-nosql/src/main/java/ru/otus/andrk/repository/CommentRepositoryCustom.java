@@ -1,6 +1,5 @@
 package ru.otus.andrk.repository;
 
-import ru.otus.andrk.model.Book;
 import ru.otus.andrk.model.Comment;
 
 import java.util.List;

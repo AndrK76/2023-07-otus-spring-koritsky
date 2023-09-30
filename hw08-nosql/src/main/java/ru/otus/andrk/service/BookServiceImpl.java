@@ -2,7 +2,6 @@ package ru.otus.andrk.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
-import org.springframework.core.convert.ConversionService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.otus.andrk.dto.BookDto;
@@ -86,6 +85,7 @@ public class BookServiceImpl implements BookService {
     }
 
     @Override
+    @Transactional
     public void deleteBook(long id) {
         try {
             var existBook = bookRepo.findById(id);

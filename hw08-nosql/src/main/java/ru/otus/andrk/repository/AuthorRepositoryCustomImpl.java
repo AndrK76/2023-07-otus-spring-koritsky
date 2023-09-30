@@ -3,11 +3,13 @@ package ru.otus.andrk.repository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import ru.otus.andrk.model.Author;
+import ru.otus.andrk.repository.util.SequenceGenerator;
 
 @RequiredArgsConstructor
 public class AuthorRepositoryCustomImpl implements AuthorRepositoryCustom {
 
     private final MongoTemplate template;
+
     private final SequenceGenerator sequenceGenerator;
 
     @Override

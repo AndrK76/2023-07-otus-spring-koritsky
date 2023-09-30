@@ -31,7 +31,7 @@ public class DtoMapper {
                 book.getGenre() == null ? "" : book.getGenre().getName());
     }
 
-    public CommentDto commentToDto(Comment comment){
+    public CommentDto commentToDto(Comment comment) {
         return new CommentDto(comment.getId(), comment.getText());
     }
 
@@ -43,8 +43,8 @@ public class DtoMapper {
                 .author(book.getAuthor())
                 .genre(book.getGenre())
                 .build();
-            ret.setComments(bookComments.stream()
-                    .map(this::commentToDto).toList());
+        ret.setComments(bookComments.stream()
+                .map(this::commentToDto).toList());
         return ret;
     }
 }

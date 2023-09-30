@@ -43,16 +43,19 @@ public class InitDatabase {
         addBookToDb(db, "Book 1", 1L, 1L);
         addBookToDb(db, "Book without genre", 2L, null);
         addBookToDb(db, "Book without author", null, 2L);
+        addBookToDb(db, "Book 2", 2L, 2L);
     }
 
     @ChangeSet(order = "020", id = "initComments", author = "AndrK")
     public void initComments(MongoDatabase db) {
-        addCommentToDb(db, "Comment 1 for book 1", 1L);
-        addCommentToDb(db, "Comment 2 for book 1", 1L);
-        addCommentToDb(db, "Comment 1 for book 2", 2L);
-        addCommentToDb(db, "Comment 1 for book 3", 3L);
-        addCommentToDb(db, "Comment 2 for book 3", 3L);
-        addCommentToDb(db, "Comment 3 for book 3", 3L);
+        addCommentToDb(db, "Comment 1 for book wag", 1L);
+        addCommentToDb(db, "Comment 2 for book wag", 1L);
+        addCommentToDb(db, "Comment 1 for book 1", 2L);
+        addCommentToDb(db, "Comment 1 for book wg", 3L);
+        addCommentToDb(db, "Comment 2 for book wg", 3L);
+        addCommentToDb(db, "Comment 3 for book wg", 3L);
+        addCommentToDb(db, "Comment 1 for book 2", 5L);
+        addCommentToDb(db, "Comment 2 for book 2", 5L);
     }
 
     private void createSequenceInDb(MongoDatabase db, String seqName) {

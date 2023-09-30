@@ -4,8 +4,8 @@ import lombok.RequiredArgsConstructor;
 import org.bson.Document;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
-import org.springframework.data.mongodb.core.query.Query;
 import ru.otus.andrk.model.Comment;
+import ru.otus.andrk.repository.util.SequenceGenerator;
 
 import java.util.List;
 
@@ -15,6 +15,7 @@ import static org.springframework.data.mongodb.core.query.Query.query;
 public class CommentRepositoryCustomImpl implements CommentRepositoryCustom {
 
     private final MongoTemplate template;
+
     private final SequenceGenerator sequenceGenerator;
 
     @Override

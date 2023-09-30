@@ -1,8 +1,7 @@
-package ru.otus.andrk.repository;
+package ru.otus.andrk.repository.util;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.mongodb.core.MongoOperations;
-import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Component;
 import ru.otus.andrk.model.DatabaseSequence;
@@ -15,8 +14,7 @@ import static org.springframework.data.mongodb.core.query.Query.query;
 
 @RequiredArgsConstructor
 @Component
-public class SequenceGenerator {
-
+public class SequenceGeneratorImpl implements SequenceGenerator {
     private final MongoOperations mongoOperations;
 
     public long getValue(String seqName) {

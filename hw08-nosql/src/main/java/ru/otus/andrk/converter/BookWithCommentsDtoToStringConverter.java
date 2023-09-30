@@ -3,7 +3,6 @@ package ru.otus.andrk.converter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.stereotype.Component;
-import ru.otus.andrk.dto.BookDto;
 import ru.otus.andrk.dto.BookWithCommentsDto;
 
 @Component
