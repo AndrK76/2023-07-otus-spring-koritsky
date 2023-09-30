@@ -27,7 +27,7 @@ public class BookRepositoryCustomImpl implements BookRepositoryCustom {
     @Transactional
     public void deleteBook(Long bookId) {
         var bookWhere = new Document().append("$ref", "books").append("$id", bookId);
-        var bookQuery = Query.query(Criteria.where("$id").is(bookId));
+        var bookQuery = Query.query(Criteria.where("id").is(bookId));
         var commentsQuery = Query.query(Criteria.where("book").is(bookWhere));
         template.remove(commentsQuery,Comment.class);
         template.remove(bookQuery,Book.class);
