@@ -14,4 +14,4 @@
 - **hw05-jdbc**  - ДЗ к 09. DAO на Spring JDBC 
 - **hw06-jpql**  - ДЗ к 11. JPQL, Spring ORM, DAO на основе Spring ORM + JPA
 - **hw07-jpa**  - ДЗ к 13. "Белая магия" Spring Data: Spring Data JPA
-- **hw08-nosql**  -- ДЗ к 14. SQL и NoSQL базы данных
+- **hw08-nosql**  -- ДЗ к 15. Spring Data для подключения к нереляционным БД
