@@ -1,1 +1,16 @@
+spring:
+  sql:
+    init:
+      mode: always
+      data-locations: db/data.sql
+      schema-locations: database/schema.sql
+  jpa:
+    hibernate:
+      ddl-auto: none
+    open-in-view: false
+    show-sql: false
 
+logging:
+  level:
+    root: error
+    #root: info
