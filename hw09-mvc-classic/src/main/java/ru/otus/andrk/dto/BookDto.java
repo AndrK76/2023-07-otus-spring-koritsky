@@ -21,7 +21,11 @@ public class BookDto implements Serializable {
 
     private String name;
 
-    private Author author;
+    private Long authorId;
 
-    private Genre genre;
+    private String authorName;
+
+    private Long genreId;
+
+    private String genreName;
 }

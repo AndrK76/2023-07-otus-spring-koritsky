@@ -9,6 +9,9 @@ spring:
       ddl-auto: none
     open-in-view: false
     show-sql: false
+  messages:
+    encoding: UTF-8
+    fallback-to-system-locale: false
 
 logging:
   level:

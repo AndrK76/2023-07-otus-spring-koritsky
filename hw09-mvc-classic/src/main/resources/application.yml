@@ -19,3 +19,5 @@ spring:
 logging:
   level:
     root: error
+    ru.otus.andrk: info
+    org.springframework.boot.web.embedded.tomcat: info

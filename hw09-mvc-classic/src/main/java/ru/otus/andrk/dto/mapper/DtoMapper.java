@@ -14,6 +14,7 @@ import ru.otus.andrk.model.Comment;
 import ru.otus.andrk.model.Genre;
 
 import java.util.ArrayList;
+import java.util.Optional;
 
 @Component
 public class DtoMapper {
@@ -29,8 +30,10 @@ public class DtoMapper {
         var ret = BookDto.builder()
                 .id(book.getId())
                 .name(book.getName())
-                .author(book.getAuthor())
-                .genre(book.getGenre())
+                .authorId(Optional.ofNullable(book.getAuthor()).map(Author::getId).orElse(null))
+                .authorName(Optional.ofNullable(book.getAuthor()).map(Author::getName).orElse(null))
+                .genreId(Optional.ofNullable(book.getGenre()).map(Genre::getId).orElse(null))
+                .genreName(Optional.ofNullable(book.getGenre()).map(Genre::getName).orElse(null))
                 .build();
         return ret;
     }
