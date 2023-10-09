@@ -1,3 +1,6 @@
 col.one-percent-width {
     width: 1%;
 }
+.vh-50 {
+    min-height: 50vh;
+}

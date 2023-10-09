@@ -22,9 +22,9 @@ public class BookWithCommentsDto implements Serializable {
 
     private String name;
 
-    private Author author;
+    private String authorName;
 
-    private Genre genre;
+    private String genreName;
 
     private List<CommentDto> comments;
 }

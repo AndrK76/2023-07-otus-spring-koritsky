@@ -42,8 +42,8 @@ public class DtoMapper {
         var ret = BookWithCommentsDto.builder()
                 .id(book.getId())
                 .name(book.getName())
-                .author(book.getAuthor())
-                .genre(book.getGenre())
+                .authorName(Optional.ofNullable(book.getAuthor()).map(Author::getName).orElse(null))
+                .genreName(Optional.ofNullable(book.getGenre()).map(Genre::getName).orElse(null))
                 .comments(
                         book.getComments() == null
                                 ? new ArrayList<>()
