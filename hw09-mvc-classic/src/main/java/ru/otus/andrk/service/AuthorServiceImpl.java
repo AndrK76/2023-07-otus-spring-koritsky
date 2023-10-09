@@ -52,4 +52,10 @@ public class AuthorServiceImpl implements AuthorService {
             throw new OtherLibraryManipulationException(e);
         }
     }
+
+    @Override
+    public AuthorDto getAuthorByName(String name) {
+        return repo.findAuthorsByNameIgnoreCase(name).stream().map(mapper::toDto)
+                .findFirst().orElse(null);
+    }
 }

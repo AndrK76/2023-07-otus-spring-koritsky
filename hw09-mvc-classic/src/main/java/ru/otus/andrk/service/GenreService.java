@@ -10,4 +10,6 @@ public interface GenreService {
     GenreDto addGenre(String genreName);
 
     GenreDto getGenreById(long genreId);
+
+    GenreDto getGenreByName(String name);
 }

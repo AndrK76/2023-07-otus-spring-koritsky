@@ -51,4 +51,10 @@ public class GenreServiceImpl implements GenreService {
             throw new OtherLibraryManipulationException(e);
         }
     }
+
+    @Override
+    public GenreDto getGenreByName(String name) {
+        return repo.findGenresByNameIgnoreCase(name)
+                .stream().map(mapper::toDto).findFirst().orElse(null);
+    }
 }
