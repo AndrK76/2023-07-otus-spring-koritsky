@@ -16,7 +16,7 @@
 <body>
 <div class="container">
     <div class="row">
-        <main class="col-auto">
+        <main class="col-auto" th:classappend="${delete != null ? 'disabled-main' : ''}">
             <div class="row">
                 <div class="col">
                     <h1 th:text="#{library.title}">Library</h1>
@@ -40,9 +40,10 @@
                     <th th:text="#{book.author}">Author</th>
                     <th th:text="#{book.genre}">Genre</th>
                     <th>
-                        <a class="btn btn-outline-secondary btn-sm" th:text="#{book.action-add}"
-                        href="edit_book.html" th:href="@{/book/add}">
-                            <i class="fa fa-add"></i>Add book</a>
+                        <a class="btn btn-outline-secondary btn-sm"
+                           href="edit_book.html" th:href="@{/book/add}">
+                            <i class="fa fa-add"></i>
+                            <span th:text="#{book.action-add}">Add book</span></a>
                     </th>
                 </tr>
                 </thead>
@@ -60,7 +61,7 @@
                            href="comments.html" th:href="@{/book/{book}/comment(book=*{id})}"
                            th:title="#{book.action-view-comments}"> <i class="fa fa-comment"></i></a>
                         <a class="btn btn-outline-secondary btn-sm" title="Delete book"
-                           href="confirm.html" th:href="@{/book/delete(id=*{id})}"
+                           href="index.html" th:href="@{/book/delete(id=*{id})}"
                            th:title="#{book.action-delete-book}"> <i class="fa fa-remove"></i></a>
                     </td>
                 </tr>
@@ -68,12 +69,34 @@
                 <tfoot>
                 <tr>
                     <td colspan="4" class="fst-italic"
-                    th:text="#{book.total}">Total books in library:</td>
+                        th:text="#{book.total}">Total books in library:
+                    </td>
                     <th class="text-end" th:text="${#lists.size(books)}">1</th>
                 </tr>
                 </tfoot>
             </table>
         </main>
+        <div class="container" th:if="${delete != null}" th:classappend="${delete != null ? 'alert-div' : ''}">
+            <div class="row">
+                <div class="col-auto">
+                    <div class="align-items-center rounded-2 ps-5 pe-5 pb-2 pt-2 border">
+                        <div class="mb-2"
+                             th:text="#{action.confirm-delete(#{book})}">Confirm delete
+                        </div>
+                        <div>
+                            <form action="index.html" th:action="@{${acceptUrl}}" th:method="POST">
+                                <input type="hidden" th:name="id" th:value="${delete}">
+                                <button type="submit" class="btn btn-outline-danger me-5"
+                                        th:text="#{action.yes}">Yes, delete
+                                </button>
+                                <a class="btn btn-outline-secondary ms-5" href="index.html"
+                                   th:href="@{${backUrl}}" th:text="#{action.no}">No, cancel</a>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
 

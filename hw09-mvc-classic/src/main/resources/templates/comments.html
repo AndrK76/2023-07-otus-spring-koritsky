@@ -16,7 +16,7 @@
 <body>
 <div class="container">
     <div class="row">
-        <main class="col-md-6 col-sm-8"  th:object="${book}">
+        <main class="col-md-6 col-sm-8" th:object="${book}" th:classappend="${delete != null ? 'disabled-main' : ''}">
             <div class="row">
                 <div class="col">
                     <div class="row">
@@ -24,7 +24,7 @@
                         <div class="col-auto align-self-end">
                             <a class="btn btn-outline-secondary btn-sm"
                                href="index.html"
-                            th:href="@{/book}" th:text="#{action.to-main}">To book list</a>
+                               th:href="@{/book}" th:text="#{action.to-main}">To book list</a>
                         </div>
                     </div>
                     <div class="mb-1">
@@ -55,23 +55,25 @@
                     <th>Id</th>
                     <th th:text="#{comment.text}">Comment text</th>
                     <th>
-                        <a class="btn btn-outline-secondary btn-sm text-nowrap" th:text="#{comment.action-add}"
-                           href="modify_comment.html" th:href="@{/book/comment/add/{book}(book=*{id})}">
-                            <i class="fa fa-add"></i>New comment</a>
+                        <a class="btn btn-outline-secondary btn-sm text-nowrap"
+                           href="modify_comment.html" th:href="@{/book/{book}/comment/add(book=*{id})}">
+                            <i class="fa fa-add"></i>
+                            <span th:text="#{comment.action-add}">New comment</span></a>
                     </th>
                 </tr>
                 </thead>
                 <tbody>
                 <tr th:each="comment : *{comments}" th:object="${comment}">
-                    <td  th:text="*{id}">1</td>
-                    <td  th:text="*{text}">Text comment jklkljk  kjkljk kjkljklj kljkljklj kjkljkljkl jjkjkljkl
-                    kjkljkj kjkljkjkj kljkljkj kjkjkjkjkjkl</td>
+                    <td th:text="*{id}">1</td>
+                    <td th:text="*{text}">Text comment jklkljk kjkljk kjkljklj kljkljklj kjkljkljkl jjkjkljkl
+                        kjkljkj kjkljkjkj kljkljkj kjkjkjkjkjkl
+                    </td>
                     <td class="text-end">
                         <a class="btn btn-outline-secondary btn-sm" title="Edit comment"
                            href="modify_comment.html" th:href="@{/comment/edit(id=*{id})}"
                            th:title="#{comment.action-edit}"> <i class="fa fa-edit"></i></a>
                         <a class="btn btn-outline-secondary btn-sm" title="Delete comment"
-                           href="confirm.html" th:href="@{/comment/delete(id=*{id})}"
+                           href="comments.html" th:href="@{/comment/delete(id=*{id})}"
                            th:title="#{comment.action-delete}"> <i class="fa fa-remove"></i></a>
                     </td>
                 </tr>
@@ -79,13 +81,34 @@
                 <tfoot>
                 <tr>
                     <td colspan="2" class="fst-italic"
-                        th:text="#{comment.total}">Total comments for book:</td>
+                        th:text="#{comment.total}">Total comments for book:
+                    </td>
                     <th class="text-end" th:text="${#lists.size(book.comments)}">1</th>
                 </tr>
                 </tfoot>
             </table>
-
         </main>
+        <div class="container" th:if="${delete != null}" th:classappend="${delete != null ? 'alert-div' : ''}">
+            <div class="row">
+                <div class="col-auto">
+                    <div class="align-items-center rounded-2 ps-5 pe-5 pb-2 pt-2 border">
+                        <div class="mb-2"
+                             th:text="#{action.confirm-delete(#{comment})}">Confirm delete
+                        </div>
+                        <div>
+                            <form action="comments.html" th:action="@{${acceptUrl}}" th:method="POST">
+                                <input type="hidden" th:name="id" th:value="${delete}">
+                                <button type="submit" class="btn btn-outline-danger me-5"
+                                        th:text="#{action.yes}">Yes, delete
+                                </button>
+                                <a class="btn btn-outline-secondary ms-5" href="comments.html"
+                                   th:href="@{${backUrl}}" th:text="#{action.no}">No, cancel</a>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
 </body>

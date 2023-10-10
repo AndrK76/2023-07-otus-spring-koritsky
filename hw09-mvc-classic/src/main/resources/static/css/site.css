@@ -4,3 +4,17 @@ col.one-percent-width {
 .vh-50 {
     min-height: 50vh;
 }
+
+.disabled-main {
+    pointer-events:none;
+    filter: brightness(60%);
+    background-color: rgba(0, 0, 0, 0.2);
+}
+
+.alert-div {
+    z-index: 10;
+    position: absolute;
+    background-color: rgba(255, 255, 255, 1);
+    top: 50px
+}
+

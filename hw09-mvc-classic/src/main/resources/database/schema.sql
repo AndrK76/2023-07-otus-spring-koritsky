@@ -29,7 +29,7 @@ alter table books
 create table comments
 (
     id IDENTITY primary key,
-    text    varchar(255),
+    text    varchar(2000),
     book_id long not null
 );
 

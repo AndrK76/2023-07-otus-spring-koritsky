@@ -27,7 +27,7 @@ public class DtoMapper {
     }
 
     public BookDto toDto(Book book) {
-        var ret = BookDto.builder()
+        return BookDto.builder()
                 .id(book.getId())
                 .name(book.getName())
                 .authorId(Optional.ofNullable(book.getAuthor()).map(Author::getId).orElse(null))
@@ -35,11 +35,10 @@ public class DtoMapper {
                 .genreId(Optional.ofNullable(book.getGenre()).map(Genre::getId).orElse(null))
                 .genreName(Optional.ofNullable(book.getGenre()).map(Genre::getName).orElse(null))
                 .build();
-        return ret;
     }
 
     public BookWithCommentsDto toDtoWithComments(Book book) {
-        var ret = BookWithCommentsDto.builder()
+        return BookWithCommentsDto.builder()
                 .id(book.getId())
                 .name(book.getName())
                 .authorName(Optional.ofNullable(book.getAuthor()).map(Author::getName).orElse(null))
@@ -50,7 +49,6 @@ public class DtoMapper {
                                 : book.getComments().stream()
                                 .map(this::toDto).toList())
                 .build();
-        return ret;
     }
 
 
