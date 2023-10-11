@@ -38,7 +38,7 @@ public class CommentController {
         var book = Optional.ofNullable(bookService.getBookWithCommentsById(bookId))
                 .orElseThrow(NoExistBookException::new);
         model.addAttribute("book", book);
-        return "comments";
+        return "comment_list";
     }
 
     @GetMapping("/book/{book}/comment/add")
@@ -49,7 +49,7 @@ public class CommentController {
                 bookService.getBookById(bookId)).orElseThrow(NoExistBookException::new);
         var comment = new CommentOnBookDto(book);
         addCommentDataToModel(model, ACTION_ADD, comment);
-        return "modify_comment";
+        return "comment_edit";
     }
 
     @PostMapping("/book/{book}/comment/add")
@@ -66,7 +66,7 @@ public class CommentController {
         var comment = Optional.ofNullable(commentService.getCommentById(commentId))
                 .orElseThrow(NoExistCommentException::new);
         addCommentDataToModel(model, ACTION_EDIT, comment);
-        return "modify_comment";
+        return "comment_edit";
     }
 
     @PostMapping("/comment/edit")
@@ -85,7 +85,7 @@ public class CommentController {
         model.addAttribute("backUrl", "/book/" + bookId + "/comment");
         model.addAttribute("acceptUrl", "/comment/delete");
         model.addAttribute("delete", commentId);
-        return "comments";
+        return "comment_list";
     }
 
     @PostMapping("/comment/delete")

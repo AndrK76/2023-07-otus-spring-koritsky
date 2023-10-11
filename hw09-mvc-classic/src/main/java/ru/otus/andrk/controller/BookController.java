@@ -37,13 +37,13 @@ public class BookController {
     public String index(Model model) {
         var books = bookService.getAllBooks();
         model.addAttribute("books", books);
-        return "index";
+        return "book_list";
     }
 
     @GetMapping("/book/add")
     public String addBook(Model model) {
         addBookDataToModel(model, ACTION_ADD, new BookDto());
-        return "edit_book";
+        return "book_edit";
     }
 
     @PostMapping("/book/add")
@@ -58,7 +58,7 @@ public class BookController {
         var book = Optional.ofNullable(bookService.getBookById(bookId))
                 .orElseThrow(NoExistBookException::new);
         addBookDataToModel(model, ACTION_EDIT, book);
-        return "edit_book";
+        return "book_edit";
     }
 
     @PostMapping("/book/edit")
@@ -76,7 +76,7 @@ public class BookController {
         var books = bookService.getAllBooks();
         model.addAttribute("books", books);
         model.addAttribute("delete", bookId);
-        return "index";
+        return "book_list";
     }
 
     @PostMapping("/book/delete")
@@ -99,7 +99,7 @@ public class BookController {
         log.debug("{} {}", action, book);
         if (bindingResult.hasErrors()) {
             addBookDataToModel(model, action, book);
-            return "edit_book";
+            return "book_edit";
         }
         checkAuthorAndAddNewIfNecessary(book);
         checkGenreAndAddNewIfNecessary(book);

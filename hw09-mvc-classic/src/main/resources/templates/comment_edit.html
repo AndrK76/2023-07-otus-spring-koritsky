@@ -16,11 +16,25 @@
 <body>
 <div class="container">
     <div class="row">
-        <main class="col-md-6 col-sm-8">
+        <main class="col-md-6 col-sm-8" th:object="${comment}">
             <div class="row">
                 <div class="col">
                     <h1 th:text="#{${title}}">Modify comment</h1>
-                    <form action="comments.html" th:action="${action}" th:method="POST" th:object="${comment}">
+                    <table class="table">
+                        <tr>
+                            <th th:text="#{book.name}">Name</th>
+                            <td th:text="*{bookName}">Book name</td>
+                        </tr>
+                        <tr>
+                            <th th:text="#{book.author}">Author</th>
+                            <td th:text="*{authorName}">Author name</td>
+                        </tr>
+                        <tr>
+                            <th th:text="#{book.genre}">Genre</th>
+                            <td th:text="*{genreName}">Genre name</td>
+                        </tr>
+                    </table>
+                    <form action="comment_list.html" th:action="${action}" th:method="POST">
                         <input type="hidden" th:name="id" th:value="*{id}">
                         <input type="hidden" th:name="bookId" th:value="*{bookId}">
                         <div class="mb-1">
@@ -28,7 +42,7 @@
                             <textarea id="text" rows="5"
                                       class="form-control" placeholder="Enter comment"
                                       th:name="text" th:placeholder="#{comment.placeholder-text}"
-                            th:text="*{text}">Qwertyuiop hdtrhtgr gdfgfg</textarea>
+                                      th:text="*{text}">Qwertyuiop hdtrhtgr gdfgfg</textarea>
                             <div th:if="${#fields.hasErrors('text')}"
                                  class="alert alert-danger d-flex align-items-center">
                                 <div th:errors="*{text}">Error</div>
@@ -38,7 +52,7 @@
                         <button type="submit" class="btn btn-secondary btn-sm"
                                 th:text="#{action.apply}">Apply
                         </button>
-                        <a href="comments.html" class="btn btn-outline-secondary btn-sm"
+                        <a href="comment_list.html" class="btn btn-outline-secondary btn-sm"
                            th:href="@{/book/{book}/comment(book=*{bookId})}" th:text="#{action.cancel}">Cancel</a>
                     </form>
                 </div>
