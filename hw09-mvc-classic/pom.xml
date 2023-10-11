@@ -129,8 +129,10 @@
                     </dependency>
                 </dependencies>
                 <configuration>
+                    <suppressionsLocation>
+                        customized_suppressions.xml
+                    </suppressionsLocation>
                     <configLocation>${checkstyle.config.url}</configLocation>
-                    <excludes>*.properties</excludes>
                 </configuration>
                 <executions>
                     <execution>

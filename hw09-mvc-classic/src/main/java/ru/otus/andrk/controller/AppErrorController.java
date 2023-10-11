@@ -20,23 +20,28 @@ import ru.otus.andrk.exception.converter.ExceptionToStringMapper;
 @ControllerAdvice
 @RequiredArgsConstructor
 @Log4j2
-public class BookErrorController implements ErrorController {
+public class AppErrorController implements ErrorController {
 
     private final ExceptionToStringMapper exceptionMapper;
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(KnownLibraryManipulationException.class)
     public String knownError(KnownLibraryManipulationException e, Model model) {
-        model.addAttribute("status", HttpStatus.BAD_REQUEST);
-        model.addAttribute("message", exceptionMapper.getExceptionMessage(e));
-        return "known_error";
+        var status = HttpStatus.BAD_REQUEST.value();
+        addCommonAttributesToModel(model, status);
+        model.addAttribute("detail", exceptionMapper.getExceptionMessage(e));
+        return "error";
     }
 
     @RequestMapping("/error")
     public String statusException(Model model, HttpServletRequest request) {
         var status = (int) request.getAttribute(RequestDispatcher.ERROR_STATUS_CODE);
-        model.addAttribute("status", HttpStatus.resolve(status));
-        model.addAttribute("message", status);
-        return "known_error";
+        addCommonAttributesToModel(model, status);
+        return "error";
+    }
+
+    private void addCommonAttributesToModel(Model model, int status) {
+        model.addAttribute("code", status);
+        model.addAttribute("status", "error.status." + status);
     }
 }

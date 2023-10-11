@@ -4,6 +4,7 @@ import com.google.common.base.Strings;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -51,6 +52,14 @@ public class BookController {
                           BindingResult bindingResult,
                           Model model) {
         return processAddOrModifyBook(ACTION_ADD, book, bindingResult, model);
+    }
+
+    @PostMapping("/book/add2")
+    public ResponseEntity<String> addBook2(
+            @ModelAttribute("book") BookDto book,
+            BindingResult bindingResult,
+            Model model) {
+        return ResponseEntity.ok("ok");
     }
 
     @GetMapping("/book/edit")
@@ -113,6 +122,8 @@ public class BookController {
     }
 
     private void checkAuthorAndAddNewIfNecessary(BookDto book) {
+
+
         if (!Strings.isNullOrEmpty(book.getAuthorName())) {
             var author = authorService.getAuthorByName(book.getAuthorName());
             if (author == null) {

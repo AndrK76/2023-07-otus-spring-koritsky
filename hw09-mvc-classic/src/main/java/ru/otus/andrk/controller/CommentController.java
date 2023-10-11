@@ -111,7 +111,7 @@ public class CommentController {
         log.debug("{} {}", action, comment);
         if (bindingResult.hasErrors()) {
             addCommentDataToModel(model, action, comment);
-            return "modify_comment";
+            return "comment_edit";
         }
 
         if (action.equals(ACTION_ADD)) {

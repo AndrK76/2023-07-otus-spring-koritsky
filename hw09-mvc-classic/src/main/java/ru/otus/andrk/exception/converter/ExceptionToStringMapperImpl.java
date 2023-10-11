@@ -4,6 +4,8 @@ import org.springframework.stereotype.Service;
 import ru.otus.andrk.exception.KnownLibraryManipulationException;
 import ru.otus.andrk.exception.NoExistAuthorException;
 import ru.otus.andrk.exception.NoExistBookException;
+import ru.otus.andrk.exception.NoExistCommentException;
+import ru.otus.andrk.exception.NoExistGenreException;
 
 import java.util.Map;
 import java.util.Optional;
@@ -13,7 +15,9 @@ public class ExceptionToStringMapperImpl implements ExceptionToStringMapper {
 
     private final Map<Class, String> messages = Map.of(
             NoExistBookException.class, "book-no-exist",
-            NoExistAuthorException.class, "author-no-exist"
+            NoExistAuthorException.class, "author-no-exist",
+            NoExistGenreException.class, "genre-no-exist",
+            NoExistCommentException.class, "comment-no-exist"
     );
 
     @Override

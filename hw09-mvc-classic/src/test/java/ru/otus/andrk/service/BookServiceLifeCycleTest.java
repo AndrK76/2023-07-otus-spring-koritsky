@@ -88,8 +88,10 @@ public class BookServiceLifeCycleTest {
     public void shouldCorrectModifyDataAndDontChangeCommentForBookAndCallExpectedStatementsInBdWhenModifyBook() {
         em.clear();
         var book = bookService.getBookById(1L);
+        var genreName = book.getGenreName();
         em.clear();
         bookService.modifyBook(1L, "new name", 2L, book.getId());
+        var authorName = authorRepo.findById(2L).orElseThrow(RuntimeException::new).getName();
         em.flush();
         em.clear();
         var actualResult = bookService.getBookWithCommentsById(1l);
@@ -97,8 +99,8 @@ public class BookServiceLifeCycleTest {
         assertThat(actualResult)
                 .isNotNull()
                 .returns("new name", BookWithCommentsDto::getName)
-                .returns(2L, r -> r.getAuthor().getId())
-                .returns(1L, r -> r.getGenre().getId())
+                .returns(authorName, BookWithCommentsDto::getAuthorName)
+                .returns(genreName, BookWithCommentsDto::getGenreName)
                 .extracting(BookWithCommentsDto::getComments)
                 .isNotNull()
                 .asList()
