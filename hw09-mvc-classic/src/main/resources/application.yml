@@ -9,6 +9,7 @@ spring:
       mode: always
       schema-locations: classpath*:database/schema.sql
       data-locations: classpath*:database/data.sql
+      encoding: UTF-8
   jpa:
     show-sql: false
     generate-ddl: false

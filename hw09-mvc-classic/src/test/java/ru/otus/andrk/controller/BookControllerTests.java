@@ -188,7 +188,6 @@ public class BookControllerTests {
                 .addGenre(any());
     }
 
-
     @Test
     public void shouldDeleteBookAndRedirectToBookList() throws Exception {
         mvc.perform(post("/book/delete")
@@ -198,6 +197,8 @@ public class BookControllerTests {
         verify(bookService, times(1))
                 .deleteBook(eq(1L));
     }
+
+
 
     private List<BookDto> getBookDtoList() {
         return List.of(
@@ -211,5 +212,4 @@ public class BookControllerTests {
                         .genreId(1L).genreName("~GENRE~1")
                         .build());
     }
-
 }
