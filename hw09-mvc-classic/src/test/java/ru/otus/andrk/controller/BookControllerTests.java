@@ -18,14 +18,18 @@ import ru.otus.andrk.service.GenreService;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.hamcrest.core.StringContains.containsString;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.contains;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.model;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirectedUrl;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -73,6 +77,23 @@ public class BookControllerTests {
                 .contains("~NAME~1~")
                 .contains("~NAME~2~");
     }
+
+
+    @Test
+    public void shouldReturnCorrectBookList2() throws Exception {
+        var listBook = getBookDtoList();
+        given(bookService.getAllBooks()).willReturn(listBook);
+
+        mvc.perform(get("/book"))
+                .andExpect(status().isOk())
+                .andExpect(model().attributeExists("books"))
+                .andExpect(model().attribute("books", listBook))
+                .andExpect(content().string(containsString("~NAME~1~")))
+                .andExpect(content().string(containsString("~NAME~2~")))
+        ;
+    }
+
+
 
     @ParameterizedTest
     @ValueSource(strings = {"/", "/book", "/book/add", "/book/edit?id=1", "/book/delete?id=1"})
