@@ -1,0 +1,9 @@
+spring:
+  messages:
+    encoding: UTF-8
+    fallback-to-system-locale: false
+
+logging:
+  level:
+    #root: error
+    root: info
