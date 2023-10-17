@@ -23,6 +23,7 @@
                 </div>
                 <div class="col-auto">
                     <div class="btn-group align-items-end mt-3">
+                        <input type="hidden" th:value="${#locale.toString()}" id="lang">
                         <a class="btn btn-sm"
                            th:classappend="${#locale.toString()}=='en'?'btn-secondary':'btn-outline-secondary'"
                            th:href="@{/(lang=en)}">En</a>
@@ -32,7 +33,7 @@
                     </div>
                 </div>
             </div>
-            <table class="table table-hover w-auto">
+            <table class="table table-hover w-auto" id="bookTable">
                 <thead>
                 <tr>
                     <th>Id</th>
@@ -48,7 +49,7 @@
                 </tr>
                 </thead>
                 <tbody>
-                <tr>
+                <tr th:style="'display: none'">
                     <td>1</td>
                     <td>Book name</td>
                     <td>Author name</td>
@@ -68,7 +69,7 @@
                     <td colspan="4" class="fst-italic" th:text="#{book.total}">
                         Total books in library:
                     </td>
-                    <th class="text-end">1</th>
+                    <th class="text-end" th:text="0" id="booksTotal">1</th>
                 </tr>
                 </tfoot>
             </table>
@@ -76,5 +77,15 @@
     </div>
 </div>
 
+
+
+
+
 </body>
+
+
+<script th:src="@{/js/common.js}"></script>
+<script th:src="@{/js/book_list.js}"></script>
+<script th:src="@{/webjars/bootstrap/dist/js/bootstrap.bundle.min.js}"></script>
+
 </html>
