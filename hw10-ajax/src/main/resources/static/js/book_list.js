@@ -4,11 +4,7 @@ async function loadBooks() {
     showBooks({status: response.status, data: data});
 }
 
-async function loadLocalize(lang) {
-    console.log(lang);
-}
-
-let localize = new Map([
+let localizedMessages = new Map([
     ['book.action-edit', 'Edit book'],
     ['book.action-view-comments', 'View comments'],
     ['book.action-delete-book', 'Delete book']
@@ -30,11 +26,11 @@ function showBooks(response) {
                     <td>${book.authorName === null ? '' : book.authorName}</td>
                     <td>${book.genreName === null ? '' : book.genreName}</td>
                     <td>
-                        <a class="btn btn-outline-secondary btn-sm" title="${localize.get('book.action-edit')}"
+                        <a class="btn btn-outline-secondary btn-sm" title="${localizedMessages.get('book.action-edit')}"
                            href="#"> <i class="fa fa-edit"></i></a>
-                        <a class="btn btn-outline-secondary btn-sm" title="${localize.get('book.action-view-comments')}"
+                        <a class="btn btn-outline-secondary btn-sm" title="${localizedMessages.get('book.action-view-comments')}"
                            href="#"> <i class="fa fa-comment"></i></a>
-                        <a class="btn btn-outline-secondary btn-sm" title="${localize.get('book.action-delete-book')}"
+                        <a class="btn btn-outline-secondary btn-sm" title="${localizedMessages.get('book.action-delete-book')}"
                            href="#"> <i class="fa fa-remove"></i></a>
                     </td>`;
             tbody.append(row);
@@ -48,6 +44,6 @@ function showBooks(response) {
 
 
 window.onload = async (event) => {
-    await loadLocalize(document.getElementById('lang').value)
+    await getLocalizedMessages(document.getElementById('lang').value, localizedMessages);
     await loadBooks();
 }
