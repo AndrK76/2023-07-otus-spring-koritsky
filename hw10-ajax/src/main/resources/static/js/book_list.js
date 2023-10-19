@@ -4,11 +4,11 @@ async function loadBooks() {
     showBooks({status: response.status, data: data});
 }
 
-let localizedMessages = new Map([
-    ['book.action-edit', 'Edit book'],
-    ['book.action-view-comments', 'View comments'],
-    ['book.action-delete-book', 'Delete book']
-]);
+function addBookLocalizedMessages() {
+    localizedMessages.set('book.action-edit', 'Edit book');
+    localizedMessages.set('book.action-view-comments', 'View comments');
+    localizedMessages.set('book.action-delete-book', 'Delete book');
+}
 
 
 function showBooks(response) {
@@ -44,6 +44,8 @@ function showBooks(response) {
 
 
 window.onload = async (event) => {
-    await getLocalizedMessages(document.getElementById('lang').value, localizedMessages);
+    addBookLocalizedMessages();
+    await getLocalizedMessages(document.getElementById('lang').value);
+    console.log(localizedMessages);
     await loadBooks();
 }

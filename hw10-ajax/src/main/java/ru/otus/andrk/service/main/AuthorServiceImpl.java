@@ -1,4 +1,4 @@
-package ru.otus.andrk.service;
+package ru.otus.andrk.service.main;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -9,6 +9,7 @@ import ru.otus.andrk.dto.mapper.DtoMapper;
 import ru.otus.andrk.exception.OtherLibraryManipulationException;
 import ru.otus.andrk.model.Author;
 import ru.otus.andrk.repository.AuthorRepository;
+import ru.otus.andrk.service.main.AuthorService;
 
 import java.util.List;
 

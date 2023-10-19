@@ -10,9 +10,9 @@
 	</parent>
 
 	<groupId>ru.otus.andrk</groupId>
-	<artifactId>book-crud-classic</artifactId>
+	<artifactId>book-crud-ajax</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>book-crud-classic</name>
+	<name>book-crud-ajax</name>
 	<description>Book CRUD With MVC Ajax</description>
 
 	<properties>

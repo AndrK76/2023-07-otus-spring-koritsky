@@ -1,4 +1,4 @@
-package ru.otus.andrk.service;
+package ru.otus.andrk.service.main;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;

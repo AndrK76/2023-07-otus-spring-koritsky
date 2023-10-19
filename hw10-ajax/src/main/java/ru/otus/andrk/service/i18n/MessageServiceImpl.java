@@ -1,4 +1,4 @@
-package ru.otus.andrk.service;
+package ru.otus.andrk.service.i18n;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.MessageSource;
@@ -27,6 +27,11 @@ public class MessageServiceImpl implements MessageService {
                         return "";
                     }
                 }));
+    }
+
+    @Override
+    public String getMessage(Locale locale, String messageKey, Object[] args) {
+        return messageSource.getMessage(messageKey,args, locale);
     }
 }
 

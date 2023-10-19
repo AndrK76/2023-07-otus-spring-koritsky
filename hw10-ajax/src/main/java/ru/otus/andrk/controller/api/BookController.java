@@ -5,10 +5,9 @@ import lombok.extern.log4j.Log4j2;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 import ru.otus.andrk.dto.BookDto;
-import ru.otus.andrk.service.BookService;
+import ru.otus.andrk.service.main.BookService;
 
 import java.util.List;
-import java.util.Locale;
 
 @RestController
 @Log4j2
