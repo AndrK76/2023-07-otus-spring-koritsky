@@ -1,15 +1,10 @@
+const errorContainer = document.getElementById('errorContainer');
+
 async function loadBooks() {
     let response = await fetch(urlGetAllBook, {method: "GET", headers: jsonRequestHeader});
     let data = await response.json();
     showBooks({status: response.status, data: data});
 }
-
-function addBookLocalizedMessages() {
-    localizedMessages.set('book.action-edit', 'Edit book');
-    localizedMessages.set('book.action-view-comments', 'View comments');
-    localizedMessages.set('book.action-delete-book', 'Delete book');
-}
-
 
 function showBooks(response) {
     const tbody = document.querySelector('#bookTable tbody');
@@ -38,14 +33,14 @@ function showBooks(response) {
         });
         totalEl.innerHTML = countBook;
     } else {
-        console.log(response.status + ', ' + JSON.stringify(response.data, null, 4));
+        //console.log(response.status + ', ' + JSON.stringify(response.data, null, 4));
+        showError(errorContainer, response.data);
     }
 }
 
 
 window.onload = async (event) => {
-    addBookLocalizedMessages();
-    await getLocalizedMessages(document.getElementById('lang').value);
-    console.log(localizedMessages);
+    await getLocalizedMessages(document.getElementById('lang').value, errorContainer);
+    //console.log(localizedMessages);
     await loadBooks();
 }

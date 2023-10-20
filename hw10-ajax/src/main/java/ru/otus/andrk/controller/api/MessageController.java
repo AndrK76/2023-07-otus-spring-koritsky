@@ -22,8 +22,7 @@ public class MessageController {
 
     @GetMapping({"/api/v1/message/{lang}","/api/v1/message"})
     private Map<String,String> getMessages(
-            @RequestParam(name = "name", defaultValue = "") List<String> messageKeys,
             @PathVariable(name = "lang", required = false) Optional<String> lang) {
-        return messageService.getMessages(Locale.forLanguageTag(lang.orElse("en")), messageKeys);
+        return messageService.getMessages(Locale.forLanguageTag(lang.orElse("en")));
     }
 }

@@ -14,7 +14,8 @@ public class ApiErrorDto {
     private final int status;
     private String statusMessage;
     private String statusMessageKey;
-    private String statusMessageLocalized;
+    private String errorMessage;
+    private String errorMessageKey;
+    private String detailMessage;
     private String detailMessageKey;
-    private String localizedDetailMessage;
 }

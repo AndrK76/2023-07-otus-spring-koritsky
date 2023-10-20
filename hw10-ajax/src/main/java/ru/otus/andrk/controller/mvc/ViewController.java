@@ -8,7 +8,7 @@ import org.springframework.ui.Model;
 public class ViewController {
 
     @GetMapping({"/","/book"})
-    public String test(Model model) {
+    public String bookList(Model model) {
         return "book_list";
     }
 }

@@ -11,7 +11,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.LocaleResolver;
 import org.springframework.web.servlet.ModelAndView;
@@ -20,7 +19,6 @@ import ru.otus.andrk.dto.mapper.ApiErrorMapper;
 
 import java.util.HashMap;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 
 @Controller
@@ -49,8 +47,7 @@ public class CustomErrorController extends AbstractErrorController {
         }
         var errorAttributes = getErrorAttributes(request, ErrorAttributeOptions.defaults());
         log.debug(errorAttributes);
-        var lang = localeResolver.resolveLocale(request).getLanguage();
-        return new ResponseEntity<>(mapper.fromErrorAttributes(errorAttributes, lang), status);
+        return new ResponseEntity<>(mapper.fromErrorAttributes(errorAttributes), status);
     }
 
     @RequestMapping(path = "/error", produces = MediaType.TEXT_HTML_VALUE)
@@ -58,9 +55,8 @@ public class CustomErrorController extends AbstractErrorController {
         final var status = getStatus(request);
         var errorAttributes = getErrorAttributes(request, ErrorAttributeOptions.defaults());
         log.debug(errorAttributes);
-        var lang = localeResolver.resolveLocale(request).getLanguage();
         Map<String, Object> model = new HashMap<>();
-        model.put("data", mapper.fromErrorAttributes(errorAttributes, lang));
+        model.put("info", mapper.fromErrorAttributes(errorAttributes));
         response.setStatus(status.value());
         ModelAndView modelAndView = resolveErrorView(request, response, status, model);
         return (modelAndView != null) ? modelAndView : new ModelAndView("error", model);

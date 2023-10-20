@@ -1,5 +1,5 @@
-const urlGetAllBook = '/api/v1/book2'
 const urlGetLocalizedMessage = '/api/v1/message'
+const urlGetAllBook = '/api/v1/book'
 
 
 const jsonRequestHeader = {'Accept': 'application/json', 'Content-Type': 'application/json'}
@@ -14,18 +14,54 @@ let localizedMessages = new Map([
 ]);
 
 
-async function getLocalizedMessages(lang) {
-    let names = [...localizedMessages.keys()].reduce((str, key) => str + '&name=' + key, '');
-    names = (names === '') ? names : names.substring(1);
-    let response = await fetch(urlGetLocalizedMessage+'/'+lang+'?'+ names,
+async function getLocalizedMessages(lang, errDiv=null) {
+    let response = await fetch(urlGetLocalizedMessage + '/' + lang,
         {method: "GET", headers: jsonRequestHeader});
-    if (response.ok){
-        let result = await response.json();
-        [...localizedMessages.keys()].forEach(key=>{
-           const localizedText = result[key];
-           if (localizedText !== ''){
-               localizedMessages.set(key,localizedText);
-           }
+    let result = await response.json();
+    if (response.ok) {
+        Object.keys(result).forEach(key => {
+            localizedMessages.set(key, result[key]);
         });
+    } else {
+        if (errDiv !== null){
+            showError(errDiv, result);
+        } else {
+            console.log(JSON.stringify(result));
+        }
     }
+}
+
+function showError(place, errorData) {
+    //console.log(errorData);
+    const title = errorData.errorMessage === null
+        ? errorData.status
+        : 'title';
+    const message = errorData.errorMessage === null
+        ? (localizedMessages.has(errorData.statusMessageKey)
+            ? localizedMessages.get(errorData.statusMessageKey)
+            : errorData.statusMessage)
+        : 'message';
+
+    const detail = errorData.detailMessage !== null
+        ? (localizedMessages.has(errorData.detailMessageKey)
+            ? localizedMessages.get(errorData.detailMessageKey)
+            : errorData.detailMessage)
+        : null;
+
+    let detailText = '';
+    if (detail !== null){
+        detailText = `<p class="text-decoration-underline mb-0">${localizedMessages.get('error.detail')}:</p>
+                        <p class="mt-0 mb-0">${detail}</p>`
+    }
+
+
+    let alertDiv = document.createElement('div');
+    alertDiv.innerHTML =
+        `<div class="alert alert-danger alert-dismissible fade show" role="alert">
+             <strong>${title}</strong>
+             ${message}
+             ${detailText}
+             <button type="button" class="btn-close btn-sm" data-bs-dismiss="alert" aria-label="Close"></button>
+         </div>`;
+    place.append(alertDiv);
 }
