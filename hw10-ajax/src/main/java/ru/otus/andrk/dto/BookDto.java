@@ -20,7 +20,7 @@ import java.io.Serializable;
 public class BookDto implements Serializable {
     private long id;
 
-    @NotBlank(message = "{book.message-name-not-empty}")
+    @NotBlank(message = "book.message-name-not-empty")
     private String name;
 
     private Long authorId;

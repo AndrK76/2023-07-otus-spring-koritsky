@@ -1,4 +1,4 @@
-package ru.otus.andrk.service.main;
+package ru.otus.andrk.service.data;
 
 import ru.otus.andrk.dto.GenreDto;
 

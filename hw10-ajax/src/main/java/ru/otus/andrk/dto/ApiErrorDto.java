@@ -12,10 +12,7 @@ import java.util.Date;
 public class ApiErrorDto {
     private final Date timestamp;
     private final int status;
-    private String statusMessage;
-    private String statusMessageKey;
-    private String errorMessage;
-    private String errorMessageKey;
-    private String detailMessage;
-    private String detailMessageKey;
+    private MessagePair statusMessage;
+    private MessagePair errorMessage;
+    private MessagePair detailMessage;
 }

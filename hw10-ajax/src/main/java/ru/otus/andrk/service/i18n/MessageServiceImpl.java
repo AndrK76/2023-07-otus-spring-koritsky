@@ -24,7 +24,8 @@ public class MessageServiceImpl implements MessageService {
             "book.action-delete-book", "other-error",
             "known-error.other-manipulation-error", "error",
             "error.detail", "error.status.400", "error.status.404",
-            "error.status.405", "error.status.500"
+            "error.status.405", "error.status.500",
+            "book.message-name-not-empty"
     );
 
     @Value("${book-app.default-lang:en}")

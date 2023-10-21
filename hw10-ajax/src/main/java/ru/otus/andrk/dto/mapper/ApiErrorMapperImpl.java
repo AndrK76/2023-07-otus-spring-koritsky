@@ -1,10 +1,14 @@
 package ru.otus.andrk.dto.mapper;
 
+import com.google.common.base.Strings;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import ru.otus.andrk.dto.ApiErrorDto;
+import ru.otus.andrk.dto.MessagePair;
+import ru.otus.andrk.exception.KnownLibraryManipulationException;
+import ru.otus.andrk.exception.OtherLibraryManipulationException;
+import ru.otus.andrk.exception.converter.ExceptionToStringMapper;
 import ru.otus.andrk.service.i18n.MessageService;
 
 import java.util.Date;
@@ -16,6 +20,9 @@ import java.util.Map;
 public class ApiErrorMapperImpl implements ApiErrorMapper {
 
     private final MessageService messageService;
+
+    private final ExceptionToStringMapper exceptionMapper;
+
 
     public ApiErrorDto fromErrorAttributes(Map<String, Object> errAttrs) {
         Object errTimestamp = errAttrs.get("timestamp");
@@ -31,16 +38,54 @@ public class ApiErrorMapperImpl implements ApiErrorMapper {
                 ? (String) errPath
                 : null;
         var ret = new ApiErrorDto(timestamp, status);
-        ret.setStatusMessageKey(getStatusMessageKey(ret.getStatus()));
-        ret.setStatusMessage(
-                messageService.getMessageInDefaultLocale(
-                        ret.getStatusMessageKey(), null));
-        ret.setDetailMessage(path);
+        setStatus(ret);
+        ret.setDetailMessage(new MessagePair("", path));
+        return ret;
+    }
+
+    @Override
+    public ApiErrorDto fromOtherError(OtherLibraryManipulationException e) {
+        log.debug("fromOtherError: {}", e.toString());
+        var ret = new ApiErrorDto(new Date(), 500);
+        setStatus(ret);
+        var messageKey = "known-error.other-manipulation-error";
+        ret.setErrorMessage(new MessagePair(messageKey,
+                messageService.getMessageInDefaultLocale(messageKey, null)));
+        if (e.getCause() != null) {
+            var message = Strings.isNullOrEmpty(e.getCause().getMessage())
+                    ? e.getCause().getClass().getSimpleName()
+                    : e.getCause().getMessage();
+            ret.setDetailMessage(new MessagePair("", message));
+        }
+        return ret;
+    }
+
+    @Override
+    public ApiErrorDto fromKnownError(KnownLibraryManipulationException e) {
+        log.debug("fromKnownError: {}", e.toString());
+        var ret = new ApiErrorDto(new Date(), 400);
+        setStatus(ret);
+        var messageKey = exceptionMapper.getExceptionMessage(e);
+        ret.setErrorMessage(new MessagePair(messageKey,
+                messageService.getMessageInDefaultLocale(messageKey, null)));
+        if (e.getCause() != null) {
+            var message = Strings.isNullOrEmpty(e.getCause().getMessage())
+                    ? e.getCause().getClass().getSimpleName()
+                    : e.getCause().getMessage();
+            ret.setDetailMessage(new MessagePair("", message));
+        }
         return ret;
     }
 
     private String getStatusMessageKey(int status) {
         return "error.status." + status;
+    }
+
+    private void setStatus(ApiErrorDto messageObj) {
+        var messageKey = getStatusMessageKey(messageObj.getStatus());
+        messageObj.setStatusMessage(
+                new MessagePair(messageKey,
+                        messageService.getMessageInDefaultLocale(messageKey, null)));
     }
 
 

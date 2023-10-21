@@ -19,11 +19,11 @@
             <div class="row">
                 <div class="col">
                     <h1 th:text="#{library.title}">Library</h1>
-                    <p th:text="#{error} + ' '+ *{status} + ': '+ #{${info.statusMessageKey}}" class="h3">Error</p>
+                    <p th:text="#{error} + ' '+ *{status} + ': '+ #{${info.statusMessage.key}}" class="h3">Error</p>
                     <p th:if="${detail != null}" class="h5">
                         <span class="fw-bold" th:text="#{error.detail}+':'">Detail:</span>
                         <span
-                                th:text="(${info.detailMessageKey}!=null ? #{${info.detailMessageKey}}:${info.detailMessage}) ">
+                                th:text="(${info.detailMessage.key}!=null ? #{${info.detailMessage.key}}:${info.detailMessage.message}) ">
                             Detail message</span></p>
                 </div>
                 <div class="text-center">

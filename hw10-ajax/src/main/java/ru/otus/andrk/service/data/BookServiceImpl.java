@@ -1,5 +1,6 @@
-package ru.otus.andrk.service.main;
+package ru.otus.andrk.service.data;
 
+import com.google.common.base.Strings;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
@@ -34,9 +35,12 @@ public class BookServiceImpl implements BookService {
 
     private final DtoMapper mapper;
 
+    private final AuthorService authorService;
+
+    private final GenreService genreService;
+
 
     @Override
-    //@Transactional(readOnly = true)
     public List<BookDto> getAllBooks() {
         try {
             return bookRepo.findAll().stream().map(mapper::toDto).toList();
@@ -47,14 +51,15 @@ public class BookServiceImpl implements BookService {
     }
 
     @Override
-    //@Transactional(readOnly = true)
     public BookDto getBookById(long id) {
+        Optional<BookDto> book;
         try {
-            return  bookRepo.findById(id).map(mapper::toDto).orElse(null);
+            book =  bookRepo.findById(id).map(mapper::toDto);
         } catch (Exception e) {
             log.error(e);
             throw new OtherLibraryManipulationException(e);
         }
+        return book.orElseThrow(NoExistBookException::new);
     }
 
     @Override
@@ -70,14 +75,16 @@ public class BookServiceImpl implements BookService {
 
     @Override
     @Transactional
-    public BookDto addBook(String bookName, Long authorId, Long genreId) {
-        return saveBook(0, bookName, authorId, genreId);
+    public BookDto addBook(BookDto book) {
+        actualizeAuthorAndGenre(book);
+        return saveBook(0, book.getName(), book.getAuthorId(), book.getGenreId());
     }
 
     @Override
     @Transactional
-    public BookDto modifyBook(long bookId, String newName, Long newAuthorId, Long newGenreId) {
-        return saveBook(bookId, newName, newAuthorId, newGenreId);
+    public BookDto modifyBook(long bookId, BookDto book) {
+        actualizeAuthorAndGenre(book);
+        return saveBook(0, book.getName(), book.getAuthorId(), book.getGenreId());
     }
 
     @Override
@@ -112,6 +119,28 @@ public class BookServiceImpl implements BookService {
         } catch (Exception e) {
             log.error(e);
             throw new OtherLibraryManipulationException(e);
+        }
+    }
+
+    private void actualizeAuthorAndGenre(BookDto book){
+        if (!Strings.isNullOrEmpty(book.getAuthorName())) {
+            var author = authorService.getAuthorByName(book.getAuthorName());
+            if (author == null) {
+                author = authorService.addAuthor(book.getAuthorName());
+            }
+            book.setAuthorId(author.id());
+        } else {
+            book.setAuthorId(null);
+        }
+
+        if (!Strings.isNullOrEmpty(book.getGenreName())) {
+            var genre = genreService.getGenreByName(book.getGenreName());
+            if (genre == null) {
+                genre = genreService.addGenre(book.getGenreName());
+            }
+            book.setGenreId(genre.id());
+        } else {
+            book.setGenreId(null);
         }
     }
 }

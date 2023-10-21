@@ -11,5 +11,8 @@ col.one-percent-width {
     background-color: rgba(0, 0, 0, 0.2);
 }
 
-
+div.invisible {
+    display: none;
+    min-height: 0px;
+}
 
