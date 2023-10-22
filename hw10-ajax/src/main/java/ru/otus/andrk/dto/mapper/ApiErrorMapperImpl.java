@@ -6,6 +6,7 @@ import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
 import ru.otus.andrk.dto.ApiErrorDto;
 import ru.otus.andrk.dto.MessagePair;
+import ru.otus.andrk.exception.BuBuException;
 import ru.otus.andrk.exception.KnownLibraryManipulationException;
 import ru.otus.andrk.exception.OtherLibraryManipulationException;
 import ru.otus.andrk.exception.converter.ExceptionToStringMapper;
@@ -45,16 +46,21 @@ public class ApiErrorMapperImpl implements ApiErrorMapper {
 
     @Override
     public ApiErrorDto fromOtherError(OtherLibraryManipulationException e) {
+        RuntimeException ex = e;
         log.debug("fromOtherError: {}", e.toString());
         var ret = new ApiErrorDto(new Date(), 500);
         setStatus(ret);
         var messageKey = "known-error.other-manipulation-error";
+        if (e.getCause() instanceof BuBuException){
+            messageKey = "known-error.bubu-error";
+            ex = (BuBuException)e.getCause();
+        }
         ret.setErrorMessage(new MessagePair(messageKey,
                 messageService.getMessageInDefaultLocale(messageKey, null)));
-        if (e.getCause() != null) {
-            var message = Strings.isNullOrEmpty(e.getCause().getMessage())
-                    ? e.getCause().getClass().getSimpleName()
-                    : e.getCause().getMessage();
+        if (ex.getCause() != null) {
+            var message = Strings.isNullOrEmpty(ex.getCause().getMessage())
+                    ? ex.getCause().getClass().getSimpleName()
+                    : ex.getCause().getMessage();
             ret.setDetailMessage(new MessagePair("", message));
         }
         return ret;

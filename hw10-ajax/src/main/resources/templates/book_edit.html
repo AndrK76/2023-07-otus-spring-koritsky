@@ -28,7 +28,7 @@
             </div>
             <div class="row">
                 <div class="col">
-                    <form action="book_list.html" id="bookForm">
+                    <form action="book_list.html" id="bookForm" th:action="''">
                         <input type="hidden" id="action" th:value="${action}">
                         <input type="hidden" id="idBook" th:value="${id}">
                         <input type="hidden" id="backUrl" th:value="${backUrl}">

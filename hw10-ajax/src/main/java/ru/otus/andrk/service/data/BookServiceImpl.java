@@ -39,10 +39,13 @@ public class BookServiceImpl implements BookService {
 
     private final GenreService genreService;
 
+    private final BuBuService buBuService;
+
 
     @Override
     public List<BookDto> getAllBooks() {
         try {
+            buBuService.tryBuBu();
             return bookRepo.findAll().stream().map(mapper::toDto).toList();
         } catch (Exception e) {
             log.error(e);
@@ -54,7 +57,8 @@ public class BookServiceImpl implements BookService {
     public BookDto getBookById(long id) {
         Optional<BookDto> book;
         try {
-            book =  bookRepo.findById(id).map(mapper::toDto);
+            buBuService.tryBuBu();
+            book = bookRepo.findById(id).map(mapper::toDto);
         } catch (Exception e) {
             log.error(e);
             throw new OtherLibraryManipulationException(e);
@@ -65,12 +69,15 @@ public class BookServiceImpl implements BookService {
     @Override
     @Transactional(readOnly = true)
     public BookWithCommentsDto getBookWithCommentsById(long id) {
+        Optional<BookWithCommentsDto> book;
         try {
-            return  bookRepo.findById(id).map(mapper::toDtoWithComments).orElse(null);
+            buBuService.tryBuBu();
+            book = bookRepo.findById(id).map(mapper::toDtoWithComments);
         } catch (Exception e) {
             log.error(e);
             throw new OtherLibraryManipulationException(e);
         }
+        return book.orElseThrow(NoExistBookException::new);
     }
 
     @Override
@@ -84,7 +91,7 @@ public class BookServiceImpl implements BookService {
     @Transactional
     public BookDto modifyBook(long bookId, BookDto book) {
         actualizeAuthorAndGenre(book);
-        return saveBook(0, book.getName(), book.getAuthorId(), book.getGenreId());
+        return saveBook(book.getId(), book.getName(), book.getAuthorId(), book.getGenreId());
     }
 
     @Override
@@ -101,6 +108,7 @@ public class BookServiceImpl implements BookService {
 
     private BookDto saveBook(long oldBookId, String newName, Long newAuthorId, Long newGenreId) {
         try {
+            buBuService.tryBuBu();
             Book book = (oldBookId == 0L) ? new Book() :
                     bookRepo.findById(oldBookId).orElseThrow(NoExistBookException::new);
             Author newAuthor = newAuthorId == null ? null :
@@ -122,25 +130,30 @@ public class BookServiceImpl implements BookService {
         }
     }
 
-    private void actualizeAuthorAndGenre(BookDto book){
-        if (!Strings.isNullOrEmpty(book.getAuthorName())) {
-            var author = authorService.getAuthorByName(book.getAuthorName());
-            if (author == null) {
-                author = authorService.addAuthor(book.getAuthorName());
+    private void actualizeAuthorAndGenre(BookDto book) {
+        try{
+            if (!Strings.isNullOrEmpty(book.getAuthorName())) {
+                var author = authorService.getAuthorByName(book.getAuthorName());
+                if (author == null) {
+                    author = authorService.addAuthor(book.getAuthorName());
+                }
+                book.setAuthorId(author.id());
+            } else {
+                book.setAuthorId(null);
             }
-            book.setAuthorId(author.id());
-        } else {
-            book.setAuthorId(null);
-        }
 
-        if (!Strings.isNullOrEmpty(book.getGenreName())) {
-            var genre = genreService.getGenreByName(book.getGenreName());
-            if (genre == null) {
-                genre = genreService.addGenre(book.getGenreName());
+            if (!Strings.isNullOrEmpty(book.getGenreName())) {
+                var genre = genreService.getGenreByName(book.getGenreName());
+                if (genre == null) {
+                    genre = genreService.addGenre(book.getGenreName());
+                }
+                book.setGenreId(genre.id());
+            } else {
+                book.setGenreId(null);
             }
-            book.setGenreId(genre.id());
-        } else {
-            book.setGenreId(null);
+        } catch (Exception e){
+            log.error(e);
+            throw new OtherLibraryManipulationException(e);
         }
     }
 }

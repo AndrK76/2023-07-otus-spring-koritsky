@@ -45,25 +45,25 @@
                     <th th:text="#{book.genre}">Genre</th>
                     <th>
                         <a class="btn btn-outline-secondary btn-sm"
-                           href="book_edit.html" th:href="@{/book/new}">
+                           href="book_edit.html" th:href="@{/book(action='add')}">
                             <i class="fa fa-add"></i>
                             <span th:text="#{book.action-add}">Add book</span></a>
                     </th>
                 </tr>
                 </thead>
                 <tbody>
-                <tr th:style="'display: none'">
+                <tr th:if="false">
                     <td>1</td>
                     <td>Book name</td>
                     <td>Author name</td>
                     <td>Genre name</td>
                     <td>
                         <a class="btn btn-outline-secondary btn-sm" title="Edit book"
-                           href="#"> <i class="fa fa-edit"></i></a>
+                           href="book_edit.html"> <i class="fa fa-edit"></i></a>
                         <a class="btn btn-outline-secondary btn-sm" title="View comments"
-                           href="#"> <i class="fa fa-comment"></i></a>
-                        <a class="btn btn-outline-secondary btn-sm" title="Delete book"
-                           href="#"> <i class="fa fa-remove"></i></a>
+                           href="comment_list.html"> <i class="fa fa-comment"></i></a>
+                        <btn class="btn btn-outline-secondary btn-sm" title="Delete book"
+                             onclick="callDeleteBook(1);"> <i class="fa fa-remove"></i></btn>
                     </td>
                 </tr>
                 </tbody>
@@ -80,9 +80,33 @@
     </div>
 </div>
 
+<div class="modal fade" id="deleteQuery" tabindex="-1" aria-labelledby="deleteQueryTitle" aria-hidden="true">
+    <input type="hidden" id="deleteId">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="deleteQueryTitle"
+                    th:text="#{action.confirm-delete(#{book})}">Confirm delete</h5>
+                <button type="button" class="btn-close btn-sm" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+             <div class="modal-footer">
+                <button type="button" class="btn btn-danger btn-sm"
+                        th:text="#{action.yes}" id="deleteBtn">Yes, delete</button>
+                <button type="button" class="btn btn-outline-secondary btn-sm" data-bs-dismiss="modal"
+                        th:text="#{action.no}">No, cancel</button>
+            </div>
+        </div>
+    </div>
+</div>
 
 </body>
 
+<script th:if="false">
+    const noClear=true;
+</script>
+<script th:if="true">
+    const noClear=false;
+</script>
 
 <script th:src="@{/js/common.js}" src="../static/js/common.js"></script>
 <script th:src="@{/js/book_list.js}" src="../static/js/book_list.js"></script>

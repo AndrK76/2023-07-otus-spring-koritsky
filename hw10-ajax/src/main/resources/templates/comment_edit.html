@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="ru" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="#{library.title} +' :: '+#{${title}}">Modify book</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+          th:href="@{/webjars/bootstrap/dist/css/bootstrap.min.css}"
+          rel="stylesheet">
+    <link href="../static/css/site.css"
+          th:href="@{/css/site.css}"
+          rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css"
+          th:href="@{/webjars/font-awesome/css/all.min.css}"
+          rel="stylesheet">
+</head>
+<body>
+<div class="container">
+    <div class="row justify-content-center">
+        <main class="col-sm-12 col-md-10">
+            <div class="row">
+                <div class="col">
+                    <h1 th:text="#{${title}}">Modify comment</h1>
+                    <input type="hidden" th:value="${#locale.toString()}" id="lang">
+                </div>
+            </div>
+            <div class="row">
+                <div class="col" id="errorContainer"></div>
+            </div>
+            <div class="row">
+                <div class="col">
+                    <table class="table">
+                        <tr>
+                            <th th:text="#{book.name}">Name</th>
+                            <td id="bookName" th:text="''">Book name</td>
+                        </tr>
+                        <tr>
+                            <th th:text="#{book.author}">Author</th>
+                            <td id="authorName" th:text="''">Author name</td>
+                        </tr>
+                        <tr>
+                            <th th:text="#{book.genre}">Genre</th>
+                            <td id="genreName" th:text="''">Genre name</td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col">
+                    <form action="comment_list.html" id="commentForm" th:action="''">
+                        <input type="hidden" id="action" th:value="${action}">
+                        <input type="hidden" id="idBook" th:value="${book}">
+                        <input type="hidden" id="idComment" th:value="${id}">
+                        <input type="hidden" id="backUrl" th:value="${backUrl}">
+                        <div class="mb-1">
+                            <label for="textComment" class="form-label" th:text="#{comment.text}">Text</label>
+                            <textarea id="textComment" rows="5"
+                                      class="form-control" placeholder="Enter comment"
+                                      th:placeholder="#{comment.placeholder-text}"
+                                      th:text="''">Comment text example</textarea>
+                            <div id="textCommentError" th:classappend="invisible">
+                                <div class="alert alert-danger align-items-center">Error</div>
+                            </div>
+                        </div>
+
+                        <button type="button" class="btn btn-secondary btn-sm" id="btnAccept"
+                                th:text="#{action.apply}">Apply
+                        </button>
+                        <a href="comment_list.html" class="btn btn-outline-secondary btn-sm"
+                           th:href="${backUrl}" th:text="#{action.cancel}">Cancel</a>
+                    </form>
+                </div>
+            </div>
+        </main>
+    </div>
+</div>
+</body>
+
+<script th:src="@{/js/common.js}" src="../static/js/common.js"></script>
+<script th:src="@{/js/comment_edit.js}" src="../static/js/comment_edit.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"
+        th:src="@{/webjars/bootstrap/dist/js/bootstrap.bundle.min.js}"></script>
+
+</html>

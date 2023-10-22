@@ -1,9 +1,12 @@
 const urlGetLocalizedMessage = '/api/v1/message';
-const urlBookApi = '/api/v1/book';
+
 const urlGetAllAuthors = '/api/v1/author';
 const urlGetAllGenres = '/api/v1/genre';
+
+const urlBookApi = '/api/v1/book';
 const urlValidateBook = '/api/v1/validation/book';
 
+const urlCommentApi = '/api/v1/comment';
 
 const jsonRequestHeader = {'Accept': 'application/json', 'Content-Type': 'application/json'}
 
@@ -52,6 +55,7 @@ function makeErr(e) {
 }
 
 function showError(place, errorData) {
+    //console.log(errorData);
     const title = errorData.status;
     const message = (errorData.errorMessage === undefined || errorData.errorMessage === null || errorData.errorMessage.message === null)
         ? (localizedMessages.has(errorData.statusMessage.key)
@@ -61,7 +65,9 @@ function showError(place, errorData) {
             ? localizedMessages.get(errorData.errorMessage.key)
             : errorData.errorMessage.message);
 
-    const detail = (errorData.detailMessage !== undefined && errorData.detailMessage.message !== null)
+    const detail = (errorData.detailMessage !== undefined
+        && errorData.detailMessage !== null
+        && errorData.detailMessage.message !== null)
         ? (localizedMessages.has(errorData.detailMessage.key)
             ? localizedMessages.get(errorData.detailMessage.key)
             : errorData.detailMessage.message)
@@ -85,7 +91,7 @@ function showError(place, errorData) {
     place.append(alertDiv);
 }
 
-async function getDataAndApply(url, errorContainer, successFunction, errorFunction){
+async function getDataAndApply(url, errorContainer, successFunction, errorFunction) {
     try {
         let response = await fetch(url,
             {
@@ -93,18 +99,18 @@ async function getDataAndApply(url, errorContainer, successFunction, errorFuncti
             });
         let data = await response.json();
         if (response.ok) {
-            if (successFunction != null){
+            if (successFunction != null) {
                 successFunction(data);
             }
         } else {
             showError(errorContainer, data);
-            if (errorFunction != null){
+            if (errorFunction != null) {
                 errorFunction(response.status);
             }
         }
     } catch (e) {
         showError(errorContainer, makeErr(e));
-        if (errorFunction != null){
+        if (errorFunction != null) {
             errorFunction(404);
         }
     }

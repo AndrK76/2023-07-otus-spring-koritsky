@@ -3,31 +3,50 @@ package ru.otus.andrk.controller.mvc;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestParam;
 
 @Controller
 public class ViewController {
 
-    @GetMapping({"/","/book"})
-    public String bookList(Model model) {
+    @GetMapping({"/", "/book"})
+    public String bookView(
+            @RequestParam(name = "action", defaultValue = "list") String action,
+            @RequestParam(name = "id", defaultValue = "") Long bookId,
+            Model model) {
+        if (action.equals("add")) {
+            model.addAttribute("action", "add");
+            model.addAttribute("id", "0");
+            model.addAttribute("backUrl", "/book");
+            model.addAttribute("title", "book.add-title");
+            return "book_edit";
+        } else if (action.equals("edit")) {
+            model.addAttribute("action", "edit");
+            model.addAttribute("id", bookId);
+            model.addAttribute("backUrl", "/book");
+            model.addAttribute("title", "book.edit-title");
+            return "book_edit";
+        } else if (action.equals("comments")) {
+            model.addAttribute("id", bookId);
+            model.addAttribute("backUrl", "/book");
+            return "comment_list";
+        }
         return "book_list";
     }
 
-    @GetMapping("/book/new")
-    public String addBook(Model model) {
-        model.addAttribute("action", "add");
-        model.addAttribute("id", "0");
-        model.addAttribute("backUrl", "/book");
-        model.addAttribute("title", "book.add-title");
-        return "book_edit";
-    }
-
-    @GetMapping("/book/edit/{id}")
-    public String editBook(@PathVariable(name = "id") int bookId, Model model){
-        model.addAttribute("action", "edit");
-        model.addAttribute("id", bookId);
-        model.addAttribute("backUrl", "/book");
-        model.addAttribute("title", "book.edit-title");
-        return "book_edit";
+    @GetMapping("/comment")
+    public String commentView(
+            @RequestParam(name = "action", defaultValue = "") String action,
+            @RequestParam(name = "book", defaultValue = "") Long bookId,
+            @RequestParam(name = "id", defaultValue = "") Long commentId,
+            Model model) {
+        if (action.equals("add") || action.equals("edit")) {
+            model.addAttribute("action", action);
+            model.addAttribute("title", "comment." + action + "-title");
+            model.addAttribute("backUrl", "/book?id=" + bookId + "&action=comments");
+            model.addAttribute("book", bookId);
+            model.addAttribute("id", commentId);
+            return "comment_edit";
+        }
+        return "error";
     }
 }

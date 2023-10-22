@@ -1,5 +1,7 @@
 book-app:
   default-lang: en
+  enable-bubu: false
+  bubu-factor: 5
 
 server:
   port: 8080

@@ -1,6 +1,6 @@
 package ru.otus.andrk.config;
 
-import org.springframework.beans.factory.annotation.Value;
+import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.LocaleResolver;
@@ -12,15 +12,15 @@ import org.springframework.web.servlet.i18n.LocaleChangeInterceptor;
 import java.util.Locale;
 
 @Configuration
+@RequiredArgsConstructor
 public class LocalizationConfig implements WebMvcConfigurer {
 
-    @Value("${book-app.default-lang:en}")
-    private String defaultLang;
+    private final ApplicationSettings appSettings;
 
     @Bean(name = "localeResolver")
     public LocaleResolver localeResolver() {
         var resolver = new CookieLocaleResolver("locale");
-        resolver.setDefaultLocale(new Locale(defaultLang));
+        resolver.setDefaultLocale(new Locale(appSettings.getDefaultLang()));
         return resolver;
     }
 

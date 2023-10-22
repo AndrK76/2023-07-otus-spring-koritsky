@@ -1,6 +1,7 @@
 const errorContainer = document.getElementById('errorContainer');
 const nameItem = document.getElementById('nameBook');
 const nameErrDiv = document.getElementById('nameBookError');
+const saveBtn = document.getElementById('btnAccept');
 
 const authorList = document.getElementById('authorList');
 const genreList = document.getElementById('genreList');
@@ -49,7 +50,6 @@ async function validateBook() {
 
 }
 
-
 function showValidateResult(result) {
     nameErrDiv.innerHTML = '';
     if (result.name === undefined) {
@@ -66,7 +66,6 @@ function showValidateResult(result) {
         }
     }
 }
-
 
 function makeBook() {
     let idBook = document.getElementById('idBook').value;
@@ -89,10 +88,16 @@ async function saveBook() {
         return;
     }
     let book = makeBook();
+    let urlAction = urlBookApi;
+    let method = 'POST';
+    if (document.getElementById('action').value === 'edit'){
+        urlAction = urlBookApi + '/' + book.id;
+        method = 'PUT';
+    }
     try {
-        let response = await fetch(urlBookApi,
+        let response = await fetch(urlAction,
             {
-                method: "POST", headers: jsonRequestHeader,
+                method: method, headers: jsonRequestHeader,
                 body: JSON.stringify(book)
             });
         if (response.ok) {
@@ -107,13 +112,22 @@ async function saveBook() {
 }
 
 function showBook(data) {
-    console.log(data);
+    document.getElementById('idBook').value = data.id;
+    document.getElementById('nameBook').value = data.name;
+    document.getElementById('authorId').value = data.authorId;
+    document.getElementById('authorName').value = data.authorName;
+    document.getElementById('genreId').value = data.genreId;
+    document.getElementById('genreName').value = data.genreName;
+}
+
+function disableSave(){
+    saveBtn.disabled = true;
 }
 
 
 window.onload = async (event) => {
     nameItem.onblur = validateBook;
-    document.getElementById('btnAccept').onclick = saveBook;
+    saveBtn.onclick = saveBook;
     clearLists();
     await getLocalizedMessages(document.getElementById('lang').value, errorContainer)
 
@@ -122,8 +136,6 @@ window.onload = async (event) => {
 
     let id = document.getElementById('idBook').value;
     if (id !== '0') {
-        getDataAndApply(urlBookApi + '/' + id, errorContainer, showBook).then();
+        getDataAndApply(urlBookApi + '/' + id, errorContainer, showBook, disableSave).then();
     }
-
-
 }
