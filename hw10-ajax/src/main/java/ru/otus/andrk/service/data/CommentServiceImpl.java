@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import ru.otus.andrk.dto.CommentDto;
 import ru.otus.andrk.dto.CommentOnBookDto;
 import ru.otus.andrk.dto.mapper.DtoMapper;
 import ru.otus.andrk.exception.KnownLibraryManipulationException;
@@ -27,45 +28,26 @@ public class CommentServiceImpl implements CommentService {
 
     private final DtoMapper mapper;
 
-    @Override
-    @Transactional(readOnly = true)
-    public List<CommentOnBookDto> getCommentsForBook(long bookId) {
-        try {
-            var book = bookRepo.findById(bookId);
-            if (book.isEmpty()) {
-                throw new NoExistBookException();
-            }
-            return repo.findCommentsByBook(book.get()).stream()
-                    .map(mapper::toDtoWithBook).toList();
-        } catch (KnownLibraryManipulationException e) {
-            log.error(e);
-            throw e;
-        } catch (Exception e) {
-            log.error(e);
-            throw new OtherLibraryManipulationException(e);
-        }
-    }
+    private final BuBuService buBuService;
+
 
     @Override
-    @Transactional(readOnly = true)
-    public CommentOnBookDto getCommentById(long id) {
+    public CommentDto getCommentById(long id) {
+        log.debug("get {}",id);
+        Optional<Comment> comment;
         try {
-            var comment = repo.findById(id).orElse(null);
-            if (comment != null) {
-                var book = bookRepo.findById(comment.getBook().getId());
-                return mapper.toDtoWithBook(comment);
-            } else {
-                return null;
-            }
+            buBuService.tryBuBu();
+            comment = repo.findById(id);
         } catch (Exception e) {
             log.error(e);
             throw new OtherLibraryManipulationException(e);
         }
+        return comment.map(mapper::toDto).orElseThrow(NoExistCommentException::new);
     }
 
     @Override
     @Transactional
-    public CommentOnBookDto addCommentForBook(long bookId, String text) {
+    public CommentDto addCommentForBook(long bookId, String text) {
         Comment comment;
         try {
             var book = bookRepo.findById(bookId);
@@ -87,7 +69,7 @@ public class CommentServiceImpl implements CommentService {
 
     @Override
     @Transactional
-    public CommentOnBookDto modifyComment(long commentId, String newText) {
+    public CommentDto modifyComment(long commentId, String newText) {
         Comment comment;
         try {
             comment = repo.findById(commentId).orElse(null);
@@ -109,14 +91,20 @@ public class CommentServiceImpl implements CommentService {
     @Override
     @Transactional
     public void deleteComment(long id) {
-        var comment = repo.findById(id);
-        comment.ifPresent(repo::delete);
+        try {
+            var comment = repo.findById(id);
+            comment.ifPresent(repo::delete);
+        } catch (Exception e){
+            log.error(e);
+            throw new OtherLibraryManipulationException(e);
+        }
     }
 
-    private CommentOnBookDto saveComment(Comment comment) {
+    private CommentDto saveComment(Comment comment) {
         try {
+            buBuService.tryBuBu();
             var savedComment = Optional.of(repo.save(comment));
-            return savedComment.map(mapper::toDtoWithBook)
+            return savedComment.map(mapper::toDto)
                     .orElse(null);
         } catch (Exception e) {
             log.error(e);

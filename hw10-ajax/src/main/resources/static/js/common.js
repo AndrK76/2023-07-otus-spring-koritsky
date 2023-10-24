@@ -7,6 +7,7 @@ const urlBookApi = '/api/v1/book';
 const urlValidateBook = '/api/v1/validation/book';
 
 const urlCommentApi = '/api/v1/comment';
+const urlValidateComment = '/api/v1/validation/comment';
 
 const jsonRequestHeader = {'Accept': 'application/json', 'Content-Type': 'application/json'}
 

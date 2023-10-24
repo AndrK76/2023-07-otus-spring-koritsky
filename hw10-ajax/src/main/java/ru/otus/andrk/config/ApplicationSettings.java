@@ -14,12 +14,16 @@ public class ApplicationSettings {
 
     private final int bubuFactor;
 
+    private final String messageBundle;
+
     public ApplicationSettings(
             @Value("${book-app.default-lang:en}") String defaultLang,
             @Value("${book-app.enable-bubu:false}") boolean ebableBuBu,
-            @Value("${book-app.bubu-factor:3}") int bubuFactor) {
+            @Value("${book-app.bubu-factor:3}") int bubuFactor,
+            @Value("${spring.messages.basename}") String messageBundle) {
         this.defaultLang = defaultLang;
         this.ebableBuBu = ebableBuBu;
         this.bubuFactor = bubuFactor > 0 ? bubuFactor : 3;
+        this.messageBundle = messageBundle;
     }
 }

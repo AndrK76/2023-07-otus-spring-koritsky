@@ -12,7 +12,6 @@ import ru.otus.andrk.exception.KnownLibraryManipulationException;
 import ru.otus.andrk.exception.OtherLibraryManipulationException;
 
 @ControllerAdvice(basePackages = "ru.otus.andrk.controller.api")
-//@ControllerAdvice
 @RequiredArgsConstructor
 @Log4j2
 public class ApiExceptionHandler extends ResponseEntityExceptionHandler {

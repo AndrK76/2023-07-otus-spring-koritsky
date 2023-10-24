@@ -2,15 +2,16 @@ package ru.otus.andrk.service.i18n;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.context.NoSuchMessageException;
 import org.springframework.stereotype.Service;
 import ru.otus.andrk.config.ApplicationSettings;
+import ru.otus.andrk.exception.LocalizationException;
 
-import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.ResourceBundle;
 import java.util.stream.Collectors;
 
 @Service
@@ -18,25 +19,16 @@ import java.util.stream.Collectors;
 @Log4j2
 public class MessageServiceImpl implements MessageService {
 
-    private final MessageSource messageSource;
+    @Autowired
+    private  MessageSource messageSource;
 
     private final ApplicationSettings appSettings;
 
-    private final List<String> allMessageKeys = List.of(
-            "book.action-edit", "book.action-view-comments",
-            "book.action-delete-book", "other-error",
-            "known-error.other-manipulation-error", "error",
-            "error.detail", "error.status.400", "error.status.404",
-            "error.status.405", "error.status.500",
-            "book.message-name-not-empty", "known-error.book-no-exist",
-            "known-error.bubu-error",
-            "comment.action-edit", "comment.action-delete"
-    );
-
     @Override
     public Map<String, String> getMessages(Locale locale) {
-        return allMessageKeys.stream()
-                .collect(Collectors.toMap(k -> k, v -> {
+        try{
+            return ResourceBundle.getBundle(appSettings.getMessageBundle(), locale).keySet().stream()
+                    .collect(Collectors.toMap(k -> k, v -> {
                     try {
                         return messageSource.getMessage(v, null, locale);
                     } catch (NoSuchMessageException e) {
@@ -44,6 +36,10 @@ public class MessageServiceImpl implements MessageService {
                         return "";
                     }
                 }));
+        } catch (Exception e){
+            log.error(e);
+            throw new LocalizationException(e);
+        }
     }
 
     @Override
@@ -57,5 +53,7 @@ public class MessageServiceImpl implements MessageService {
         }
 
     }
+
+
 }
 

@@ -17,7 +17,7 @@ import java.io.Serializable;
 public final class CommentOnBookDto implements Serializable {
     private long id;
 
-    @NotBlank(message = "{comment.message-text-not-empty}")
+    @NotBlank(message = "comment.message-text-not-empty")
     private String text;
 
     private long bookId;

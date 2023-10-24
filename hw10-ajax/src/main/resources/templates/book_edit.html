@@ -71,8 +71,8 @@
                         <button type="button" class="btn btn-secondary btn-sm" id="btnAccept"
                                 th:text="#{action.apply}">Apply
                         </button>
-                        <a href="book_list.html" class="btn btn-outline-secondary btn-sm"
-                           th:href="@{${backUrl}}" th:text="#{action.cancel}">Cancel</a>
+                        <button class="btn btn-outline-secondary btn-sm" onclick="history.back();"
+                           th:text="#{action.cancel}">Cancel</button>
                     </form>
                 </div>
             </div>

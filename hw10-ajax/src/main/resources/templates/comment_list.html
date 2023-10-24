@@ -54,16 +54,16 @@
                     </div>
                 </div>
             </div>
-            <table id="commentTable" class="table table-hover w-auto">
+            <table id="commentTable" class="table table-hover w-100">
                 <thead>
                 <tr>
                     <th>Id</th>
                     <th th:text="#{comment.text}">Comment text</th>
-                    <th>
-                        <a class="btn btn-outline-secondary btn-sm text-nowrap"
-                           href="comment_edit.html" th:href="@{/comment(action='add', book=${id})}">
+                    <th class="text-end">
+                        <button class="btn btn-outline-secondary btn-sm text-nowrap"
+                                onclick="callEditComment();">
                             <i class="fa fa-add"></i>
-                            <span th:text="#{comment.action-add}">New comment</span></a>
+                            <span th:text="#{comment.action-add}">New comment</span></button>
                     </th>
                 </tr>
                 </thead>
@@ -74,12 +74,12 @@
                         kjkljkj kjkljkjkj kljkljkj kjkjkjkjkjkl
                     </td>
                     <td class="text-end">
-                        <a class="btn btn-outline-secondary btn-sm" title="Edit comment"
-                           href="comment_edit.html"
-                           th:title="#{comment.action-edit}"> <i class="fa fa-edit"></i></a>
-                        <btn class="btn btn-outline-secondary btn-sm" title="Delete comment"
-                             onclick="callDeleteComment(1);"
-                             th:title="#{comment.action-delete}"><i class="fa fa-remove"></i></btn>
+                        <button class="btn btn-outline-secondary btn-sm" title="Edit comment"
+                                onclick="callEditComment(1);"
+                                th:title="#{comment.action-edit}"><i class="fa fa-edit"></i></button>
+                        <button class="btn btn-outline-secondary btn-sm" title="Delete comment"
+                                onclick="callDeleteComment(1);"
+                                th:title="#{comment.action-delete}"><i class="fa fa-remove"></i></button>
                     </td>
                 </tr>
                 </tbody>
@@ -99,7 +99,7 @@
 
 <div class="modal fade" id="deleteQuery" tabindex="-1" aria-labelledby="deleteQueryTitle" aria-hidden="true">
     <input type="hidden" id="deleteId">
-    <div class="modal-dialog">
+    <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title" id="deleteQueryTitle"
@@ -117,6 +117,47 @@
         </div>
     </div>
 </div>
+
+
+<div class="modal fade" id="editComment" tabindex="-1" aria-labelledby="editCommentTitle" aria-hidden="true">
+    <input type="hidden" id="editId">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="editCommentTitle">Comment edit title</h5>
+                <button type="button" class="btn-close btn-sm" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body container">
+                <div class="row">
+                    <div class="col" id="errorContainerModal"></div>
+                </div>
+                <div class="row">
+                    <div class="col">
+                        <div class="mb-1">
+                            <label for="textComment" class="form-label" th:text="#{comment.text}">Text</label>
+                            <textarea id="textComment" rows="5"
+                                      class="form-control" placeholder="Enter comment"
+                                      th:placeholder="#{comment.placeholder-text}"
+                                      th:text="''">Comment text example</textarea>
+                            <div id="textCommentError" th:classappend="invisible">
+                                <div class="alert alert-danger align-items-center">Error</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary btn-sm"
+                        th:text="#{action.apply}" id="saveBtn">Apply
+                </button>
+                <button type="button" class="btn btn-outline-secondary btn-sm" data-bs-dismiss="modal"
+                        th:text="#{action.cancel}">Cancel
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
 </body>
 
 <script th:if="false">

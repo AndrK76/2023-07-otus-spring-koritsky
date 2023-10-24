@@ -33,20 +33,4 @@ public class ViewController {
         return "book_list";
     }
 
-    @GetMapping("/comment")
-    public String commentView(
-            @RequestParam(name = "action", defaultValue = "") String action,
-            @RequestParam(name = "book", defaultValue = "") Long bookId,
-            @RequestParam(name = "id", defaultValue = "") Long commentId,
-            Model model) {
-        if (action.equals("add") || action.equals("edit")) {
-            model.addAttribute("action", action);
-            model.addAttribute("title", "comment." + action + "-title");
-            model.addAttribute("backUrl", "/book?id=" + bookId + "&action=comments");
-            model.addAttribute("book", bookId);
-            model.addAttribute("id", commentId);
-            return "comment_edit";
-        }
-        return "error";
-    }
 }

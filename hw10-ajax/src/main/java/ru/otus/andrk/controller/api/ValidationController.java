@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import ru.otus.andrk.dto.BookDto;
+import ru.otus.andrk.dto.CommentDto;
 import ru.otus.andrk.dto.MessagePair;
 import ru.otus.andrk.service.i18n.MessageService;
 
@@ -29,9 +30,18 @@ public class ValidationController {
     @PostMapping(value = "/api/v1/validation/book")
     public ResponseEntity<String> validateBook(
             @RequestBody @Valid BookDto book) {
-        log.debug("lang: {}, book: {}", book);
+        log.debug("book: {}", book);
         return ResponseEntity.ok("ok");
     }
+
+    @PostMapping(value = "/api/v1/validation/comment")
+    public ResponseEntity<String> validateComment(
+            @RequestBody @Valid CommentDto comment) {
+        log.debug("comment: {}", comment);
+        return ResponseEntity.ok("ok");
+    }
+
+
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(MethodArgumentNotValidException.class)

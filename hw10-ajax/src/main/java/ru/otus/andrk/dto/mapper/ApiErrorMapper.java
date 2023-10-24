@@ -14,4 +14,5 @@ public interface ApiErrorMapper {
     ApiErrorDto fromKnownError(KnownLibraryManipulationException e);
 
 
+
 }

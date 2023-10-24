@@ -1,17 +1,18 @@
 package ru.otus.andrk.service.data;
 
+import ru.otus.andrk.dto.CommentDto;
 import ru.otus.andrk.dto.CommentOnBookDto;
 
 import java.util.List;
 
 public interface CommentService {
-    List<CommentOnBookDto> getCommentsForBook(long bookId);
 
-    CommentOnBookDto getCommentById(long id);
 
-    CommentOnBookDto addCommentForBook(long bookId, String text);
+    CommentDto getCommentById(long id);
 
-    CommentOnBookDto modifyComment(long commentId, String newText);
+    CommentDto addCommentForBook(long bookId, String text);
+
+    CommentDto modifyComment(long commentId, String newText);
 
     void deleteComment(long id);
 
