@@ -41,8 +41,6 @@ public class ValidationController {
         return ResponseEntity.ok("ok");
     }
 
-
-
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public Map<String, MessagePair> handleValidationExceptions(

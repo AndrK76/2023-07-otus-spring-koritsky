@@ -12,7 +12,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 import ru.otus.andrk.dto.CommentDto;
 import ru.otus.andrk.dto.CommentOnBookDto;
-import ru.otus.andrk.model.Comment;
 import ru.otus.andrk.service.data.CommentService;
 
 @RestController

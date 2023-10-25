@@ -11,8 +11,12 @@ import java.util.Date;
 @RequiredArgsConstructor
 public class ApiErrorDto {
     private final Date timestamp;
+
     private final int status;
+
     private MessagePair statusMessage;
+
     private MessagePair errorMessage;
+
     private MessagePair detailMessage;
 }

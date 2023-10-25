@@ -19,8 +19,7 @@ import java.util.stream.Collectors;
 @Log4j2
 public class MessageServiceImpl implements MessageService {
 
-    @Autowired
-    private  MessageSource messageSource;
+    private  final MessageSource messageSource;
 
     private final ApplicationSettings appSettings;
 
@@ -51,9 +50,7 @@ public class MessageServiceImpl implements MessageService {
             log.error(e);
             return "";
         }
-
     }
-
 
 }
 

@@ -62,5 +62,4 @@ public class CustomErrorController extends AbstractErrorController {
         return (modelAndView != null) ? modelAndView : new ModelAndView("error", model);
     }
 
-
 }

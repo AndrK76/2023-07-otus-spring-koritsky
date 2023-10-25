@@ -24,7 +24,6 @@ public class ApiErrorMapperImpl implements ApiErrorMapper {
 
     private final ExceptionToStringMapper exceptionMapper;
 
-
     public ApiErrorDto fromErrorAttributes(Map<String, Object> errAttrs) {
         Object errTimestamp = errAttrs.get("timestamp");
         Object errStatus = errAttrs.get("status");
@@ -55,15 +54,7 @@ public class ApiErrorMapperImpl implements ApiErrorMapper {
             messageKey = "known-error.bubu-error";
             ex = (BuBuException)e.getCause();
         }
-        ret.setErrorMessage(new MessagePair(messageKey,
-                messageService.getMessageInDefaultLocale(messageKey, null)));
-        if (ex.getCause() != null) {
-            var message = Strings.isNullOrEmpty(ex.getCause().getMessage())
-                    ? ex.getCause().getClass().getSimpleName()
-                    : ex.getCause().getMessage();
-            ret.setDetailMessage(new MessagePair("", message));
-        }
-        return ret;
+        return makeApiErrorDto(ex, ret, messageKey);
     }
 
     @Override
@@ -72,15 +63,7 @@ public class ApiErrorMapperImpl implements ApiErrorMapper {
         var ret = new ApiErrorDto(new Date(), 400);
         setStatus(ret);
         var messageKey = exceptionMapper.getExceptionMessage(e);
-        ret.setErrorMessage(new MessagePair(messageKey,
-                messageService.getMessageInDefaultLocale(messageKey, null)));
-        if (e.getCause() != null) {
-            var message = Strings.isNullOrEmpty(e.getCause().getMessage())
-                    ? e.getCause().getClass().getSimpleName()
-                    : e.getCause().getMessage();
-            ret.setDetailMessage(new MessagePair("", message));
-        }
-        return ret;
+        return makeApiErrorDto(e, ret, messageKey);
     }
 
     private String getStatusMessageKey(int status) {
@@ -94,5 +77,16 @@ public class ApiErrorMapperImpl implements ApiErrorMapper {
                         messageService.getMessageInDefaultLocale(messageKey, null)));
     }
 
+    private ApiErrorDto makeApiErrorDto(RuntimeException ex, ApiErrorDto ret, String messageKey) {
+        ret.setErrorMessage(new MessagePair(messageKey,
+                messageService.getMessageInDefaultLocale(messageKey, null)));
+        if (ex.getCause() != null) {
+            var message = Strings.isNullOrEmpty(ex.getCause().getMessage())
+                    ? ex.getCause().getClass().getSimpleName()
+                    : ex.getCause().getMessage();
+            ret.setDetailMessage(new MessagePair("", message));
+        }
+        return ret;
+    }
 
 }
