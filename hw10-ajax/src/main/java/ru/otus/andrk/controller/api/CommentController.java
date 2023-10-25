@@ -27,19 +27,19 @@ public class CommentController {
     }
 
     @PostMapping("/api/v1/comment")
-    public CommentDto addComment(@RequestBody @Valid CommentOnBookDto comment){
+    public CommentDto addComment(@RequestBody @Valid CommentOnBookDto comment) {
         return commentService.addCommentForBook(comment.getBookId(), comment.getText());
     }
 
     @PutMapping("/api/v1/comment/{id}")
     public CommentDto modifyComment(
             @PathVariable(name = "id") long commentId,
-            @RequestBody @Valid CommentDto comment){
-        return commentService.modifyComment(comment.id(), comment.text());
+            @RequestBody @Valid CommentDto comment) {
+        return commentService.modifyComment(commentId, comment.text());
     }
 
     @DeleteMapping("/api/v1/comment/{id}")
-    public void deleteComment(@PathVariable(name = "id") long commentId){
+    public void deleteComment(@PathVariable(name = "id") long commentId) {
         commentService.deleteComment(commentId);
     }
 

@@ -1,6 +1,5 @@
 package ru.otus.andrk.controller.api;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,7 +29,6 @@ import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -63,6 +61,7 @@ public class BookControllerTest {
 
     @SpyBean
     private ApiExceptionHandler apiExceptionHandler;
+
     @MockBean
     private ApiErrorMapper errorMapper;
 
@@ -119,7 +118,7 @@ public class BookControllerTest {
     }
 
     @Test
-    public void shouldAddBookAndReturnIt() throws Exception {
+    public void shouldAddGivenBookOnlyOnceAndReturnExcept() throws Exception {
         var srcBook = getBookDtoList().get(0);
         var resBook = getBookDtoList().get(1);
         given(bookService.addBook(any())).willReturn(resBook);
@@ -149,7 +148,7 @@ public class BookControllerTest {
     }
 
     @Test
-    public void shouldModifyGivenBookAndReturnIt() throws Exception {
+    public void shouldModifyOnlyGivenBookAndReturnExcept() throws Exception {
         var srcBook = getBookDtoList().get(0);
         var srcId = 99L;
         assert srcBook.getId() != srcId;
@@ -163,6 +162,7 @@ public class BookControllerTest {
                 .andExpect(content().json(mapper.writeValueAsString(resBook)));
 
         verify(bookService, times(1)).modifyBook(srcId, srcBook);
+        verify(bookService, times(1)).modifyBook(anyLong(), any());
     }
 
     @Test
