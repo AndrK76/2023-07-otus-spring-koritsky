@@ -1,9 +1,6 @@
 package ru.otus.andrk.service.data;
 
 import ru.otus.andrk.dto.CommentDto;
-import ru.otus.andrk.dto.CommentOnBookDto;
-
-import java.util.List;
 
 public interface CommentService {
 
@@ -15,5 +12,4 @@ public interface CommentService {
     CommentDto modifyComment(long commentId, String newText);
 
     void deleteComment(long id);
-
 }

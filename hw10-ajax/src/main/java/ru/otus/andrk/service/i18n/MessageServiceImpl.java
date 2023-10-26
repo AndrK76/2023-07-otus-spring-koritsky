@@ -2,7 +2,6 @@ package ru.otus.andrk.service.i18n;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.context.NoSuchMessageException;
 import org.springframework.stereotype.Service;
@@ -19,23 +18,24 @@ import java.util.stream.Collectors;
 @Log4j2
 public class MessageServiceImpl implements MessageService {
 
-    private  final MessageSource messageSource;
+    private final MessageSource messageSource;
 
     private final ApplicationSettings appSettings;
 
     @Override
-    public Map<String, String> getMessages(Locale locale) {
-        try{
+    public Map<String, String> getMessages(String lang) {
+        try {
+            Locale locale = Locale.forLanguageTag(lang);
             return ResourceBundle.getBundle(appSettings.getMessageBundle(), locale).keySet().stream()
                     .collect(Collectors.toMap(k -> k, v -> {
-                    try {
-                        return messageSource.getMessage(v, null, locale);
-                    } catch (NoSuchMessageException e) {
-                        log.error(e);
-                        return "";
-                    }
-                }));
-        } catch (Exception e){
+                        try {
+                            return messageSource.getMessage(v, null, locale);
+                        } catch (NoSuchMessageException e) {
+                            log.error(e);
+                            return "";
+                        }
+                    }));
+        } catch (Exception e) {
             log.error(e);
             throw new LocalizationException(e);
         }

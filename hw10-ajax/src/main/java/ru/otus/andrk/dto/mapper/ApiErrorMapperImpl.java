@@ -4,6 +4,8 @@ import com.google.common.base.Strings;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
+import org.springframework.validation.FieldError;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import ru.otus.andrk.dto.ApiErrorDto;
 import ru.otus.andrk.dto.MessagePair;
 import ru.otus.andrk.exception.BuBuException;
@@ -13,6 +15,7 @@ import ru.otus.andrk.exception.converter.ExceptionToStringMapper;
 import ru.otus.andrk.service.i18n.MessageService;
 
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Map;
 
 @Service
@@ -50,9 +53,9 @@ public class ApiErrorMapperImpl implements ApiErrorMapper {
         var ret = new ApiErrorDto(new Date(), 500);
         setStatus(ret);
         var messageKey = "known-error.other-manipulation-error";
-        if (e.getCause() instanceof BuBuException){
+        if (e.getCause() instanceof BuBuException) {
             messageKey = "known-error.bubu-error";
-            ex = (BuBuException)e.getCause();
+            ex = (BuBuException) e.getCause();
         }
         return makeApiErrorDto(ex, ret, messageKey);
     }
@@ -64,6 +67,18 @@ public class ApiErrorMapperImpl implements ApiErrorMapper {
         setStatus(ret);
         var messageKey = exceptionMapper.getExceptionMessage(e);
         return makeApiErrorDto(e, ret, messageKey);
+    }
+
+    @Override
+    public Map<String, MessagePair> fromNotValidArgument(MethodArgumentNotValidException e) {
+        Map<String, MessagePair> errors = new HashMap<>();
+        e.getBindingResult().getAllErrors().forEach((error) -> {
+            String fieldName = ((FieldError) error).getField();
+            String errorMessageKey = error.getDefaultMessage();
+            String errorMessage = messageService.getMessageInDefaultLocale(errorMessageKey, null);
+            errors.put(fieldName, new MessagePair(errorMessageKey, errorMessage));
+        });
+        return errors;
     }
 
     private String getStatusMessageKey(int status) {

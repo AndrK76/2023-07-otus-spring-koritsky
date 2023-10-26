@@ -4,5 +4,4 @@ public class LocalizationException extends OtherLibraryManipulationException {
     public LocalizationException(Throwable cause) {
         super(cause);
     }
-
 }

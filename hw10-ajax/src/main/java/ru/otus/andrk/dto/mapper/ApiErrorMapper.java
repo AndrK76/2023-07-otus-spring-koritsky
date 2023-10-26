@@ -1,6 +1,8 @@
 package ru.otus.andrk.dto.mapper;
 
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import ru.otus.andrk.dto.ApiErrorDto;
+import ru.otus.andrk.dto.MessagePair;
 import ru.otus.andrk.exception.KnownLibraryManipulationException;
 import ru.otus.andrk.exception.OtherLibraryManipulationException;
 
@@ -13,4 +15,5 @@ public interface ApiErrorMapper {
 
     ApiErrorDto fromKnownError(KnownLibraryManipulationException e);
 
+    Map<String, MessagePair> fromNotValidArgument(MethodArgumentNotValidException e);
 }

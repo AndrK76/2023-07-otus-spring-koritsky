@@ -20,7 +20,6 @@ public class AuthorServiceImpl implements AuthorService {
 
     private final DtoMapper mapper;
 
-
     @Override
     public List<AuthorDto> getAllAuthors() {
         try {

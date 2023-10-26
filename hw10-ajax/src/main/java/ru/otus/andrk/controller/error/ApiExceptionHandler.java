@@ -20,17 +20,16 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler(OtherLibraryManipulationException.class)
     public ResponseEntity<ApiErrorDto> otherLibErr(OtherLibraryManipulationException e) {
-        log.debug("otherLibErr: {}",e.toString());
+        log.debug("otherLibErr: {}", e.toString());
         var ret = mapper.fromOtherError(e);
         return ResponseEntity.status(ret.getStatus()).body(ret);
     }
 
     @ExceptionHandler(KnownLibraryManipulationException.class)
-    public ResponseEntity<ApiErrorDto> knownLibErr(KnownLibraryManipulationException e){
-        log.debug("knownLibErr: {}",e.toString());
+    public ResponseEntity<ApiErrorDto> knownLibErr(KnownLibraryManipulationException e) {
+        log.debug("knownLibErr: {}", e.toString());
         var ret = mapper.fromKnownError(e);
         return ResponseEntity.status(ret.getStatus()).body(ret);
-
     }
 
 }

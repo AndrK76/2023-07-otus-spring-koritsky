@@ -131,29 +131,37 @@ public class BookServiceImpl implements BookService {
     }
 
     private void actualizeAuthorAndGenre(BookDto book) {
-        try{
-            if (!Strings.isNullOrEmpty(book.getAuthorName())) {
-                var author = authorService.getAuthorByName(book.getAuthorName());
-                if (author == null) {
-                    author = authorService.addAuthor(book.getAuthorName());
-                }
-                book.setAuthorId(author.id());
-            } else {
-                book.setAuthorId(null);
-            }
-
-            if (!Strings.isNullOrEmpty(book.getGenreName())) {
-                var genre = genreService.getGenreByName(book.getGenreName());
-                if (genre == null) {
-                    genre = genreService.addGenre(book.getGenreName());
-                }
-                book.setGenreId(genre.id());
-            } else {
-                book.setGenreId(null);
-            }
-        } catch (Exception e){
+        try {
+            actualizeAuthor(book);
+            actualizeGenre(book);
+        } catch (Exception e) {
             log.error(e);
             throw new OtherLibraryManipulationException(e);
         }
     }
+
+    private void actualizeAuthor(BookDto book) {
+        if (!Strings.isNullOrEmpty(book.getAuthorName())) {
+            var author = authorService.getAuthorByName(book.getAuthorName());
+            if (author == null) {
+                author = authorService.addAuthor(book.getAuthorName());
+            }
+            book.setAuthorId(author.id());
+        } else {
+            book.setAuthorId(null);
+        }
+    }
+
+    private void actualizeGenre(BookDto book) {
+        if (!Strings.isNullOrEmpty(book.getGenreName())) {
+            var genre = genreService.getGenreByName(book.getGenreName());
+            if (genre == null) {
+                genre = genreService.addGenre(book.getGenreName());
+            }
+            book.setGenreId(genre.id());
+        } else {
+            book.setGenreId(null);
+        }
+    }
+
 }

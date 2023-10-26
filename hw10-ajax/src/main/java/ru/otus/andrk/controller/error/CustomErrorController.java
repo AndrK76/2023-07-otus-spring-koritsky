@@ -12,7 +12,6 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.servlet.LocaleResolver;
 import org.springframework.web.servlet.ModelAndView;
 import ru.otus.andrk.dto.ApiErrorDto;
 import ru.otus.andrk.dto.mapper.ApiErrorMapper;
@@ -24,20 +23,16 @@ import java.util.Map;
 @Controller
 @Log4j2
 public class CustomErrorController extends AbstractErrorController {
+    private final ApiErrorMapper mapper;
+
     public CustomErrorController(
             ErrorAttributes errorAttributes,
             List<ErrorViewResolver> errorViewResolvers,
-            ApiErrorMapper mapper,
-            LocaleResolver localeResolver
+            ApiErrorMapper mapper
     ) {
         super(errorAttributes, errorViewResolvers);
         this.mapper = mapper;
-        this.localeResolver = localeResolver;
     }
-
-    private final ApiErrorMapper mapper;
-
-    private final LocaleResolver localeResolver;
 
     @RequestMapping(path = "/error", produces = {MediaType.APPLICATION_JSON_VALUE})
     public ResponseEntity<ApiErrorDto> errorData(HttpServletRequest request) {

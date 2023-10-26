@@ -42,7 +42,7 @@ public class BookController {
     }
 
     @GetMapping("/api/v1/book/{id}/comments")
-    public BookWithCommentsDto getBookWithComments(@PathVariable(name = "id") long bookId){
+    public BookWithCommentsDto getBookWithComments(@PathVariable(name = "id") long bookId) {
         return bookService.getBookWithCommentsById(bookId);
     }
 
@@ -54,12 +54,12 @@ public class BookController {
     @PutMapping("/api/v1/book/{id}")
     public BookDto modifyBook(
             @PathVariable(name = "id") long bookId,
-            @RequestBody @Valid BookDto book){
+            @RequestBody @Valid BookDto book) {
         return bookService.modifyBook(bookId, book);
     }
 
     @DeleteMapping("/api/v1/book/{id}")
-    public void deleteBook(@PathVariable(name = "id") long bookId){
+    public void deleteBook(@PathVariable(name = "id") long bookId) {
         bookService.deleteBook(bookId);
     }
 

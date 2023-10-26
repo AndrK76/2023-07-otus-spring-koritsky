@@ -12,5 +12,4 @@ public interface AuthorService {
     AuthorDto getAuthorById(long authorId);
 
     AuthorDto getAuthorByName(String name);
-
 }

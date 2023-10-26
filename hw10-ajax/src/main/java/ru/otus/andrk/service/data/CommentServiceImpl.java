@@ -5,7 +5,6 @@ import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.otus.andrk.dto.CommentDto;
-import ru.otus.andrk.dto.CommentOnBookDto;
 import ru.otus.andrk.dto.mapper.DtoMapper;
 import ru.otus.andrk.exception.KnownLibraryManipulationException;
 import ru.otus.andrk.exception.NoExistBookException;
@@ -15,7 +14,6 @@ import ru.otus.andrk.model.Comment;
 import ru.otus.andrk.repository.BookRepository;
 import ru.otus.andrk.repository.CommentRepository;
 
-import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -33,7 +31,7 @@ public class CommentServiceImpl implements CommentService {
 
     @Override
     public CommentDto getCommentById(long id) {
-        log.debug("get {}",id);
+        log.debug("get {}", id);
         Optional<Comment> comment;
         try {
             buBuService.tryBuBu();
@@ -94,7 +92,7 @@ public class CommentServiceImpl implements CommentService {
         try {
             var comment = repo.findById(id);
             comment.ifPresent(repo::delete);
-        } catch (Exception e){
+        } catch (Exception e) {
             log.error(e);
             throw new OtherLibraryManipulationException(e);
         }

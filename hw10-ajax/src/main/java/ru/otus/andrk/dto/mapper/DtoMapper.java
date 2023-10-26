@@ -24,5 +24,4 @@ public interface DtoMapper {
     CommentOnBookDto toDtoWithBook(Comment comment);
 
     CommentDto toDto(Comment comment);
-
 }
