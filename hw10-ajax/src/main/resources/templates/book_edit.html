@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="ru" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="#{library.title} +' :: '+#{${title}}">Modify book</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+          th:href="@{/webjars/bootstrap/dist/css/bootstrap.min.css}"
+          rel="stylesheet">
+    <link href="../static/css/site.css"
+          th:href="@{/css/site.css}"
+          rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css"
+          th:href="@{/webjars/font-awesome/css/all.min.css}"
+          rel="stylesheet">
+</head>
+<body>
+<div class="container">
+    <div class="row justify-content-center">
+        <main class="col-sm-12 col-md-10">
+            <div class="row">
+                <div class="col">
+                    <h1 th:text="#{${title}}">Modify book</h1>
+                    <input type="hidden" th:value="${#locale.toString()}" id="lang">
+                </div>
+            </div>
+            <div class="row">
+                <div class="col" id="errorContainer"></div>
+            </div>
+            <div class="row">
+                <div class="col">
+                    <form action="book_list.html" id="bookForm" th:action="''">
+                        <input type="hidden" id="action" th:value="${action}">
+                        <input type="hidden" id="idBook" th:value="${id}">
+                        <input type="hidden" id="backUrl" th:value="${backUrl}">
+                        <div class="mb-1">
+                            <label for="nameBook" class="form-label" th:text="#{book.name}">Name</label>
+                            <input type="text"
+                                   class="form-control" id="nameBook" value="Name book" placeholder="Enter book name"
+                                   th:placeholder="#{book.placeholder-name}" th:value="''">
+                            <div id="nameBookError" th:classappend="invisible">
+                                <div class="alert alert-danger align-items-center">Error</div>
+                            </div>
+                        </div>
+                        <div class="mb-1">
+                            <input type="hidden" id="authorId">
+                            <label for="authorName" class="form-label" th:text="#{book.author}">Author</label>
+                            <input
+                                    class="form-control" id="authorName" value="Book author"
+                                    placeholder="Select exist author or enter new"
+                                    th:placeholder="#{book.placeholder-author}"
+                                    th:value="''"
+                                    list="authorList">
+                            <datalist id="authorList">
+                                <option value="Existing author name" th:if="${false}"/>
+                            </datalist>
+                        </div>
+                        <div class="mb-1">
+                            <input type="hidden" id="genreId">
+                            <label for="genreName" class="form-label" th:text="#{book.genre}">Genre</label>
+                            <input
+                                    class="form-control" id="genreName" value="Book genre"
+                                    placeholder="Select exist genre or enter new"
+                                    th:placeholder="#{book.placeholder-genre}"
+                                    th:value="''"
+                                    list="genreList">
+                            <datalist id="genreList">
+                                <option value="Existing genre name" th:if="${false}"/>
+                            </datalist>
+                        </div>
+
+                        <button type="button" class="btn btn-secondary btn-sm" id="btnAccept"
+                                th:text="#{action.apply}">Apply
+                        </button>
+                        <button class="btn btn-outline-secondary btn-sm" onclick="history.back();"
+                           th:text="#{action.cancel}">Cancel</button>
+                    </form>
+                </div>
+            </div>
+        </main>
+    </div>
+</div>
+</body>
+
+<script th:src="@{/js/common.js}" src="../static/js/common.js"></script>
+<script th:src="@{/js/book_edit.js}" src="../static/js/book_edit.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"
+        th:src="@{/webjars/bootstrap/dist/js/bootstrap.bundle.min.js}"></script>
+
+</html>
