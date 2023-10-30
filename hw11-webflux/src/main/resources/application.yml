@@ -1,0 +1,37 @@
+book-app:
+  default-lang: en
+
+server:
+  port: 8080
+  error:
+    include-stacktrace: never
+
+spring:
+  data:
+    mongodb:
+      host: localhost
+      port: 27017
+      database: bookStore
+  messages:
+    basename: messages
+    encoding: UTF-8
+    fallback-to-system-locale: false
+
+mongock:
+  runner-type: "InitializingBean"
+  change-logs-scan-package: ru.otus.andrk.changelog
+  mongo-db:
+    write-concern:
+      journal: false
+    read-concern: local
+
+
+
+logging:
+  level:
+    root: error
+    #ru.otus.andrk: info
+    ru.otus.andrk: debug
+    org.springframework.boot.web.embedded.netty.NettyWebServer: info
+
+
