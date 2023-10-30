@@ -1,5 +1,7 @@
 book-app:
   default-lang: en
+  thread-pool-size: 2
+  list-delay-ms: 100
 
 server:
   port: 8080
@@ -18,7 +20,7 @@ spring:
     fallback-to-system-locale: false
 
 mongock:
-  runner-type: "InitializingBean"
+  runner-type: "ApplicationRunner"
   change-logs-scan-package: ru.otus.andrk.changelog
   mongo-db:
     write-concern:
@@ -30,8 +32,9 @@ mongock:
 logging:
   level:
     root: error
-    #ru.otus.andrk: info
     ru.otus.andrk: debug
     org.springframework.boot.web.embedded.netty.NettyWebServer: info
+    #com.github.cloudyrock: trace
+    com.github.cloudyrock.mongock.runner: info
 
 

@@ -1,0 +1,18 @@
+col.one-percent-width {
+    width: 1%;
+}
+.vh-50 {
+    min-height: 50vh;
+}
+
+.disabled-main {
+    pointer-events:none;
+    filter: brightness(60%);
+    background-color: rgba(0, 0, 0, 0.2);
+}
+
+div.invisible {
+    display: none;
+    min-height: 0px;
+}
+
