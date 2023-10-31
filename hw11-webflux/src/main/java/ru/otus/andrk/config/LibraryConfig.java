@@ -11,10 +11,14 @@ public class LibraryConfig {
 
     private final String defaultLang;
 
+    private final String messageBundle;
+
     public LibraryConfig(
             @Value("${book-app.list-delay-ms}") long listDelayInMs,
-            @Value("${book-app.default-lang}")String defaultLang) {
+            @Value("${book-app.default-lang}")String defaultLang,
+            @Value("${spring.messages.basename}")String messageBundle) {
         this.listDelayInMs = listDelayInMs;
         this.defaultLang = defaultLang;
+        this.messageBundle = messageBundle;
     }
 }

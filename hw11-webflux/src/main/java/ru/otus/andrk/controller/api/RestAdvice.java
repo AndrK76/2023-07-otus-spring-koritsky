@@ -1,0 +1,33 @@
+package ru.otus.andrk.controller.api;
+
+import lombok.RequiredArgsConstructor;
+import lombok.extern.log4j.Log4j2;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.RestControllerAdvice;
+import reactor.core.publisher.Mono;
+import ru.otus.andrk.dto.ApiErrorDto;
+import ru.otus.andrk.dto.mapper.ApiErrorMapper;
+import ru.otus.andrk.exception.KnownLibraryManipulationException;
+import ru.otus.andrk.exception.OtherLibraryManipulationException;
+
+@RestControllerAdvice(basePackages = "ru.otus.andrk.controller.api")
+@RequiredArgsConstructor
+@Log4j2
+public class RestAdvice {
+    private final ApiErrorMapper mapper;
+
+    @ExceptionHandler(OtherLibraryManipulationException.class)
+    public Mono<ResponseEntity<ApiErrorDto>> otherLibErr(OtherLibraryManipulationException e) {
+        return mapper.fromOtherError(e)
+                .doOnNext(r -> log.warn("otherLibErr: {}", e.toString()))
+                .map(r -> ResponseEntity.status(r.getStatus()).body(r));
+    }
+
+    @ExceptionHandler(KnownLibraryManipulationException.class)
+    public Mono<ResponseEntity<ApiErrorDto>> knownLibErr(KnownLibraryManipulationException e) {
+        return mapper.fromKnownError(e)
+                .doOnNext(r -> log.warn("knownLibErr: {}", e.toString()))
+                .map(r -> ResponseEntity.status(r.getStatus()).body(r));
+    }
+}

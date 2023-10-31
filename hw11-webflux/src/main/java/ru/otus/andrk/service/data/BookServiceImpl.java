@@ -10,6 +10,7 @@ import ru.otus.andrk.config.LibraryConfig;
 import ru.otus.andrk.dto.BookDto;
 import ru.otus.andrk.dto.BookWithCommentsDto;
 import ru.otus.andrk.dto.mapper.DtoMapper;
+import ru.otus.andrk.exception.OtherLibraryManipulationException;
 import ru.otus.andrk.repository.BookRepository;
 
 import java.time.Duration;
@@ -28,6 +29,7 @@ public class BookServiceImpl implements BookService {
     public Flux<BookDto> getAllBooks() {
         log.debug("call get all books");
         return bookRepo.findAll()
+                .timeout(Duration.ofMillis(500), scheduler)
                 .delayElements(Duration.ofMillis(config.getListDelayInMs()),scheduler)
                 .map(mapper::toDto)
                 .doFirst(()->log.debug("Start get all books"))
