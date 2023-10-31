@@ -11,7 +11,24 @@ Content-Type: application/x-ndjson
 Accept-Encoding: UTF-8
 Cache-Control: no-cache
 
+###
+GET http://localhost:8080/locale?lang=ru
+Accept-Encoding: UTF-8
+Accept-Language: en_US
+Cache-Control: no-cache
 
+###
+GET http://localhost:8080/locale?lang=en
+Accept-Encoding: UTF-8
+Accept-Language: en_US
+Cache-Control: no-cache
+
+
+###
+GET http://localhost:8080/locale
+Accept-Encoding: UTF-8
+Accept-Language: en_US
+Cache-Control: no-cache
 
 
 

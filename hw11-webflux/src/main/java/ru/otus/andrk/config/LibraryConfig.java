@@ -9,8 +9,12 @@ import org.springframework.stereotype.Component;
 public class LibraryConfig {
     private final long listDelayInMs;
 
+    private final String defaultLang;
+
     public LibraryConfig(
-            @Value("${book-app.list-delay-ms}") long listDelayInMs) {
+            @Value("${book-app.list-delay-ms}") long listDelayInMs,
+            @Value("${book-app.default-lang}")String defaultLang) {
         this.listDelayInMs = listDelayInMs;
+        this.defaultLang = defaultLang;
     }
 }

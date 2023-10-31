@@ -41,7 +41,7 @@ public class ThreadConfig {
 
     @Bean
     public Scheduler workerPool() {
-        return Schedulers.newParallel("worker-thread", threadPoolSize);
+        return Schedulers.newParallel("work-thread", threadPoolSize);
     }
 
 }
