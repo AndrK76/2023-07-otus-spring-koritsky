@@ -9,41 +9,52 @@ window.onload = async (event) => {
     //document.getElementById('deleteBtn').onclick = doDelete;
     deleteModal = new bootstrap.Modal(document.getElementById('deleteQuery'));
     await getLocalizedMessages(document.getElementById('lang').value, errorContainer);
-    //await loadBooks();
-    //getBooks();
-    getDataAsJsonStreamAndApply(urlBookApi, errorContainer).then();
+    clearBooks();
+    await getDataAsJsonStreamAndApply2(urlBookApi, errorContainer, showBook, afterLoadBooks);
 }
 
-function getBooks() {
-    const streamErr = e => {
-        console.warn("error");
-        console.warn(e);
+
+let bookCounter = 0;
+let actionEdit;
+let actionViewComments;
+let actionDelete;
+
+
+function clearBooks() {
+    if (!noClear){
+        tbody.innerHTML = '';
+        totalEl.innerHTML = '???';
+        bookCounter = 0;
     }
+    actionEdit = localizedMessages.has('book.action-edit')
+        ? localizedMessages.get('book.action-edit')
+        : 'Edit book';
+    actionViewComments = localizedMessages.has('book.action-view-comments')
+        ? localizedMessages.get('book.action-view-comments')
+        : 'View Comments';
+    actionDelete = localizedMessages.has('book.action-delete-book')
+        ? localizedMessages.get('book.action-delete-book')
+        : 'Delete book';
+}
 
-    fetch(urlBookApi, {method: "GET", headers: ndJsonRequestHeader})
-        .then((response) => {
-            return can.ndjsonStream(response.body);
-        })
-        .then(dataStream => {
-            const reader = dataStream.getReader();
-            const read = result => {
-                if (result.done) {
-                    return;
-                }
-                render(result.value);
-                reader.read().then(read, streamErr);
-            }
-            reader.read().then(read, streamErr);
-        });
+function showBook(book){
+    bookCounter++;
+    let row = document.createElement('tr');
+    row.innerHTML = `<td>${book.id}</td>
+                    <td>${book.name}</td>
+                    <td>${book.authorName === null ? '' : book.authorName}</td>
+                    <td>${book.genreName === null ? '' : book.genreName}</td>
+                    <td>
+                        <a class="btn btn-outline-secondary btn-sm" title="${actionEdit}"
+                           href="/book?action=edit&id=${book.id}"> <i class="fa fa-edit"></i></a>
+                        <a class="btn btn-outline-secondary btn-sm" title="${actionViewComments}"
+                           href="/book?action=comments&id=${book.id}"> <i class="fa fa-comment"></i></a>
+                        <btn class="btn btn-outline-secondary btn-sm" title="${actionDelete}"
+                            onclick="callDeleteBook(${book.id});"> <i class="fa fa-remove"></i></btn>
+                    </td>`;
+    tbody.append(row);
+}
 
-    const render = value => {
-        console.log(value)
-        /*
-        const div = document.createElement('div');
-        div.append('stringValue:', JSON.stringify(value));
-        document.getElementById('dataBlock').append(div);
-         */
-    };
-
-
+function afterLoadBooks(){
+    totalEl.innerHTML = bookCounter.toString();
 }

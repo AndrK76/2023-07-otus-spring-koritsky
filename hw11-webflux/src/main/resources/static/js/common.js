@@ -97,40 +97,45 @@ async function getDataAsJsonAndApply(url, errorContainer, successFunction, error
     }
 }
 
-async function getDataAsJsonStreamAndApply(url, errorContainer, itemFunction, completeFunction, errorFunction) {
-    try {
 
-        function processItem(item) {
-            if (item['errorMessage'] !== undefined) {
-                showError(errorContainer, item);
-            } else {
-                console.log(item);
+async function getDataAsJsonStreamAndApply2(url, errorContainer, itemFunction, completeFunction, errorFunction) {
+    try {
+        function onMessage(data, status) {
+            if (itemFunction !== undefined){
+                itemFunction(data, status);
             }
         }
 
-        function processError(e) {
-            console.warn(e);
-            showError(errorContainer, e);
+        function onComplete() {
+            if (completeFunction !== undefined){
+                completeFunction();
+            }
         }
 
-        fetch(url, {method: "GET", headers: ndJsonRequestHeader})
-            .catch(e => console.warn(e))
-            .then(response => {
-                return can.ndjsonStream(response.body)
-            })
-            .catch(e => console.warn(e))
-            .then(dataStream => {
-                const reader = dataStream.getReader();
-                const read = result => {
-                    if (result.done) {
-                        return;
-                    }
-                    processItem(result.value);
-                    reader.read().then(read, processError);
-                }
-                reader.read().then(read, processError);
-            })
-            .catch(e => console.warn(e))
+        function onError(data, status) {
+            function makeErr(e) {
+                return {
+                    'status': '200',
+                    'errorMessage': {'key': null, 'message': null},
+                    'statusMessage': {'key': '', 'message': e.message},
+                };
+            }
+
+            if (status === undefined) {
+                data = makeErr(data);
+                //status = 200;
+            }
+            showError(errorContainer, data);
+        }
+
+
+        const stream = fetch(url, {method: "GET", headers: ndJsonRequestHeader});
+
+        stream
+            .then(readStream(onMessage, onError))
+            .then(onComplete)
+            .catch(onError)
+        ;
     } catch (e) {
         showError(errorContainer, makeErr(e));
         if (errorFunction != null) {
