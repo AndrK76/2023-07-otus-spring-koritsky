@@ -6,6 +6,8 @@ import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.client.HttpStatusCodeException;
+import org.springframework.web.server.ResponseStatusException;
 import reactor.core.publisher.Mono;
 import reactor.core.scheduler.Scheduler;
 import ru.otus.andrk.dto.ApiErrorDto;
@@ -32,10 +34,9 @@ public class ApiErrorMapperImpl implements ApiErrorMapper {
 
 
     @Override
-    public Mono<ApiErrorDto> fromErrorAttributes(Map<String, Object> errAttrs) {
-        return Mono.just(makeErrorDtoFromErrorAttributes(errAttrs))
-                .publishOn(scheduler)
-                .doOnNext(r -> log.debug("fromErrorAttributes"));
+    public ApiErrorDto fromErrorAttributes(Map<String, Object> errAttrs) {
+        log.debug("fromErrorAttributes");
+        return makeErrorDtoFromErrorAttributes(errAttrs);
     }
 
     @Override
@@ -48,6 +49,12 @@ public class ApiErrorMapperImpl implements ApiErrorMapper {
     public Mono<ApiErrorDto> fromKnownError(KnownLibraryManipulationException e) {
         return Mono.just(makeFromKnownError(e)).publishOn(scheduler)
                 .doOnNext(l-> log.debug("fromKnownError: {}", e.toString()));
+    }
+
+    @Override
+    public Mono<ApiErrorDto> fromStatusError(ResponseStatusException e) {
+        return Mono.just(makeFromStatusError(e)).publishOn(scheduler)
+                .doOnNext(l-> log.debug("fromStatusError: {}", e.toString()));
     }
 
     @Override
@@ -88,6 +95,15 @@ public class ApiErrorMapperImpl implements ApiErrorMapper {
         var messageKey = "known-error.other-manipulation-error";
         return makeApiErrorDto(ex, ret, messageKey);
     }
+
+    private ApiErrorDto makeFromStatusError(ResponseStatusException e) {
+        RuntimeException ex = e;
+        var ret = new ApiErrorDto(new Date(), e.getStatusCode().value());
+        setStatus(ret);
+        var messageKey = "known-error.other-manipulation-error";
+        return makeApiErrorDto(ex, ret, messageKey);
+    }
+
 
     private ApiErrorDto makeFromKnownError(KnownLibraryManipulationException e) {
         var ret = new ApiErrorDto(new Date(), 400);

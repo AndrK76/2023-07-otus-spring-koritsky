@@ -5,6 +5,7 @@ import lombok.extern.log4j.Log4j2;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.client.HttpStatusCodeException;
 import reactor.core.publisher.Mono;
 import ru.otus.andrk.dto.ApiErrorDto;
 import ru.otus.andrk.dto.mapper.ApiErrorMapper;
@@ -30,4 +31,6 @@ public class RestAdvice {
                 .doOnNext(r -> log.warn("knownLibErr: {}", e.toString()))
                 .map(r -> ResponseEntity.status(r.getStatus()).body(r));
     }
+
+
 }

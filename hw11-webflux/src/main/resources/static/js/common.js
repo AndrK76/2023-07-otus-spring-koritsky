@@ -24,7 +24,7 @@ async function getLocalizedMessages(lang, errDiv = null) {
         });
     }
 
-    getDataAsJsonAndApply(url, errDiv, applyLocalizeMessages).then();
+    await getDataAsJsonAndApply(url, errDiv, applyLocalizeMessages);
 }
 
 function makeErr(e) {
@@ -97,8 +97,7 @@ async function getDataAsJsonAndApply(url, errorContainer, successFunction, error
     }
 }
 
-
-async function getDataAsJsonStreamAndApply2(url, errorContainer, itemFunction, completeFunction, errorFunction) {
+async function getDataAsJsonStreamAndApply(url, errorContainer, itemFunction, completeFunction, errorFunction) {
     try {
         function onMessage(data, status) {
             if (itemFunction !== undefined){
@@ -141,5 +140,24 @@ async function getDataAsJsonStreamAndApply2(url, errorContainer, itemFunction, c
         if (errorFunction != null) {
             errorFunction(500);
         }
+    }
+}
+
+async function doDelete(url, deleteId, errorContainer, successFunction) {
+    try{
+        let response = await fetch(urlBookApi + '/' + deleteId,
+            {
+                method: 'DELETE', headers: jsonRequestHeader,
+            });
+        if (response.ok){
+            if (successFunction !== undefined){
+                successFunction();
+            }
+        } else {
+            let result = await response.json();
+            showError(errorContainer, result);
+        }
+    } catch (e) {
+        showError(errorContainer, makeErr(e));
     }
 }

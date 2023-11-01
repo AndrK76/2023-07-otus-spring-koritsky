@@ -29,7 +29,7 @@ public class BookServiceImpl implements BookService {
     public Flux<BookDto> getAllBooks() {
         log.debug("call get all books");
         return bookRepo.findAll()
-                .timeout(Duration.ofMillis(500), scheduler)
+                .timeout(Duration.ofMillis(config.getWaitDataInMs()), scheduler)
                 .delayElements(Duration.ofMillis(config.getListDelayInMs()),scheduler)
                 .map(mapper::toDto)
                 .doFirst(()->log.debug("Start get all books"))

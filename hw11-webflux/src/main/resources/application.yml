@@ -1,6 +1,7 @@
 book-app:
   default-lang: en
   thread-pool-size: 2
+  wait-data-ms: 200
   list-delay-ms: 100
 
 server:
