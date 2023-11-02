@@ -32,5 +32,4 @@ public class RestAdvice {
                 .map(r -> ResponseEntity.status(r.getStatus()).body(r));
     }
 
-
 }

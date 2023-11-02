@@ -32,7 +32,6 @@ public class ApiErrorMapperImpl implements ApiErrorMapper {
 
     private final Scheduler scheduler;
 
-
     @Override
     public ApiErrorDto fromErrorAttributes(Map<String, Object> errAttrs) {
         log.debug("fromErrorAttributes");
@@ -41,20 +40,23 @@ public class ApiErrorMapperImpl implements ApiErrorMapper {
 
     @Override
     public Mono<ApiErrorDto> fromOtherError(OtherLibraryManipulationException e) {
-        return Mono.just(makeFromOtherError(e)).publishOn(scheduler)
-                .doOnNext(l->log.debug("fromOtherError: {}",e.toString()));
+        return Mono.just(makeFromOtherError(e))
+                .doOnNext(l -> log.debug("fromOtherError: {}", e.toString()))
+                .publishOn(scheduler);
     }
 
     @Override
     public Mono<ApiErrorDto> fromKnownError(KnownLibraryManipulationException e) {
-        return Mono.just(makeFromKnownError(e)).publishOn(scheduler)
-                .doOnNext(l-> log.debug("fromKnownError: {}", e.toString()));
+        return Mono.just(makeFromKnownError(e))
+                .doOnNext(l -> log.debug("fromKnownError: {}", e.toString()))
+                .publishOn(scheduler);
     }
 
     @Override
     public Mono<ApiErrorDto> fromStatusError(ResponseStatusException e) {
-        return Mono.just(makeFromStatusError(e)).publishOn(scheduler)
-                .doOnNext(l-> log.debug("fromStatusError: {}", e.toString()));
+        return Mono.just(makeFromStatusError(e))
+                .doOnNext(l -> log.debug("fromStatusError: {}", e.toString()))
+                .publishOn(scheduler);
     }
 
     @Override
@@ -63,7 +65,7 @@ public class ApiErrorMapperImpl implements ApiErrorMapper {
         e.getBindingResult().getAllErrors().forEach((error) -> {
             String fieldName = ((FieldError) error).getField();
             String errorMessageKey = error.getDefaultMessage();
-            //String errorMessage = messageService.getMessageInDefaultLocale(errorMessageKey, null);
+            String errorMessage = messageService.getMessageInDefaultLocale(errorMessageKey, null);
             errors.put(fieldName, new MessagePair(errorMessageKey, "errorMessage"));
         });
         return errors;
@@ -103,7 +105,6 @@ public class ApiErrorMapperImpl implements ApiErrorMapper {
         var messageKey = "known-error.other-manipulation-error";
         return makeApiErrorDto(ex, ret, messageKey);
     }
-
 
     private ApiErrorDto makeFromKnownError(KnownLibraryManipulationException e) {
         var ret = new ApiErrorDto(new Date(), 400);

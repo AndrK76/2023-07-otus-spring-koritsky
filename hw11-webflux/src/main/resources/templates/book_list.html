@@ -44,10 +44,10 @@
                     <th th:text="#{book.author}">Author</th>
                     <th th:text="#{book.genre}">Genre</th>
                     <th class="text-end">
-                        <a class="btn btn-outline-secondary btn-sm"
-                           href="book_edit.html" th:href="@{/book(action='add')}">
+                        <btn class="btn btn-outline-secondary btn-sm"
+                             onclick="callEditBook();">
                             <i class="fa fa-add"></i>
-                            <span th:text="#{book.action-add}">Add book</span></a>
+                            <span th:text="#{book.action-add}">Add book</span></btn>
                     </th>
                 </tr>
                 </thead>
@@ -94,6 +94,71 @@
                         th:text="#{action.yes}" id="deleteBtn">Yes, delete</button>
                 <button type="button" class="btn btn-outline-secondary btn-sm" data-bs-dismiss="modal"
                         th:text="#{action.no}">No, cancel</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade modal-lg" id="editBookModal" tabindex="-1" aria-labelledby="editBookTitle" aria-hidden="true">
+    <input type="hidden" id="editBookId">
+    <input type="hidden" id="editBookAction">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="editBookTitle">Book edit title</h5>
+                <button type="button" class="btn-close btn-sm" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body container">
+                <div class="row">
+                    <div class="col" id="errorContainerModalBook"></div>
+                </div>
+                <div class="row">
+                    <div class="col">
+                        <div class="mb-1">
+                            <label for="nameBook" class="form-label" th:text="#{book.name}">Name</label>
+                            <input type="text"
+                                   class="form-control" id="nameBook" value="Name book" placeholder="Enter book name"
+                                   th:placeholder="#{book.placeholder-name}" th:value="''">
+                            <div id="nameBookError" th:classappend="invisible">
+                                <div class="alert alert-danger align-items-center">Error</div>
+                            </div>
+                        </div>
+                        <div class="mb-1">
+                            <input type="hidden" id="authorId">
+                            <label for="authorName" class="form-label" th:text="#{book.author}">Author</label>
+                            <input
+                                    class="form-control" id="authorName" value="Book author"
+                                    placeholder="Select exist author or enter new"
+                                    th:placeholder="#{book.placeholder-author}"
+                                    th:value="''"
+                                    list="authorList">
+                            <datalist id="authorList">
+                                <option value="Existing author name" th:if="${false}"/>
+                            </datalist>
+                        </div>
+                        <div class="mb-1">
+                            <input type="hidden" id="genreId">
+                            <label for="genreName" class="form-label" th:text="#{book.genre}">Genre</label>
+                            <input
+                                    class="form-control" id="genreName" value="Book genre"
+                                    placeholder="Select exist genre or enter new"
+                                    th:placeholder="#{book.placeholder-genre}"
+                                    th:value="''"
+                                    list="genreList">
+                            <datalist id="genreList">
+                                <option value="Existing genre name" th:if="${false}"/>
+                            </datalist>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary btn-sm"
+                        th:text="#{action.apply}" id="saveBookBtn">Apply
+                </button>
+                <button type="button" class="btn btn-outline-secondary btn-sm" data-bs-dismiss="modal"
+                        th:text="#{action.cancel}">Cancel
+                </button>
             </div>
         </div>
     </div>

@@ -39,7 +39,6 @@ public class CustomExceptionHandler extends AbstractErrorWebExceptionHandler {
 
     private final ApiErrorMapper mapper;
 
-
     public CustomExceptionHandler(ExceptionHandlerConfig config) {
         super(config.getErrorAttributes(), config.getResources(), config.getApplicationContext());
         this.setMessageWriters(config.getConfigurer().getWriters());

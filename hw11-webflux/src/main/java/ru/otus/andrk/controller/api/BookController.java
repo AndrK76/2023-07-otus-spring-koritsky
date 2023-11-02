@@ -2,7 +2,9 @@ package ru.otus.andrk.controller.api;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ServerWebExchange;
 import org.springframework.web.server.i18n.LocaleContextResolver;
@@ -32,15 +34,15 @@ public class BookController {
     }
 
 
+    @DeleteMapping("/api/v1/book/{id}")
+    public Mono<Void> deleteBookBiId(@PathVariable(name = "id") String bookId) {
+        return bookService.deleteBook(bookId);
+    }
+
+
     @GetMapping("/api/v1/author")
     public Flux<AuthorDto> getAllAuthors() {
         return authorService.getAllAuthors();
-    }
-
-    @GetMapping("/locale")
-    public Mono<String> getLang(ServerWebExchange exchange) {
-        //localeResolver.resolveLocaleContext(exchange)
-        return Mono.just(localeResolver.resolveLocaleContext(exchange).getLocale().getLanguage());
     }
 
 
