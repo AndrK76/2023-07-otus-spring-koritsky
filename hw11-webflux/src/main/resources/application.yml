@@ -1,13 +1,14 @@
 book-app:
   default-lang: en
   thread-pool-size: 2
-  wait-data-ms: 2000
+  wait-data-ms: 1000
   list-delay-ms: 100
 
 server:
   port: 8080
   error:
-    include-stacktrace: never
+    #include-stacktrace: never
+    include-stacktrace: always
 
 spring:
   data:

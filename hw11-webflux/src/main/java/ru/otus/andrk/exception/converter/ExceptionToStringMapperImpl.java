@@ -1,6 +1,7 @@
 package ru.otus.andrk.exception.converter;
 
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.support.WebExchangeBindException;
 import ru.otus.andrk.exception.KnownLibraryManipulationException;
 import ru.otus.andrk.exception.NoExistAuthorException;
 import ru.otus.andrk.exception.NoExistBookException;
@@ -26,6 +27,9 @@ public class ExceptionToStringMapperImpl implements ExceptionToStringMapper {
             return "known-error." +
                     Optional.ofNullable(messages.get(e.getClass()))
                             .orElse("other-manipulation-error");
+        }
+        if (e instanceof WebExchangeBindException){
+            return "argument-error";
         }
         return "other-error";
     }

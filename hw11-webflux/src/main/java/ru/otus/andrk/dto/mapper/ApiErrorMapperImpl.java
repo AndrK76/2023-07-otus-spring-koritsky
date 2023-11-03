@@ -6,6 +6,7 @@ import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.support.WebExchangeBindException;
 import org.springframework.web.client.HttpStatusCodeException;
 import org.springframework.web.server.ResponseStatusException;
 import reactor.core.publisher.Mono;
@@ -17,6 +18,7 @@ import ru.otus.andrk.exception.OtherLibraryManipulationException;
 import ru.otus.andrk.exception.converter.ExceptionToStringMapper;
 import ru.otus.andrk.service.i18n.MessageService;
 
+import java.io.Serializable;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -60,16 +62,12 @@ public class ApiErrorMapperImpl implements ApiErrorMapper {
     }
 
     @Override
-    public Map<String, MessagePair> fromNotValidArgument(MethodArgumentNotValidException e) {
-        Map<String, MessagePair> errors = new HashMap<>();
-        e.getBindingResult().getAllErrors().forEach((error) -> {
-            String fieldName = ((FieldError) error).getField();
-            String errorMessageKey = error.getDefaultMessage();
-            String errorMessage = messageService.getMessageInDefaultLocale(errorMessageKey, null);
-            errors.put(fieldName, new MessagePair(errorMessageKey, "errorMessage"));
-        });
-        return errors;
+    public  Mono<ApiErrorDto> fromNotValidArgument(WebExchangeBindException e) {
+        return Mono.just(makeFromNotValidArgument(e))
+                .doOnNext(l -> log.debug("fromStatusError: {}", e.toString()))
+                .publishOn(scheduler);
     }
+
 
     private ApiErrorDto makeErrorDtoFromErrorAttributes(Map<String, Object> errAttrs) {
         Object errTimestamp = errAttrs.get("timestamp");
@@ -112,6 +110,23 @@ public class ApiErrorMapperImpl implements ApiErrorMapper {
         var messageKey = exceptionMapper.getExceptionMessage(e);
         return makeApiErrorDto(e, ret, messageKey);
     }
+
+    private ApiErrorDto makeFromNotValidArgument(WebExchangeBindException e) {
+        var ret = new ApiErrorDto(new Date(), 400);
+        setStatus(ret);
+        var messageKey = exceptionMapper.getExceptionMessage(e);
+        ret = makeApiErrorDto(e, ret, messageKey);
+        Map<String, MessagePair> errors = new HashMap<>();
+        e.getBindingResult().getAllErrors().forEach((error) -> {
+            String fieldName = ((FieldError) error).getField();
+            String errorMessageKey = error.getDefaultMessage();
+            String errorMessage = messageService.getMessageInDefaultLocale(errorMessageKey, null);
+            errors.put(fieldName, new MessagePair(errorMessageKey, errorMessage));
+        });
+        ret.setDetails((Serializable) errors);
+        return ret;
+    }
+
 
     private String getStatusMessageKey(int status) {
         return "error.status." + status;

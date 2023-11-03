@@ -4,9 +4,11 @@ import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Component;
 import ru.otus.andrk.dto.AuthorDto;
 import ru.otus.andrk.dto.BookDto;
+import ru.otus.andrk.dto.CommentDto;
 import ru.otus.andrk.dto.GenreDto;
 import ru.otus.andrk.model.Author;
 import ru.otus.andrk.model.Book;
+import ru.otus.andrk.model.Comment;
 import ru.otus.andrk.model.Genre;
 
 import java.util.Optional;
@@ -20,8 +22,18 @@ public class DtoMapperImpl implements DtoMapper {
     }
 
     @Override
+    public Author fromDto(AuthorDto dto) {
+        return new Author(dto.id(), dto.name());
+    }
+
+    @Override
     public GenreDto toDto(Genre genre) {
         return new GenreDto(genre.getId(), genre.getName());
+    }
+
+    @Override
+    public Genre fromDto(GenreDto dto) {
+        return new Genre(dto.id(), dto.name());
     }
 
     @Override
@@ -34,6 +46,11 @@ public class DtoMapperImpl implements DtoMapper {
                 .genreId(Optional.ofNullable(book.getGenre()).map(Genre::getId).orElse(null))
                 .genreName(Optional.ofNullable(book.getGenre()).map(Genre::getName).orElse(null))
                 .build();
+    }
+
+    @Override
+    public CommentDto toDto(Comment comment) {
+        return new CommentDto(comment.getId(), comment.getText());
     }
 
     /*

@@ -4,6 +4,10 @@ const ndJsonRequestHeader = {'Accept': 'application/x-ndjson', 'Content-Type': '
 
 const urlGetLocalizedMessage = '/api/v1/message';
 const urlBookApi = '/api/v1/book';
+const urlValidateApi = '/api/v1/validation';
+
+const urlGetAllAuthors = '/api/v1/author';
+const urlGetAllGenres = '/api/v1/genre';
 
 let localizedMessages = new Map([
     ['error', 'Error'],
@@ -72,7 +76,8 @@ function showError(place, errorData) {
     place.append(alertDiv);
 }
 
-async function getDataAsJsonAndApply(url, errorContainer, successFunction, errorFunction) {
+async function getDataAsJsonAndApply(url, errorContainer, successFunction,
+                                     errorFunction = showError) {
     try {
         let response = await fetch(url,
             {
@@ -84,29 +89,23 @@ async function getDataAsJsonAndApply(url, errorContainer, successFunction, error
                 successFunction(data);
             }
         } else {
-            showError(errorContainer, data);
-            if (errorFunction != null) {
-                errorFunction(response.status);
-            }
+            errorFunction(errorContainer, data);
         }
     } catch (e) {
-        showError(errorContainer, makeErr(e));
-        if (errorFunction != null) {
-            errorFunction(500);
-        }
+        errorFunction(errorContainer, makeErr(e));
     }
 }
 
 async function getDataAsJsonStreamAndApply(url, errorContainer, itemFunction, completeFunction, errorFunction) {
     try {
         function onMessage(data, status) {
-            if (itemFunction !== undefined){
+            if (itemFunction !== undefined) {
                 itemFunction(data, status);
             }
         }
 
         function onComplete() {
-            if (completeFunction !== undefined){
+            if (completeFunction !== undefined) {
                 completeFunction();
             }
         }
@@ -144,13 +143,13 @@ async function getDataAsJsonStreamAndApply(url, errorContainer, itemFunction, co
 }
 
 async function doDelete(url, deleteId, errorContainer, successFunction) {
-    try{
+    try {
         let response = await fetch(urlBookApi + '/' + deleteId,
             {
                 method: 'DELETE', headers: jsonRequestHeader,
             });
-        if (response.ok){
-            if (successFunction !== undefined){
+        if (response.ok) {
+            if (successFunction !== undefined) {
                 successFunction();
             }
         } else {
@@ -159,5 +158,29 @@ async function doDelete(url, deleteId, errorContainer, successFunction) {
         }
     } catch (e) {
         showError(errorContainer, makeErr(e));
+    }
+}
+
+async function sendDataAsJsonAndApply(url, method, dataToSend, errorContainer, successFunction,
+                                      errorFunction = showError) {
+    try {
+        let response = await fetch(url,
+            {
+                method: method, headers: jsonRequestHeader,
+                body: JSON.stringify(dataToSend)
+            });
+        let data = await response.json();
+        if (response.ok) {
+            if (successFunction != null) {
+                successFunction(data);
+            }
+            return true;
+        } else {
+            errorFunction(errorContainer, data);
+            return false;
+        }
+    } catch (e) {
+        errorFunction(errorContainer, makeErr(e));
+        return false;
     }
 }

@@ -11,7 +11,5 @@ public interface GenreService {
 
     Mono<GenreDto> addGenre(String genreName);
 
-    Mono<GenreDto> getGenreById(long genreId);
-
     Mono<GenreDto> getGenreByName(String name);
 }

@@ -8,19 +8,20 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import reactor.core.scheduler.Scheduler;
 import ru.otus.andrk.config.LibraryConfig;
-import ru.otus.andrk.dto.AuthorDto;
+import ru.otus.andrk.dto.GenreDto;
 import ru.otus.andrk.dto.mapper.DtoMapper;
 import ru.otus.andrk.model.Author;
-import ru.otus.andrk.repository.AuthorRepository;
+import ru.otus.andrk.model.Genre;
+import ru.otus.andrk.repository.GenreRepository;
 
 import java.time.Duration;
 
 @Service
 @Log4j2
 @RequiredArgsConstructor
-public class AuthorServiceImpl implements AuthorService {
+public class GenreServiceImpl implements GenreService {
 
-    private final AuthorRepository repo;
+    private final GenreRepository repo;
 
     private final DtoMapper mapper;
 
@@ -28,9 +29,8 @@ public class AuthorServiceImpl implements AuthorService {
 
     private final LibraryConfig config;
 
-
     @Override
-    public Flux<AuthorDto> getAllAuthors() {
+    public Flux<GenreDto> getAllGenres() {
         return repo.findAll()
                 .publishOn(scheduler)
                 .timeout(Duration.ofMillis(config.getWaitDataInMs()), scheduler)
@@ -39,15 +39,15 @@ public class AuthorServiceImpl implements AuthorService {
 
     @Override
     @Transactional
-    public Mono<AuthorDto> addAuthor(String authorName) {
-        return repo.save(new Author(authorName)).publishOn(scheduler)
+    public Mono<GenreDto> addGenre(String genreName) {
+        return repo.save(new Genre(genreName)).publishOn(scheduler)
                 .map(mapper::toDto)
-                .doOnNext(author->log.debug("Add author: {}",author));
+                .doOnNext(genre->log.debug("Add genre: {}",genre));
     }
 
 
     @Override
-    public Mono<AuthorDto> getAuthorByName(String name) {
+    public Mono<GenreDto> getGenreByName(String name) {
         return repo.findFirstByName(name).publishOn(scheduler)
                 .map(mapper::toDto);
     }

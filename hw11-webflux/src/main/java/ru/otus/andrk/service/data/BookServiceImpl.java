@@ -1,5 +1,6 @@
 package ru.otus.andrk.service.data;
 
+import com.google.common.base.Strings;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
@@ -8,12 +9,12 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import reactor.core.scheduler.Scheduler;
 import ru.otus.andrk.config.LibraryConfig;
+import ru.otus.andrk.dto.AuthorDto;
 import ru.otus.andrk.dto.BookDto;
-import ru.otus.andrk.dto.BookWithCommentsDto;
+import ru.otus.andrk.dto.GenreDto;
 import ru.otus.andrk.dto.mapper.DtoMapper;
-import ru.otus.andrk.exception.OtherLibraryManipulationException;
+import ru.otus.andrk.model.Book;
 import ru.otus.andrk.repository.BookRepository;
-import ru.otus.andrk.repository.CommentRepository;
 
 import java.time.Duration;
 
@@ -24,11 +25,15 @@ public class BookServiceImpl implements BookService {
 
     private final BookRepository bookRepo;
 
-    private final CommentRepository commentRepo;
-
     private final DtoMapper mapper;
     private final Scheduler scheduler;
     private final LibraryConfig config;
+
+    private final CommentService commentService;
+
+    private final AuthorService authorService;
+
+    private final GenreService genreService;
 
     @Override
     public Flux<BookDto> getAllBooks() {
@@ -43,34 +48,65 @@ public class BookServiceImpl implements BookService {
     }
 
     @Override
+    @Transactional
+    public Mono<Void> deleteBook(String id) {
+        return commentService.deleteAllCommentsForBook(id)
+                .then(Mono.just(id).publishOn(scheduler)
+                        .doOnNext(b -> bookRepo.deleteById(id))
+                        .doOnNext(l -> log.debug("delete book id={}", l))
+                ).then();
+    }
+
+    @Override
     public Mono<BookDto> getBookById(long id) {
         return null;
     }
 
     @Override
-    public Mono<BookWithCommentsDto> getBookWithCommentsById(long id) {
-        return null;
-    }
-
-    @Override
-    public Mono<BookDto> addBook(Mono<BookDto> book) {
-        return null;
-    }
-
-    @Override
-    public Mono<BookDto> modifyBook(long bookId, Mono<BookDto> book) {
-        return null;
+    @Transactional
+    public Mono<BookDto> addBook(BookDto book) {
+        return composeBook(book).publishOn(scheduler)
+                .flatMap(bookRepo::save).map(mapper::toDto)
+                .doOnNext(b -> log.debug("add book id={}", b.getId()));
     }
 
     @Override
     @Transactional
-    public Mono<Void> deleteBook(String id) {
-        return commentRepo.findByBook_Id(id)
-                .publishOn(scheduler)
-                .doOnNext(commentRepo::delete)
-                .doOnNext(l -> log.debug("delete comment id={}", l.getId()))
-                .doOnComplete(() -> bookRepo.deleteById(id))
-                .doOnComplete(() -> log.debug("delete book id={}", id))
-                .then();
+    public Mono<BookDto> modifyBook(String bookId, BookDto book) {
+        book.setId(bookId);
+        return composeBook(book).publishOn(scheduler)
+                .doOnNext(b -> log.debug("start modify book id={}", b.getId()))
+                .flatMap(bookRepo::save).map(mapper::toDto)
+                .doOnNext(b -> log.debug("end modify book id={}", b.getId()));
     }
+
+
+    private Mono<AuthorDto> actualizeAuthor(String authorName) {
+        return authorService.getAuthorByName(authorName)
+                .switchIfEmpty(authorService.addAuthor(authorName));
+    }
+
+    private Mono<GenreDto> actualizeGenre(String genreName) {
+        return genreService.getGenreByName(genreName)
+                .switchIfEmpty(genreService.addGenre(genreName));
+    }
+
+    private Mono<Book> composeBook(BookDto book) {
+        return Mono.zip(
+                        Mono.just(book),
+                        Strings.isNullOrEmpty(book.getAuthorName())
+                                ? Mono.empty()
+                                : actualizeAuthor(book.getAuthorName()),
+                        Strings.isNullOrEmpty(book.getGenreName())
+                                ? Mono.empty()
+                                : actualizeGenre(book.getGenreName()))
+                .flatMap(data -> {
+                    var author = data.getT2() == null ? null : mapper.fromDto(data.getT2());
+                    var genre = data.getT3() == null ? null : mapper.fromDto(data.getT3());
+                    var ret = new Book(data.getT1().getId(), data.getT1().getName(), author, genre);
+                    return Mono.just(ret);
+                });
+    }
+
+
 }

@@ -9,6 +9,8 @@ window.onload = async (event) => {
     deleteModal = new bootstrap.Modal(document.getElementById('deleteQuery'));
     editBookModal = new bootstrap.Modal(document.getElementById('editBookModal'));
     document.getElementById('deleteBtn').onclick = doDeleteBook;
+    bookNameItem.onblur = validateBookName;
+    saveBtn.onclick = startSaveBook;
 
     await getLocalizedMessages(document.getElementById('lang').value, errorContainer);
     loadBooks().then();
@@ -84,8 +86,15 @@ function deleteBookRow() {
     bookRow.remove();
 }
 
+const bookNameItem = document.getElementById('nameBook');
+
 function callEditBook(bookId) {
-    const bookNameItem = document.getElementById('nameBook');
+    saveBtn.disabled = false;
+    clearBookNameError();
+    document.getElementById('errorContainerModalBook').innerHTML = '';
+    getDataAsJsonAndApply(urlGetAllAuthors, errorContainer, applyAuthorList).then();
+    getDataAsJsonAndApply(urlGetAllGenres, errorContainer, applyGenreList).then();
+
     const bookAuthorItem = document.getElementById('authorName');
     const bookGenreItem = document.getElementById('genreName');
     if (bookId !== undefined) {
@@ -113,3 +122,106 @@ function callEditBook(bookId) {
     }
     editBookModal.toggle();
 }
+
+function makeBook() {
+    let idBook = document.getElementById('editBookId').value;
+    let nameBook = bookNameItem.value;
+    let authorId = document.getElementById('authorId').value;
+    let authorName = document.getElementById('authorName').value;
+    let genreId = document.getElementById('genreId').value;
+    let genreName = document.getElementById('genreName').value;
+
+    let book = {
+        'id': (idBook === '') ? '0' : idBook, 'name': nameBook,
+        'authorId': authorId, 'authorName': authorName,
+        'genreId': genreId, 'genreName': genreName
+    };
+    return book;
+}
+
+function applyAuthorList(data) {
+    const authorList = document.getElementById('authorList');
+    authorList.innerHTML = '';
+    for (const author of data) {
+        const option = document.createElement('option');
+        option.value = author.name;
+        authorList.append(option);
+    }
+}
+
+function applyGenreList(data) {
+    const genreList = document.getElementById('genreList');
+    genreList.innerHTML = '';
+    for (const genre of data) {
+        const option = document.createElement('option');
+        option.value = genre.name;
+        genreList.append(option);
+    }
+}
+
+const nameBookErrorDiv = document.getElementById('nameBookError');
+
+function clearBookNameError() {
+    nameBookErrorDiv.innerHTML = '';
+    if (!nameBookErrorDiv.classList.contains('invisible')) {
+        nameBookErrorDiv.classList.add('invisible');
+    }
+}
+
+async function validateBookName() {
+    const errDiv = document.getElementById('errorContainerModalBook');
+
+    function showBookError(errDiv, data) {
+        if (('errorMessage' in data) && ('key' in data.errorMessage)
+            && data.errorMessage.key === 'argument-error'
+            && ('details' in data) && ('name' in data.details)) {
+            let msgKey = data.details.name.key;
+            let message = localizedMessages.has(msgKey) ? localizedMessages.get(msgKey) : data.details.name.message;
+            let msgDiv = document.createElement('div');
+            msgDiv.innerHTML = `<div class="alert alert-danger align-items-center m-0 p-0">${message}</div>`;
+            nameBookErrorDiv.append(msgDiv);
+            if (nameBookErrorDiv.classList.contains('invisible')) {
+                nameBookErrorDiv.classList.remove('invisible');
+            }
+        } else {
+            showError(errDiv, data);
+        }
+
+    }
+
+    clearBookNameError();
+
+    return await sendDataAsJsonAndApply(urlValidateApi + '/book', 'POST', makeBook(),
+        errDiv, null, showBookError);
+}
+
+const saveBtn = document.getElementById('saveBookBtn');
+
+async function startSaveBook() {
+    function afterSaveBook(data) {
+        console.log(data);
+    }
+
+    const action = document.getElementById('editBookAction').value;
+    const errDiv = document.getElementById('errorContainerModalBook');
+    saveBtn.disabled = true;
+
+
+    const book = makeBook();
+    if (await validateBookName()) {
+        let method = 'POST';
+        let url = urlBookApi;
+        if (action === 'edit') {
+            method = 'PUT';
+            url += '/' + book.id;
+        }
+        if (!await sendDataAsJsonAndApply(url, method, book, errDiv, afterSaveBook)) {
+            saveBtn.disabled = false;
+        }
+    } else {
+        saveBtn.disabled = false;
+    }
+}
+
+
+

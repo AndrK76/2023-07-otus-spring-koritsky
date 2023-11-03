@@ -9,7 +9,5 @@ public interface AuthorService {
 
     Mono<AuthorDto> addAuthor(String authorName);
 
-    Mono<AuthorDto> getAuthorById(long authorId);
-
     Mono<AuthorDto> getAuthorByName(String name);
 }

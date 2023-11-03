@@ -53,7 +53,7 @@ public class MessageServiceImpl implements MessageService {
         try {
             return messageSource.getMessage(messageKey, args, locale);
         } catch (NoSuchMessageException e) {
-            log.error(e);
+            log.debug(e.getMessage());
             return "";
         }
     }

@@ -57,7 +57,7 @@ public class InitDatabase {
         commentRepo.save(new Comment("Клёва", bookKnuth)).block();
         commentRepo.save(new Comment("Нудно", bookKnuth)).block();
 
-        for (int i = 1; i < 64; i++) {
+        for (int i = 1; i < 15; i++) {
             bookRepo.save(
                     new Book("Ричард Длинные руки. Опус "+ i,
                             authors.get("orlovsky"), genres.get("proza"))).block();
