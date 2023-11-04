@@ -11,6 +11,7 @@ import org.springframework.web.client.HttpStatusCodeException;
 import org.springframework.web.server.ResponseStatusException;
 import reactor.core.publisher.Mono;
 import reactor.core.scheduler.Scheduler;
+import ru.otus.andrk.config.DataLayerConfig;
 import ru.otus.andrk.dto.ApiErrorDto;
 import ru.otus.andrk.dto.MessagePair;
 import ru.otus.andrk.exception.KnownLibraryManipulationException;
@@ -32,7 +33,7 @@ public class ApiErrorMapperImpl implements ApiErrorMapper {
 
     private final ExceptionToStringMapper exceptionMapper;
 
-    private final Scheduler scheduler;
+    private final DataLayerConfig config;
 
     @Override
     public ApiErrorDto fromErrorAttributes(Map<String, Object> errAttrs) {
@@ -44,28 +45,28 @@ public class ApiErrorMapperImpl implements ApiErrorMapper {
     public Mono<ApiErrorDto> fromOtherError(OtherLibraryManipulationException e) {
         return Mono.just(makeFromOtherError(e))
                 .doOnNext(l -> log.debug("fromOtherError: {}", e.toString()))
-                .publishOn(scheduler);
+                .publishOn(config.getScheduler());
     }
 
     @Override
     public Mono<ApiErrorDto> fromKnownError(KnownLibraryManipulationException e) {
         return Mono.just(makeFromKnownError(e))
                 .doOnNext(l -> log.debug("fromKnownError: {}", e.toString()))
-                .publishOn(scheduler);
+                .publishOn(config.getScheduler());
     }
 
     @Override
     public Mono<ApiErrorDto> fromStatusError(ResponseStatusException e) {
         return Mono.just(makeFromStatusError(e))
                 .doOnNext(l -> log.debug("fromStatusError: {}", e.toString()))
-                .publishOn(scheduler);
+                .publishOn(config.getScheduler());
     }
 
     @Override
     public  Mono<ApiErrorDto> fromNotValidArgument(WebExchangeBindException e) {
         return Mono.just(makeFromNotValidArgument(e))
                 .doOnNext(l -> log.debug("fromStatusError: {}", e.toString()))
-                .publishOn(scheduler);
+                .publishOn(config.getScheduler());
     }
 
 

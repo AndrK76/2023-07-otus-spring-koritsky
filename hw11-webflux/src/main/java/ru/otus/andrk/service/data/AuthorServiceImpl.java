@@ -7,7 +7,8 @@ import org.springframework.transaction.annotation.Transactional;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import reactor.core.scheduler.Scheduler;
-import ru.otus.andrk.config.LibraryConfig;
+import ru.otus.andrk.config.ControllerConfig;
+import ru.otus.andrk.config.DataLayerConfig;
 import ru.otus.andrk.dto.AuthorDto;
 import ru.otus.andrk.dto.mapper.DtoMapper;
 import ru.otus.andrk.model.Author;
@@ -24,23 +25,21 @@ public class AuthorServiceImpl implements AuthorService {
 
     private final DtoMapper mapper;
 
-    private final Scheduler scheduler;
-
-    private final LibraryConfig config;
+    private final DataLayerConfig config;
 
 
     @Override
     public Flux<AuthorDto> getAllAuthors() {
         return repo.findAll()
-                .publishOn(scheduler)
-                .timeout(Duration.ofMillis(config.getWaitDataInMs()), scheduler)
+                .publishOn(config.getScheduler())
+                .timeout(Duration.ofMillis(config.getWaitDataInMs()), config.getScheduler())
                 .map(mapper::toDto);
     }
 
     @Override
     @Transactional
     public Mono<AuthorDto> addAuthor(String authorName) {
-        return repo.save(new Author(authorName)).publishOn(scheduler)
+        return repo.save(new Author(authorName)).publishOn(config.getScheduler())
                 .map(mapper::toDto)
                 .doOnNext(author->log.debug("Add author: {}",author));
     }
@@ -48,7 +47,7 @@ public class AuthorServiceImpl implements AuthorService {
 
     @Override
     public Mono<AuthorDto> getAuthorByName(String name) {
-        return repo.findFirstByName(name).publishOn(scheduler)
+        return repo.findFirstByName(name).publishOn(config.getScheduler())
                 .map(mapper::toDto);
     }
 }

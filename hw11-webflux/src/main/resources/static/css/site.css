@@ -16,3 +16,14 @@ div.invisible {
     min-height: 0px;
 }
 
+tr.invisible {
+    display: none;
+    min-height: 0px;
+}
+
+.comment-row:hover {
+    background-color: #ffffff;
+}
+
+btn.show-comment {
+}

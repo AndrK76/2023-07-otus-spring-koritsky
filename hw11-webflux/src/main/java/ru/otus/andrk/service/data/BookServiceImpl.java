@@ -8,15 +8,18 @@ import org.springframework.transaction.annotation.Transactional;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import reactor.core.scheduler.Scheduler;
-import ru.otus.andrk.config.LibraryConfig;
+import ru.otus.andrk.config.ControllerConfig;
+import ru.otus.andrk.config.DataLayerConfig;
 import ru.otus.andrk.dto.AuthorDto;
 import ru.otus.andrk.dto.BookDto;
 import ru.otus.andrk.dto.GenreDto;
 import ru.otus.andrk.dto.mapper.DtoMapper;
+import ru.otus.andrk.exception.OtherLibraryManipulationException;
 import ru.otus.andrk.model.Book;
 import ru.otus.andrk.repository.BookRepository;
 
 import java.time.Duration;
+import java.util.Optional;
 
 @Service
 @Log4j2
@@ -26,8 +29,8 @@ public class BookServiceImpl implements BookService {
     private final BookRepository bookRepo;
 
     private final DtoMapper mapper;
-    private final Scheduler scheduler;
-    private final LibraryConfig config;
+
+    private final DataLayerConfig config;
 
     private final CommentService commentService;
 
@@ -39,33 +42,30 @@ public class BookServiceImpl implements BookService {
     public Flux<BookDto> getAllBooks() {
         log.debug("call get all books");
         return bookRepo.findAll()
-                .timeout(Duration.ofMillis(config.getWaitDataInMs()), scheduler)
-                .delayElements(Duration.ofMillis(config.getListDelayInMs()), scheduler)
+                .timeout(Duration.ofMillis(config.getWaitDataInMs()), config.getScheduler())
                 .map(mapper::toDto)
                 .doFirst(() -> log.debug("Start get all books"))
                 .doOnNext(book -> log.debug("Get book {}", book.getId()))
-                .doOnComplete(() -> log.debug("End get all books"));
+                .doOnComplete(() -> log.debug("End get all books"))
+                .onErrorMap(OtherLibraryManipulationException::new);
     }
 
     @Override
     @Transactional
     public Mono<Void> deleteBook(String id) {
         return commentService.deleteAllCommentsForBook(id)
-                .then(Mono.just(id).publishOn(scheduler)
+                .onErrorMap(OtherLibraryManipulationException::new)
+                .then(Mono.just(id).publishOn(config.getScheduler())
                         .doOnNext(b -> bookRepo.deleteById(id))
                         .doOnNext(l -> log.debug("delete book id={}", l))
                 ).then();
     }
 
     @Override
-    public Mono<BookDto> getBookById(long id) {
-        return null;
-    }
-
-    @Override
     @Transactional
     public Mono<BookDto> addBook(BookDto book) {
-        return composeBook(book).publishOn(scheduler)
+        book.setId(null);
+        return composeBook(book, null).publishOn(config.getScheduler())
                 .flatMap(bookRepo::save).map(mapper::toDto)
                 .doOnNext(b -> log.debug("add book id={}", b.getId()));
     }
@@ -73,37 +73,39 @@ public class BookServiceImpl implements BookService {
     @Override
     @Transactional
     public Mono<BookDto> modifyBook(String bookId, BookDto book) {
-        book.setId(bookId);
-        return composeBook(book).publishOn(scheduler)
+        return composeBook(book, bookId).publishOn(config.getScheduler())
                 .doOnNext(b -> log.debug("start modify book id={}", b.getId()))
                 .flatMap(bookRepo::save).map(mapper::toDto)
                 .doOnNext(b -> log.debug("end modify book id={}", b.getId()));
     }
 
 
-    private Mono<AuthorDto> actualizeAuthor(String authorName) {
-        return authorService.getAuthorByName(authorName)
-                .switchIfEmpty(authorService.addAuthor(authorName));
+    private Mono<Optional<AuthorDto>> actualizeAuthor(String authorName) {
+        return Strings.isNullOrEmpty(authorName)
+                ? Mono.just(Optional.empty())
+                : authorService.getAuthorByName(authorName)
+                .switchIfEmpty(authorService.addAuthor(authorName))
+                .map(Optional::of);
     }
 
-    private Mono<GenreDto> actualizeGenre(String genreName) {
-        return genreService.getGenreByName(genreName)
-                .switchIfEmpty(genreService.addGenre(genreName));
+    private Mono<Optional<GenreDto>> actualizeGenre(String genreName) {
+        return Strings.isNullOrEmpty(genreName)
+                ? Mono.just(Optional.empty())
+                : genreService.getGenreByName(genreName)
+                .switchIfEmpty(genreService.addGenre(genreName))
+                .map(Optional::of);
     }
 
-    private Mono<Book> composeBook(BookDto book) {
+    private Mono<Book> composeBook(BookDto book, String bookId) {
         return Mono.zip(
                         Mono.just(book),
-                        Strings.isNullOrEmpty(book.getAuthorName())
-                                ? Mono.empty()
-                                : actualizeAuthor(book.getAuthorName()),
-                        Strings.isNullOrEmpty(book.getGenreName())
-                                ? Mono.empty()
-                                : actualizeGenre(book.getGenreName()))
+                        actualizeAuthor(book.getAuthorName()),
+                        actualizeGenre(book.getGenreName())
+                )
                 .flatMap(data -> {
-                    var author = data.getT2() == null ? null : mapper.fromDto(data.getT2());
-                    var genre = data.getT3() == null ? null : mapper.fromDto(data.getT3());
-                    var ret = new Book(data.getT1().getId(), data.getT1().getName(), author, genre);
+                    var author = data.getT2().map(mapper::fromDto).orElse(null);
+                    var genre = data.getT3().map(mapper::fromDto).orElse(null);
+                    var ret = new Book(bookId, data.getT1().getName(), author, genre);
                     return Mono.just(ret);
                 });
     }

@@ -54,13 +54,26 @@ public class InitDatabase {
                 new Book("The Art of Computer Programming",
                         authors.get("knuth"), genres.get("noGenre"))
         ).block();
+
+        commentRepo.save(new Comment(
+                "Роман Евгений Онегин на мой взгляд должен прочитать каждый! Интересно наблюдать за размышлениями героев!\n" +
+                        "Проследить безответную любовь, которую уже не получится вернуть. Обожаю письма от Онегина и Татьяны,\n" +
+                        "они наполнены чувствами и пропитаны смыслом, правда для каждого своим! Несмотря на то, что роман написан \n" +
+                        "был очень давно, многие мысли актуальны и по сей день. Тем кто не читал-желаю этого, а те кто читал– советую\n" +
+                        "ещё раз. Такие произведения никогда не стареют!\n" +
+                        "https://www.litres.ru/book/aleksandr-pushkin/evgeniy-onegin-171966/otzivi/", bookOnegin)).block();
+        commentRepo.save(new Comment("Аффтар пеши исчо", bookOnegin)).block();
         commentRepo.save(new Comment("Клёва", bookKnuth)).block();
         commentRepo.save(new Comment("Нудно", bookKnuth)).block();
 
         for (int i = 1; i < 15; i++) {
-            bookRepo.save(
-                    new Book("Ричард Длинные руки. Опус "+ i,
-                            authors.get("orlovsky"), genres.get("proza"))).block();
+            var book = new Book("Ричард Длинные руки. Опус " + i,
+                    authors.get("orlovsky"), genres.get("proza"));
+            bookRepo.save(book).block();
+            var couComment = (int) (Math.random() * 20);
+            for (int j = 0; j < couComment; j++) {
+                commentRepo.save(new Comment("Комментарий №" + j, book)).block();
+            }
         }
 
     }

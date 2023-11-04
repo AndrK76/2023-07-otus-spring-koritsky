@@ -7,7 +7,9 @@ import org.springframework.context.NoSuchMessageException;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
 import reactor.core.scheduler.Scheduler;
-import ru.otus.andrk.config.LibraryConfig;
+import ru.otus.andrk.config.ControllerConfig;
+import ru.otus.andrk.config.DataLayerConfig;
+import ru.otus.andrk.config.LocalizationConfig;
 import ru.otus.andrk.exception.LocalizationException;
 
 import java.util.Locale;
@@ -22,10 +24,7 @@ public class MessageServiceImpl implements MessageService {
 
     private final MessageSource messageSource;
 
-    private final LibraryConfig config;
-
-    private final Scheduler scheduler;
-
+    private final LocalizationConfig config;
 
     @Override
     public Mono<Map<String, String>> getMessages(String lang) {
@@ -40,7 +39,7 @@ public class MessageServiceImpl implements MessageService {
                             log.error(e);
                             return "";
                         }
-                    }))).publishOn(scheduler);
+                    }))).publishOn(config.getScheduler());
         } catch (Exception e) {
             log.error(e);
             throw new LocalizationException(e);

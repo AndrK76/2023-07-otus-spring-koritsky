@@ -9,7 +9,8 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.server.ServerWebExchange;
 import org.springframework.web.server.adapter.WebHttpHandlerBuilder;
 import org.springframework.web.server.i18n.LocaleContextResolver;
-import ru.otus.andrk.config.LibraryConfig;
+import ru.otus.andrk.config.ControllerConfig;
+import ru.otus.andrk.config.LocalizationConfig;
 
 import java.util.List;
 import java.util.Locale;
@@ -19,7 +20,7 @@ import java.util.Locale;
 @Log4j2
 public class CustomLocaleContextResolver implements LocaleContextResolver {
 
-    private final LibraryConfig config;
+    private final LocalizationConfig config;
 
     @Override
     public LocaleContext resolveLocaleContext(ServerWebExchange exchange) {

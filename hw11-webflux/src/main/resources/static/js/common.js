@@ -5,6 +5,7 @@ const ndJsonRequestHeader = {'Accept': 'application/x-ndjson', 'Content-Type': '
 const urlGetLocalizedMessage = '/api/v1/message';
 const urlBookApi = '/api/v1/book';
 const urlValidateApi = '/api/v1/validation';
+const urlCommentApi = '/api/v1/comment';
 
 const urlGetAllAuthors = '/api/v1/author';
 const urlGetAllGenres = '/api/v1/genre';
@@ -77,7 +78,7 @@ function showError(place, errorData) {
 }
 
 async function getDataAsJsonAndApply(url, errorContainer, successFunction,
-                                     errorFunction = showError) {
+                                     errorFunction = showError, additionalContent) {
     try {
         let response = await fetch(url,
             {
@@ -86,27 +87,29 @@ async function getDataAsJsonAndApply(url, errorContainer, successFunction,
         let data = await response.json();
         if (response.ok) {
             if (successFunction != null) {
-                successFunction(data);
+                successFunction(data, additionalContent);
             }
         } else {
-            errorFunction(errorContainer, data);
+            errorFunction(errorContainer, data, additionalContent);
         }
     } catch (e) {
-        errorFunction(errorContainer, makeErr(e));
+        errorFunction(errorContainer, makeErr(e), additionalContent);
     }
 }
 
-async function getDataAsJsonStreamAndApply(url, errorContainer, itemFunction, completeFunction, errorFunction) {
+async function getDataAsJsonStreamAndApply(url, errorContainer,
+                                           itemFunction, completeFunction,
+                                           errorFunction = showError, additionalContent) {
     try {
         function onMessage(data, status) {
             if (itemFunction !== undefined) {
-                itemFunction(data, status);
+                itemFunction(data, status, additionalContent);
             }
         }
 
         function onComplete() {
             if (completeFunction !== undefined) {
-                completeFunction();
+                completeFunction(additionalContent);
             }
         }
 
@@ -118,27 +121,21 @@ async function getDataAsJsonStreamAndApply(url, errorContainer, itemFunction, co
                     'statusMessage': {'key': '', 'message': e.message},
                 };
             }
-
             if (status === undefined) {
                 data = makeErr(data);
-                //status = 200;
             }
-            showError(errorContainer, data);
+            errorFunction(errorContainer, data, additionalContent);
         }
 
 
         const stream = fetch(url, {method: "GET", headers: ndJsonRequestHeader});
-
         stream
             .then(readStream(onMessage, onError))
             .then(onComplete)
             .catch(onError)
         ;
     } catch (e) {
-        showError(errorContainer, makeErr(e));
-        if (errorFunction != null) {
-            errorFunction(500);
-        }
+        errorFunction(errorContainer, makeErr(e), additionalContent);
     }
 }
 
