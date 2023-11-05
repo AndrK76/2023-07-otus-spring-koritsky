@@ -14,6 +14,7 @@
           rel="stylesheet">
 </head>
 <body>
+<!-- Основной блок-->
 <div class="container">
     <div class="row">
         <main class="col">
@@ -80,14 +81,20 @@
     </div>
 </div>
 
+<!-- Запрос удаления -->
 <div class="modal fade" id="deleteQuery" tabindex="-1" aria-labelledby="deleteQueryTitle" aria-hidden="true">
     <input type="hidden" id="deleteId">
+    <input type="hidden" id="deleteDopId">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="deleteQueryTitle"
-                    th:text="#{action.confirm-delete(#{book})}">Confirm delete</h5>
+                <h5 class="modal-title" id="deleteQueryTitle">Confirm delete</h5>
                 <button type="button" class="btn-close btn-sm" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body container">
+                <div class="row">
+                    <div class="col" id="errorContainerDeleteQuery"></div>
+                </div>
             </div>
              <div class="modal-footer">
                 <button type="button" class="btn btn-danger btn-sm"
@@ -99,6 +106,7 @@
     </div>
 </div>
 
+<!-- Корректировка книги -->
 <div class="modal fade modal-lg" id="editBookModal" tabindex="-1" aria-labelledby="editBookTitle" aria-hidden="true">
     <input type="hidden" id="editBookId">
     <input type="hidden" id="editBookAction">
@@ -163,6 +171,51 @@
         </div>
     </div>
 </div>
+
+<!-- Корректировка комментария -->
+<div class="modal fade modal-lg" id="editCommentModal" tabindex="-1" aria-labelledby="editBookTitle" aria-hidden="true">
+    <input type="hidden" id="editComment_bookId">
+    <input type="hidden" id="editComment_id">
+    <input type="hidden" id="editComment_action">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="editCommentTitle">Comment edit title</h5>
+                <button type="button" class="btn-close btn-sm" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body container">
+                <div class="row">
+                    <div class="col" id="errorContainerModalComment"></div>
+                </div>
+                <div class="row">
+                    <div class="col">
+                        <div class="mb-1">
+                            <label for="textComment" class="form-label" th:text="#{comment.text}">Text</label>
+                            <textarea id="textComment" rows="5"
+                                      class="form-control" placeholder="Enter comment"
+                                      th:placeholder="#{comment.placeholder-text}"
+                                      th:text="''">Comment text example</textarea>
+                            <div id="textCommentError" th:classappend="invisible">
+                                <div class="alert alert-danger align-items-center">Error</div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary btn-sm"
+                        th:text="#{action.apply}" id="saveCommentBtn">Apply
+                </button>
+                <button type="button" class="btn btn-outline-secondary btn-sm" data-bs-dismiss="modal"
+                        th:text="#{action.cancel}">Cancel
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
 
 </body>
 

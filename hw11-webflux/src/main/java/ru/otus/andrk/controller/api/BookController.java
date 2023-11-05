@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
-import reactor.core.scheduler.Scheduler;
 import ru.otus.andrk.config.ControllerConfig;
 import ru.otus.andrk.dto.AuthorDto;
 import ru.otus.andrk.dto.BookDto;
@@ -27,18 +26,10 @@ import java.time.Duration;
 @RestController
 @Log4j2
 @RequiredArgsConstructor
-public class DataController {
-
+public class BookController {
     private final BookService bookService;
 
-    private final AuthorService authorService;
-
-    private final GenreService genreService;
-
-    private final CommentService commentService;
-
     private final ControllerConfig config;
-
 
     @GetMapping("/api/v1/book")
     public Flux<BookDto> getAllBooks() {
@@ -62,22 +53,5 @@ public class DataController {
     public Mono<Void> deleteBookBiId(@PathVariable(name = "id") String bookId) {
         return bookService.deleteBook(bookId);
     }
-
-    @GetMapping("/api/v1/book/{id}/comment")
-    public Flux<CommentDto> getCommentsForBook(@PathVariable(name = "id") String bookId){
-        return commentService.getCommentsByBookId(bookId)
-                .delayElements(Duration.ofMillis(config.getListDelayInMs()),config.getScheduler());
-    }
-
-    @GetMapping("/api/v1/author")
-    public Flux<AuthorDto> getAllAuthors() {
-        return authorService.getAllAuthors();
-    }
-
-    @GetMapping("/api/v1/genre")
-    public Flux<GenreDto> getAllGenres() {
-        return genreService.getAllGenres();
-    }
-
 
 }

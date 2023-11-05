@@ -141,7 +141,7 @@ async function getDataAsJsonStreamAndApply(url, errorContainer,
 
 async function doDelete(url, deleteId, errorContainer, successFunction) {
     try {
-        let response = await fetch(urlBookApi + '/' + deleteId,
+        let response = await fetch(url + '/' + deleteId,
             {
                 method: 'DELETE', headers: jsonRequestHeader,
             });

@@ -51,7 +51,7 @@ public class BookServiceImpl implements BookService {
     }
 
     @Override
-    @Transactional
+    //@Transactional
     public Mono<Void> deleteBook(String id) {
         return commentService.deleteAllCommentsForBook(id)
                 .onErrorMap(OtherLibraryManipulationException::new)
@@ -62,7 +62,7 @@ public class BookServiceImpl implements BookService {
     }
 
     @Override
-    @Transactional
+    //@Transactional
     public Mono<BookDto> addBook(BookDto book) {
         book.setId(null);
         return composeBook(book, null).publishOn(config.getScheduler())

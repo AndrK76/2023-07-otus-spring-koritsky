@@ -8,7 +8,6 @@ let editBookModal;
 window.onload = async (event) => {
     deleteModal = new bootstrap.Modal(document.getElementById('deleteQuery'));
     editBookModal = new bootstrap.Modal(document.getElementById('editBookModal'));
-    document.getElementById('deleteBtn').onclick = doDeleteBook;
     bookNameItem.onblur = validateBookName;
     saveBtn.onclick = doSaveBook;
 
@@ -91,16 +90,33 @@ function displayCountBook() {
     totalEl.innerHTML = couRows.toString();
 }
 
+function getDeleteHeader(mode) {
+    let ret = localizedMessages.has('action.confirm-delete')
+        ? localizedMessages.get('action.confirm-delete')
+        : 'Confirm delete {0}';
+    if (ret.includes('{0}')) {
+        const subj = localizedMessages.has(mode) ? localizedMessages.get(mode) : mode;
+        ret = ret.replace('{0}',subj);
+    }
+    return ret;
+}
+
 function callDeleteBook(bookId) {
+    document.getElementById('deleteBtn').onclick = doDeleteBook;
     document.getElementById('deleteId').value = bookId;
+    document.getElementById('deleteQueryTitle').innerText = getDeleteHeader('book');
     deleteModal.toggle();
 }
 
 function doDeleteBook() {
+    function afterDelete() {
+        deleteModal.toggle();
+        deleteBookRow();
+    }
+
     const bookId = document.getElementById('deleteId').value;
-    deleteModal.toggle();
-    window.scrollTo({top: 0, behavior: 'smooth'});
-    doDelete(urlBookApi, bookId, errorContainer, deleteBookRow).then();
+    const errorDelContainer = document.getElementById('errorContainerDeleteQuery');
+    doDelete(urlBookApi, bookId, errorDelContainer, afterDelete).then();
 }
 
 function deleteBookRow() {
@@ -351,9 +367,30 @@ function callEditComment(action, bookId, commentId) {
 }
 
 function callDeleteComment(bookId, commentId) {
-    console.log('delete');
-    console.log('book: ' + bookId);
-    console.log('comment: ' + commentId);
+    document.getElementById('deleteBtn').onclick = doDeleteComment;
+    document.getElementById('deleteId').value = commentId;
+    document.getElementById('deleteDopId').value = bookId;
+    document.getElementById('deleteQueryTitle').innerText = getDeleteHeader('comment');
+    deleteModal.toggle();
 }
+
+function doDeleteComment() {
+    function afterDelete() {
+        deleteModal.toggle();
+        //deleteBookRow();
+        console.log('delete row after');
+        console.log('book: ' + bookId);
+        console.log('comment: ' + commentId);
+    }
+
+    const errorDelContainer = document.getElementById('errorContainerDeleteQuery');
+
+    const commentId = document.getElementById('deleteId').value;
+    const bookId = document.getElementById('deleteDopId').value;
+
+    doDelete(urlCommentApi, commentId, errorDelContainer, afterDelete).then();
+
+}
+
 
 

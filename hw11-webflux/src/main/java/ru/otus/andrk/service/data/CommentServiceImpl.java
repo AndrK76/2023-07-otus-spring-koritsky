@@ -3,6 +3,7 @@ package ru.otus.andrk.service.data;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import reactor.core.scheduler.Scheduler;
@@ -36,6 +37,7 @@ public class CommentServiceImpl implements CommentService {
     }
 
     @Override
+    //@Transactional
     public Mono<Void> deleteAllCommentsForBook(String bookId) {
         return getCommentsByBookId(bookId)
                 .publishOn(config.getScheduler())
@@ -43,6 +45,20 @@ public class CommentServiceImpl implements CommentService {
                 .collectList()
                 .doOnNext(l -> log.debug("delete comments ids={} size={}", l, l.size()))
                 .doOnNext(repo::deleteAllById)
+                .doOnError(OtherLibraryManipulationException::new)
+                .then();
+    }
+
+    @Override
+    //@Transactional
+    public Mono<Void> deleteComment(String commentId) {
+        return Mono.just(commentId)
+                .publishOn(config.getScheduler())
+                .flatMap(repo::findById)
+                //.doOnNext(r->r.getBook().get)
+                .doOnNext(repo::delete)
+                .doOnNext(c -> log.debug("delete comment id={} book={}", c.getId(), c.getBook().getId()))
+                .doOnError(OtherLibraryManipulationException::new)
                 .then();
     }
 }
