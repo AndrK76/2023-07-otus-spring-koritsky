@@ -38,5 +38,6 @@ logging:
     org.springframework.boot.web.embedded.netty.NettyWebServer: info
     #com.github.cloudyrock: trace
     com.github.cloudyrock.mongock.runner: info
+    org.springframework.data.mongodb.core.ReactiveMongoTemplate: debug
 
 

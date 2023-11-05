@@ -53,39 +53,4 @@ public class DtoMapperImpl implements DtoMapper {
         return new CommentDto(comment.getId(), comment.getText());
     }
 
-    /*
-    @Override
-    public BookWithCommentsDto toDtoWithComments(Book book) {
-        return BookWithCommentsDto.builder()
-                .id(book.getId())
-                .name(book.getName())
-                .authorName(Optional.ofNullable(book.getAuthor()).map(Author::getName).orElse(null))
-                .genreName(Optional.ofNullable(book.getGenre()).map(Genre::getName).orElse(null))
-                .comments(
-                        book.getComments() == null
-                                ? new ArrayList<>()
-                                : book.getComments().stream()
-                                .map(this::toDto).toList())
-                .build();
-    }
-
-    @Override
-    @Transactional(readOnly = true)
-    public CommentOnBookDto toDtoWithBook(Comment comment) {
-        Book book = comment.getBook();
-        return new CommentOnBookDto(
-                comment.getId(),
-                comment.getText(),
-                book.getId(),
-                book.getName(),
-                book.getAuthor() == null ? "" : book.getAuthor().getName(),
-                book.getGenre() == null ? "" : book.getGenre().getName());
-    }
-
-    @Override
-    public CommentDto toDto(Comment comment) {
-        return new CommentDto(comment.getId(), comment.getText());
-    }
-
-     */
 }

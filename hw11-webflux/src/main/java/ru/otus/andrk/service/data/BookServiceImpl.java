@@ -4,6 +4,7 @@ import com.google.common.base.Strings;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -14,12 +15,15 @@ import ru.otus.andrk.dto.AuthorDto;
 import ru.otus.andrk.dto.BookDto;
 import ru.otus.andrk.dto.GenreDto;
 import ru.otus.andrk.dto.mapper.DtoMapper;
+import ru.otus.andrk.exception.NoExistBookException;
 import ru.otus.andrk.exception.OtherLibraryManipulationException;
 import ru.otus.andrk.model.Book;
 import ru.otus.andrk.repository.BookRepository;
+import ru.otus.andrk.repository.CommentRepository;
 
 import java.time.Duration;
 import java.util.Optional;
+import java.util.function.Function;
 
 @Service
 @Log4j2
@@ -27,6 +31,7 @@ import java.util.Optional;
 public class BookServiceImpl implements BookService {
 
     private final BookRepository bookRepo;
+    private final CommentRepository commentRepo;
 
     private final DtoMapper mapper;
 
@@ -40,8 +45,8 @@ public class BookServiceImpl implements BookService {
 
     @Override
     public Flux<BookDto> getAllBooks() {
-        log.debug("call get all books");
         return bookRepo.findAll()
+                .publishOn(config.getScheduler())
                 .timeout(Duration.ofMillis(config.getWaitDataInMs()), config.getScheduler())
                 .map(mapper::toDto)
                 .doFirst(() -> log.debug("Start get all books"))
@@ -51,18 +56,20 @@ public class BookServiceImpl implements BookService {
     }
 
     @Override
-    //@Transactional
+    @Transactional(propagation = Propagation.REQUIRED)
     public Mono<Void> deleteBook(String id) {
         return commentService.deleteAllCommentsForBook(id)
-                .onErrorMap(OtherLibraryManipulationException::new)
-                .then(Mono.just(id).publishOn(config.getScheduler())
-                        .doOnNext(b -> bookRepo.deleteById(id))
-                        .doOnNext(l -> log.debug("delete book id={}", l))
-                ).then();
+                .then(
+                        Mono.just(id)
+                                .publishOn(config.getScheduler())
+                                .onErrorMap(OtherLibraryManipulationException::new)
+                                .doOnNext(l -> log.debug("delete book: {}", l))
+                                .flatMap(bookRepo::deleteById)
+                );
     }
 
     @Override
-    //@Transactional
+    @Transactional
     public Mono<BookDto> addBook(BookDto book) {
         book.setId(null);
         return composeBook(book, null).publishOn(config.getScheduler())
@@ -77,6 +84,14 @@ public class BookServiceImpl implements BookService {
                 .doOnNext(b -> log.debug("start modify book id={}", b.getId()))
                 .flatMap(bookRepo::save).map(mapper::toDto)
                 .doOnNext(b -> log.debug("end modify book id={}", b.getId()));
+    }
+
+    @Override
+    public Mono<Book> getBook(String bookId) {
+        return Mono.just(bookId).publishOn(config.getScheduler())
+                .onErrorMap(OtherLibraryManipulationException::new)
+                .flatMap(bookRepo::findById)
+                .doOnNext(l -> log.debug("get book id={}", l.getId()));
     }
 
 

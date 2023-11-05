@@ -23,11 +23,4 @@ public interface DtoMapper {
 
     CommentDto toDto(Comment comment);
 
-    /*
-    BookWithCommentsDto toDtoWithComments(Book book);
-
-    CommentOnBookDto toDtoWithBook(Comment comment);
-
-
-     */
 }

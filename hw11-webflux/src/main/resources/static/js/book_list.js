@@ -3,13 +3,17 @@ const tbody = document.querySelector('#bookTable tbody');
 const totalEl = document.getElementById('booksTotal');
 let deleteModal;
 let editBookModal;
+let editCommentModal;
 
 
 window.onload = async (event) => {
     deleteModal = new bootstrap.Modal(document.getElementById('deleteQuery'));
     editBookModal = new bootstrap.Modal(document.getElementById('editBookModal'));
+    editCommentModal = new bootstrap.Modal(document.getElementById('editCommentModal'));
     bookNameItem.onblur = validateBookName;
     saveBtn.onclick = doSaveBook;
+    commentTextItem.onblur = validateCommentText;
+    saveCommentBtn.onclick = doSaveComment;
 
     await getLocalizedMessages(document.getElementById('lang').value, errorContainer);
     loadBooks().then();
@@ -63,14 +67,16 @@ async function loadBooks() {
 }
 
 function showBook(book) {
-    let row = document.createElement('tr');
-    row.setAttribute('id', 'row_' + book.id);
-    fillBookRowContent(book, row);
-    tbody.append(row);
+    fillBookRowContent(book);
 }
 
-function fillBookRowContent(book, row) {
-    row.innerHTML = `<td>${book.id}</td>
+function fillBookRowContent(book) {
+    let row = document.getElementById('row_' + book.id);
+    if (row===null){
+        row = document.createElement('tr');
+        row.setAttribute('id', 'row_' + book.id);
+        tbody.append(row);
+        row.innerHTML = `<td>${book.id}</td>
                     <td>${book.name}</td>
                     <td>${book.authorName === null ? '' : book.authorName}</td>
                     <td>${book.genreName === null ? '' : book.genreName}</td>
@@ -82,6 +88,13 @@ function fillBookRowContent(book, row) {
                         <button class="btn btn-outline-secondary btn-sm" title="${actionDelete}"
                             onclick="callDeleteBook('${book.id}');"> <i class="fa fa-remove"></i></button>
                     </td>`;
+    } else {
+        row.cells[1].innerText = book.name;
+        row.cells[2].innerText = book.authorName === null ? '' : book.authorName;
+        row.cells[3].innerText = book.genreName === null ? '' : book.genreName;
+    }
+    return row;
+
 }
 
 function displayCountBook() {
@@ -96,7 +109,7 @@ function getDeleteHeader(mode) {
         : 'Confirm delete {0}';
     if (ret.includes('{0}')) {
         const subj = localizedMessages.has(mode) ? localizedMessages.get(mode) : mode;
-        ret = ret.replace('{0}',subj);
+        ret = ret.replace('{0}', subj);
     }
     return ret;
 }
@@ -123,6 +136,10 @@ function deleteBookRow() {
     const bookId = document.getElementById('deleteId').value;
     const bookRow = document.getElementById('row_' + bookId);
     bookRow.remove();
+    const commentRow = document.getElementById('commentRow_' + bookId);
+    if (commentRow !== null) {
+        commentRow.remove();
+    }
     displayCountBook();
 }
 
@@ -240,13 +257,7 @@ const saveBtn = document.getElementById('saveBookBtn');
 async function doSaveBook() {
     function afterSaveBook(book) {
         const bookId = book.id;
-        let row = document.getElementById('row_' + bookId);
-        if (action === 'add') {
-            row = document.createElement('tr');
-            row.setAttribute('id', 'row_' + book.id);
-            tbody.append(row);
-        }
-        fillBookRowContent(book, row);
+        const row = fillBookRowContent(book);
         displayCountBook();
         editBookModal.toggle();
         window.scrollTo({top: row.offsetTop, behavior: 'smooth'});
@@ -273,8 +284,12 @@ async function doSaveBook() {
 }
 
 function showComment(comment, status, info) {
-    const row = document.createElement('tr');
-    row.setAttribute('id', 'commentRow_' + comment.id);
+    let row = document.getElementById('commentRow_'+ comment.id);
+    if (row==null){
+        row = document.createElement('tr');
+        row.setAttribute('id', 'commentRow_' + comment.id);
+        info.dataBody.append(row);
+    }
     row.innerHTML = `<td>${comment.id}</td>
                     <td>${comment.text}</td>
                     <td class="text-end">
@@ -283,7 +298,6 @@ function showComment(comment, status, info) {
                         <button class="btn btn-outline-secondary btn-sm" title="${actionDeleteComment}"
                              onclick="callDeleteComment('${info.id}', '${comment.id}');"><i class="fa fa-remove"></i></button>
                     </td>`
-    info.dataBody.append(row);
 }
 
 function showCountComments(info) {
@@ -360,12 +374,6 @@ function hideComments(bookId) {
     commentRow.remove();
 }
 
-function callEditComment(action, bookId, commentId) {
-    console.log(action);
-    console.log('book: ' + bookId);
-    console.log('comment: ' + commentId);
-}
-
 function callDeleteComment(bookId, commentId) {
     document.getElementById('deleteBtn').onclick = doDeleteComment;
     document.getElementById('deleteId').value = commentId;
@@ -375,12 +383,15 @@ function callDeleteComment(bookId, commentId) {
 }
 
 function doDeleteComment() {
+
     function afterDelete() {
         deleteModal.toggle();
-        //deleteBookRow();
-        console.log('delete row after');
-        console.log('book: ' + bookId);
-        console.log('comment: ' + commentId);
+        document.getElementById('commentRow_' + commentId).remove();
+        const bookRow = document.getElementById('commentRow_' + bookId);
+        const bodyEl = bookRow.querySelector('td div table tbody');
+        const totalEl = bookRow.querySelector('td div table tfoot tr :nth-child(2)');
+        const info = {dataBody: bodyEl, dataTotal: totalEl};
+        showCountComments(info);
     }
 
     const errorDelContainer = document.getElementById('errorContainerDeleteQuery');
@@ -389,7 +400,116 @@ function doDeleteComment() {
     const bookId = document.getElementById('deleteDopId').value;
 
     doDelete(urlCommentApi, commentId, errorDelContainer, afterDelete).then();
+}
 
+const commentTextItem = document.getElementById('textComment');
+const commentTextErrorDiv = document.getElementById('textCommentError');
+const saveCommentBtn = document.getElementById('saveCommentBtn');
+
+function callEditComment(action, bookId, commentId) {
+    clearCommentTextError();
+    document.getElementById('errorContainerModalComment').innerHTML = '';
+    saveCommentBtn.disabled = false;
+    const bookRow = document.getElementById("row_" + bookId);
+    document.getElementById('bookForComment').value = bookRow.cells[1].innerText;
+    document.getElementById('editComment_bookId').value = bookId;
+    document.getElementById('editComment_action').value = action;
+    if (commentId !== null) {
+        document.getElementById('editComment_id').value = commentId;
+        document.getElementById('editCommentTitle').innerText =
+            (localizedMessages.has('comment.edit-title')
+                ? localizedMessages.get('comment.edit-title')
+                : 'Edit comment');
+        const commentRow = document.getElementById("commentRow_" + commentId);
+        commentTextItem.value = commentRow.cells[1].innerText;
+    } else {
+        document.getElementById('editComment_id').value = '';
+        document.getElementById('editCommentTitle').innerText =
+            (localizedMessages.has('comment.add-title')
+                ? localizedMessages.get('comment.add-title')
+                : 'New comment');
+        commentTextItem.value = '';
+    }
+
+    editCommentModal.toggle();
+}
+
+function clearCommentTextError() {
+    commentTextErrorDiv.innerHTML = '';
+    if (!commentTextErrorDiv.classList.contains('invisible')) {
+        commentTextErrorDiv.classList.add('invisible');
+    }
+}
+
+function makeComment() {
+    let idComment = document.getElementById('editComment_id').value;
+    let textComment = commentTextItem.value;
+
+    let comment = {
+        'id': (idComment === '') ? '' : idComment, 'text': textComment
+    };
+    return comment;
+}
+
+async function validateCommentText() {
+    const errDiv = document.getElementById('errorContainerModalComment');
+
+    function showCommentError(errDiv, data) {
+        if (('errorMessage' in data) && ('key' in data.errorMessage)
+            && data.errorMessage.key === 'argument-error'
+            && ('details' in data) && ('text' in data.details)) {
+            let msgKey = data.details.text.key;
+            let message = localizedMessages.has(msgKey) ? localizedMessages.get(msgKey) : data.details.name.message;
+            let msgDiv = document.createElement('div');
+            msgDiv.innerHTML = `<div class="alert alert-danger align-items-center m-0 p-0">${message}</div>`;
+            commentTextErrorDiv.append(msgDiv);
+            if (commentTextErrorDiv.classList.contains('invisible')) {
+                commentTextErrorDiv.classList.remove('invisible');
+            }
+        } else {
+            showError(errDiv, data);
+        }
+    }
+
+    clearCommentTextError();
+    return await sendDataAsJsonAndApply(urlValidateApi + '/comment', 'POST', makeComment(),
+        errDiv, null, showCommentError);
+}
+
+async function doSaveComment() {
+    const errDiv = document.getElementById('errorContainerModalComment');
+    saveCommentBtn.disabled = true;
+
+    const action = document.getElementById('editComment_action').value;
+    const bookId = document.getElementById('editComment_bookId').value;
+    const commentId = document.getElementById('editComment_id').value;
+
+    function afterSaveComment(comment) {
+        const bookRow = document.getElementById('commentRow_' + bookId);
+        const bodyEl = bookRow.querySelector('td div table tbody');
+        const totalEl = bookRow.querySelector('td div table tfoot tr :nth-child(2)');
+        const info = {id: bookId, dataBody: bodyEl, dataTotal: totalEl};
+        showComment(comment, null, info)
+        showCountComments(info);
+        editCommentModal.toggle();
+    }
+
+    if (await validateCommentText()) {
+        const comment = makeComment();
+        let method = 'POST';
+        let url = urlCommentApi;
+        if (action === 'edit') {
+            method = 'PUT';
+            url += '/' + commentId;
+        } else {
+            url = urlBookApi + '/' + bookId + '/comment';
+        }
+        if (!await sendDataAsJsonAndApply(url, method, comment, errDiv, afterSaveComment)) {
+            saveCommentBtn.disabled = false;
+        }
+    } else {
+        saveCommentBtn.disabled = false;
+    }
 }
 
 
