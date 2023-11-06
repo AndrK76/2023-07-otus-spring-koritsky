@@ -31,7 +31,6 @@ import java.util.function.Function;
 public class BookServiceImpl implements BookService {
 
     private final BookRepository bookRepo;
-    private final CommentRepository commentRepo;
 
     private final DtoMapper mapper;
 
@@ -94,7 +93,6 @@ public class BookServiceImpl implements BookService {
                 .doOnNext(l -> log.debug("get book id={}", l.getId()));
     }
 
-
     private Mono<Optional<AuthorDto>> actualizeAuthor(String authorName) {
         return Strings.isNullOrEmpty(authorName)
                 ? Mono.just(Optional.empty())
@@ -124,6 +122,5 @@ public class BookServiceImpl implements BookService {
                     return Mono.just(ret);
                 });
     }
-
 
 }

@@ -1,0 +1,3 @@
+book-app:
+  thread-pool-size: 2
+  list-delay-ms: 100
