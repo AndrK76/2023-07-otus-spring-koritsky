@@ -12,6 +12,7 @@ public class DataLayerConfig {
 
     private final Scheduler scheduler;
 
+
     public DataLayerConfig(
             @Value("${book-app.wait-data-ms:500}") long waitDataInMs,
             Scheduler scheduler) {

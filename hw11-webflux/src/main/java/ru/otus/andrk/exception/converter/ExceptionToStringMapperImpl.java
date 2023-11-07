@@ -28,7 +28,7 @@ public class ExceptionToStringMapperImpl implements ExceptionToStringMapper {
                     Optional.ofNullable(messages.get(e.getClass()))
                             .orElse("other-manipulation-error");
         }
-        if (e instanceof WebExchangeBindException){
+        if (e instanceof WebExchangeBindException) {
             return "argument-error";
         }
         return "other-error";

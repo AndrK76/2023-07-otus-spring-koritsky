@@ -8,22 +8,17 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
-import reactor.core.scheduler.Scheduler;
-import ru.otus.andrk.config.ControllerConfig;
 import ru.otus.andrk.config.DataLayerConfig;
 import ru.otus.andrk.dto.AuthorDto;
 import ru.otus.andrk.dto.BookDto;
 import ru.otus.andrk.dto.GenreDto;
 import ru.otus.andrk.dto.mapper.DtoMapper;
-import ru.otus.andrk.exception.NoExistBookException;
 import ru.otus.andrk.exception.OtherLibraryManipulationException;
 import ru.otus.andrk.model.Book;
 import ru.otus.andrk.repository.BookRepository;
-import ru.otus.andrk.repository.CommentRepository;
 
 import java.time.Duration;
 import java.util.Optional;
-import java.util.function.Function;
 
 @Service
 @Log4j2

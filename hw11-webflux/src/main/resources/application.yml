@@ -3,6 +3,10 @@ book-app:
   thread-pool-size: 2
   wait-data-ms: 1000
   list-delay-ms: 100
+  use-error-source: false
+  #use-error-source: true
+  #error-message-index: 1
+  #error-message-index: 10
 
 server:
   port: 8080

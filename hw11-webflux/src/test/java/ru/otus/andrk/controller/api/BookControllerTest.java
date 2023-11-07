@@ -10,6 +10,7 @@ import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.web.reactive.server.WebTestClient;
+import org.springframework.web.reactive.function.BodyInserters;
 import reactor.core.publisher.Mono;
 import reactor.core.scheduler.Scheduler;
 import reactor.test.StepVerifier;
@@ -31,6 +32,8 @@ import static org.mockito.Mockito.verify;
 @Import({ControllerConfig.class, ThreadConfig.class})
 @ContextConfiguration(classes = {BookController.class, RestAdvice.class})
 class BookControllerTest {
+
+    private static final String BOOK_API = "/api/v1/book";
 
     @MockBean
     private BookService bookService;
@@ -56,7 +59,7 @@ class BookControllerTest {
                 .willReturn(testPublisher.getValidFlux(expectedData));
 
         var actualResult = testClient
-                .get().uri("/api/v1/book")
+                .get().uri(BOOK_API)
                 .accept(MediaType.valueOf(acceptMediaType))
                 .exchange()
                 .expectStatus().isOk()
@@ -69,7 +72,66 @@ class BookControllerTest {
     }
 
 
+    @Test
+    void shouldCallAddBookMethodAndReturnExceptedResult_whenAddBook(){
+        var testPublisher = new AppTestPublisher<BookDto>();
+        var expectedData = testPublisher.getTwoBookSample();
 
+        given(bookService.addBook(any())).willReturn(testPublisher.getMono(expectedData.get(1)));
+
+        var actualResult = testClient
+                .post().uri(BOOK_API).accept(MediaType.APPLICATION_JSON)
+                .body(BodyInserters.fromValue(expectedData.get(0)))
+                .exchange()
+                .expectStatus().isOk()
+                .expectBody(BookDto.class)
+                .returnResult()
+                .getResponseBody();
+
+        assertThat(actualResult).isNotNull().isEqualTo(expectedData.get(1));
+        verify(bookService, times(1)).addBook(expectedData.get(0));
+        verify(bookService, times(1)).addBook(any());
+    }
+
+    @Test
+    void shouldCallModifyBookMethodAndReturnExceptedResult_whenModifyBook(){
+        var testPublisher = new AppTestPublisher<BookDto>();
+        var expectedData = testPublisher.getTwoBookSample();
+        String expectedId = "test-book-key";
+
+        given(bookService.modifyBook(any(), any())).willReturn(testPublisher.getMono(expectedData.get(1)));
+
+        var actualResult = testClient
+                .put().uri(BOOK_API+"/"+expectedId).accept(MediaType.APPLICATION_JSON)
+                .body(BodyInserters.fromValue(expectedData.get(0)))
+                .exchange()
+                .expectStatus().isOk()
+                .expectBody(BookDto.class)
+                .returnResult()
+                .getResponseBody();
+
+        assertThat(actualResult).isNotNull().isEqualTo(expectedData.get(1));
+        verify(bookService, times(1)).modifyBook(expectedId, expectedData.get(0));
+        verify(bookService, times(1)).modifyBook(any(), any());
+    }
+
+    @Test
+    void shouldCallDeleteBookMethod_whenModifyBook(){
+        var testPublisher = new AppTestPublisher<BookDto>();
+        var expectedData = testPublisher.getTwoBookSample();
+        String expectedId = "test-book-key";
+        given(bookService.deleteBook(any())).willReturn(Mono.empty());
+
+        var actualResult = testClient
+                .delete().uri(BOOK_API+"/"+expectedId).accept(MediaType.APPLICATION_JSON)
+                .exchange()
+                .expectStatus().isOk();
+        verify(bookService, times(1)).deleteBook(expectedId);
+        verify(bookService, times(1)).deleteBook(any());
+    }
+
+
+    //TODO: часть с вопросами
     @Test
     void shouldReturnApplyErrorAdviceAndReturnApiErrorDto_whenGetAllBook() {
         var testPublisher = new AppTestPublisher<BookDto>();
@@ -84,7 +146,7 @@ class BookControllerTest {
         given(apiErrorMapper.fromOtherError(any())).willReturn(Mono.just(exceptedErrorDto));
 
         var actualResult = testClient
-                .get().uri("/api/v1/book")
+                .get().uri(BOOK_API)
                 .accept(MediaType.APPLICATION_NDJSON)
                 .exchange()
                 .expectStatus().isEqualTo(exceptedErrorDto.getStatus())
@@ -108,7 +170,7 @@ class BookControllerTest {
         given(apiErrorMapper.fromOtherError(any())).willReturn(Mono.just(exceptedErrorDto));
 
         var response = testClient
-                .get().uri("/api/v1/book")
+                .get().uri(BOOK_API)
                 .accept(MediaType.APPLICATION_NDJSON)
                 .exchange();
 

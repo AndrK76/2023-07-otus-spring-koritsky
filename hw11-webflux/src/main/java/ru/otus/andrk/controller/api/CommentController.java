@@ -13,7 +13,6 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import ru.otus.andrk.config.ControllerConfig;
 import ru.otus.andrk.dto.CommentDto;
-import ru.otus.andrk.service.data.BookService;
 import ru.otus.andrk.service.data.CommentService;
 
 import java.time.Duration;

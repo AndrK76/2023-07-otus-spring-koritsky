@@ -5,12 +5,9 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.FieldError;
-import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.support.WebExchangeBindException;
-import org.springframework.web.client.HttpStatusCodeException;
 import org.springframework.web.server.ResponseStatusException;
 import reactor.core.publisher.Mono;
-import reactor.core.scheduler.Scheduler;
 import ru.otus.andrk.config.DataLayerConfig;
 import ru.otus.andrk.dto.ApiErrorDto;
 import ru.otus.andrk.dto.MessagePair;
@@ -90,19 +87,17 @@ public class ApiErrorMapperImpl implements ApiErrorMapper {
     }
 
     private ApiErrorDto makeFromOtherError(OtherLibraryManipulationException e) {
-        RuntimeException ex = e;
         var ret = new ApiErrorDto(new Date(), 500);
         setStatus(ret);
         var messageKey = "known-error.other-manipulation-error";
-        return makeApiErrorDto(ex, ret, messageKey);
+        return makeApiErrorDto(e, ret, messageKey);
     }
 
     private ApiErrorDto makeFromStatusError(ResponseStatusException e) {
-        RuntimeException ex = e;
         var ret = new ApiErrorDto(new Date(), e.getStatusCode().value());
         setStatus(ret);
         var messageKey = "known-error.other-manipulation-error";
-        return makeApiErrorDto(ex, ret, messageKey);
+        return makeApiErrorDto(e, ret, messageKey);
     }
 
     private ApiErrorDto makeFromKnownError(KnownLibraryManipulationException e) {

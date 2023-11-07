@@ -13,7 +13,6 @@ import ru.otus.andrk.dto.mapper.DtoMapper;
 import ru.otus.andrk.exception.NoExistBookException;
 import ru.otus.andrk.exception.NoExistCommentException;
 import ru.otus.andrk.exception.OtherLibraryManipulationException;
-import ru.otus.andrk.model.Book;
 import ru.otus.andrk.model.Comment;
 import ru.otus.andrk.repository.CommentRepository;
 
@@ -45,7 +44,7 @@ public class CommentServiceImpl implements CommentService {
 
     @Override
     public Flux<CommentDto> getCommentsByBookId(String bookId) {
-        return repo.findByBook_Id(bookId)
+        return repo.findByBookId(bookId)
                 .publishOn(config.getScheduler())
                 .onErrorMap(OtherLibraryManipulationException::new)
                 .timeout(Duration.ofMillis(config.getWaitDataInMs()), config.getScheduler())
@@ -58,7 +57,7 @@ public class CommentServiceImpl implements CommentService {
     public Mono<Void> deleteAllCommentsForBook(String bookId) {
         return Mono.just(bookId).publishOn(config.getScheduler())
                 .onErrorMap(OtherLibraryManipulationException::new)
-                .flatMapMany(repo::findByBook_Id)
+                .flatMapMany(repo::findByBookId)
                 .map(Comment::getId)
                 .collectList()
                 .doOnNext(l -> log.debug("delete comments: {}", l))

@@ -2,6 +2,7 @@ package ru.otus.andrk.controller.api;
 
 import lombok.extern.log4j.Log4j2;
 import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 import ru.otus.andrk.dto.ApiErrorDto;
 import ru.otus.andrk.dto.BookDto;
 import ru.otus.andrk.dto.MessagePair;
@@ -55,6 +56,10 @@ public class AppTestPublisher<T> {
                 }
             }
         });
+    }
+
+    public Mono<T> getMono(T source){
+        return Mono.just(source);
     }
 
     public ApiErrorDto mapError(Exception e){

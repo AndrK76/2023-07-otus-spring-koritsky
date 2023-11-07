@@ -9,7 +9,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.server.ServerWebExchange;
 import org.springframework.web.server.adapter.WebHttpHandlerBuilder;
 import org.springframework.web.server.i18n.LocaleContextResolver;
-import ru.otus.andrk.config.ControllerConfig;
 import ru.otus.andrk.config.LocalizationConfig;
 
 import java.util.List;

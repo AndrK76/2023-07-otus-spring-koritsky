@@ -6,8 +6,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
-import reactor.core.scheduler.Scheduler;
-import ru.otus.andrk.config.ControllerConfig;
 import ru.otus.andrk.config.DataLayerConfig;
 import ru.otus.andrk.dto.AuthorDto;
 import ru.otus.andrk.dto.mapper.DtoMapper;
@@ -41,7 +39,7 @@ public class AuthorServiceImpl implements AuthorService {
     public Mono<AuthorDto> addAuthor(String authorName) {
         return repo.save(new Author(authorName)).publishOn(config.getScheduler())
                 .map(mapper::toDto)
-                .doOnNext(author->log.debug("Add author: {}",author));
+                .doOnNext(author -> log.debug("Add author: {}", author));
     }
 
 

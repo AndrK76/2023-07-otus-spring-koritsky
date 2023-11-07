@@ -13,9 +13,11 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import ru.otus.andrk.config.ControllerConfig;
 import ru.otus.andrk.dto.BookDto;
+import ru.otus.andrk.exception.OtherLibraryManipulationException;
 import ru.otus.andrk.service.data.BookService;
 
 import java.time.Duration;
+import java.util.stream.IntStream;
 
 @RestController
 @Log4j2
@@ -27,7 +29,10 @@ public class BookController {
 
     @GetMapping("/api/v1/book")
     public Flux<BookDto> getAllBooks() {
-        return bookService.getAllBooks()
+        var srcData = config.isUseErrorSource()
+                ? getFluxBooksWithError(config.getErrorMessageIndex())
+                : bookService.getAllBooks();
+        return srcData
                 .delayElements(Duration.ofMillis(config.getListDelayInMs()), config.getScheduler());
     }
 
@@ -48,4 +53,26 @@ public class BookController {
         return bookService.deleteBook(bookId);
     }
 
+    //TODO: то что ниже - для иллюстрации вопроса и разумеется в контроллере ему не место
+    public Flux<BookDto> getFluxBooksWithError(int exceptionPos) {
+        var err = new OtherLibraryManipulationException(new RuntimeException());
+        var src = IntStream.range(1, 15)
+                .mapToObj(ind -> {
+                    var book = new BookDto();
+                    book.setId("q_" + ind);
+                    book.setName("book " + ind);
+                    return book;
+                }).toList();
+        return Flux.create(emitter -> {
+            for (int i = 0; i < src.size(); i++) {
+                if (i != exceptionPos) {
+                    log.info("produce book {}", i);
+                    emitter.next(src.get(i));
+                } else {
+                    log.info("produce error");
+                    emitter.error(err);
+                }
+            }
+        });
+    }
 }

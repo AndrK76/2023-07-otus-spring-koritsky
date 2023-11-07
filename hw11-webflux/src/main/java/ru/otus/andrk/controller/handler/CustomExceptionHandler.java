@@ -1,28 +1,22 @@
 package ru.otus.andrk.controller.handler;
 
-import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
-import org.springframework.boot.autoconfigure.web.WebProperties;
 import org.springframework.boot.autoconfigure.web.reactive.error.AbstractErrorWebExceptionHandler;
 import org.springframework.boot.web.error.ErrorAttributeOptions;
 import org.springframework.boot.web.reactive.error.ErrorAttributes;
-import org.springframework.context.ApplicationContext;
 import org.springframework.core.annotation.Order;
 import org.springframework.http.MediaType;
-import org.springframework.http.codec.ServerCodecConfigurer;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.BodyInserters;
 import org.springframework.web.reactive.function.server.RouterFunction;
 import org.springframework.web.reactive.function.server.ServerRequest;
 import org.springframework.web.reactive.function.server.ServerResponse;
-import org.springframework.web.reactive.result.view.ViewResolver;
 import reactor.core.publisher.Mono;
 import reactor.core.scheduler.Scheduler;
 import ru.otus.andrk.config.ExceptionHandlerConfig;
 import ru.otus.andrk.dto.mapper.ApiErrorMapper;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -76,7 +70,7 @@ public class CustomExceptionHandler extends AbstractErrorWebExceptionHandler {
                 .contentType(MediaType.TEXT_HTML)
                 .render("error", makeMapForTextModel(errorAttributes))
                 .publishOn(scheduler)
-                .doOnNext(l-> log.debug("formatTextResponse"));
+                .doOnNext(l -> log.debug("formatTextResponse"));
     }
 
     private Map<String, Object> makeMapForTextModel(Map<String, Object> errorAttributes) {

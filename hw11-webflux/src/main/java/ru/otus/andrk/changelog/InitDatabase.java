@@ -18,13 +18,13 @@ import java.util.Map;
 @ChangeLog(order = "001")
 public class InitDatabase {
 
-    private Map<String, Genre> genres = new HashMap<>(
+    private final Map<String, Genre> genres = new HashMap<>(
             Map.of(
                     "noGenre", new Genre("Не указан"),
                     "stih", new Genre("Стихи"),
                     "proza", new Genre("Проза")));
 
-    private Map<String, Author> authors = new HashMap<>(Map.of(
+    private final Map<String, Author> authors = new HashMap<>(Map.of(
             "pushkin", new Author("А.С. Пушкин"),
             "knuth", new Author("D.E. Knuth"),
             "orlovsky", new Author("Г.Ю. Орловский")
@@ -37,16 +37,17 @@ public class InitDatabase {
 
     @ChangeSet(order = "001", id = "initGenresAndAuthors", author = "AndrK")
     public void initGenresAndAuthors(GenreRepository genreRepo, AuthorRepository authorRepo) {
-        for (var key : genres.keySet()) {
-            genres.put(key, genreRepo.save(genres.get(key)).block());
-        }
-        for (var key : authors.keySet()) {
-            authors.put(key, authorRepo.save(authors.get(key)).block());
-        }
+        genres.replaceAll((k, v) -> genreRepo.save(genres.get(k)).block());
+        authors.replaceAll((k, v) -> authorRepo.save(authors.get(k)).block());
     }
 
     @ChangeSet(order = "002", id = "initBooksAndComments", author = "AndrK")
     public void initBooksAndComments(BookRepository bookRepo, CommentRepository commentRepo) {
+        initMainBooks(bookRepo, commentRepo);
+        initAdditionalBooks(bookRepo, commentRepo, 15, 18);
+    }
+
+    private void initMainBooks(BookRepository bookRepo, CommentRepository commentRepo) {
         var bookOnegin = bookRepo.save(
                 new Book("Евгений Онегин", authors.get("pushkin"), genres.get("stih"))
         ).block();
@@ -56,27 +57,33 @@ public class InitDatabase {
         ).block();
 
         commentRepo.save(new Comment(
-                "Роман Евгений Онегин на мой взгляд должен прочитать каждый! Интересно наблюдать за размышлениями героев!\n" +
-                        "Проследить безответную любовь, которую уже не получится вернуть. Обожаю письма от Онегина и Татьяны,\n" +
-                        "они наполнены чувствами и пропитаны смыслом, правда для каждого своим! Несмотря на то, что роман написан \n" +
-                        "был очень давно, многие мысли актуальны и по сей день. Тем кто не читал-желаю этого, а те кто читал– советую\n" +
+                "Роман Евгений Онегин на мой взгляд должен прочитать каждый!" +
+                        " Интересно наблюдать за размышлениями героев!\n" +
+                        "Проследить безответную любовь, которую уже не получится вернуть." +
+                        " Обожаю письма от Онегина и Татьяны,\n" +
+                        "они наполнены чувствами и пропитаны смыслом, правда для каждого своим!" +
+                        " Несмотря на то, что роман написан \n" +
+                        "был очень давно, многие мысли актуальны и по сей день. Тем кто не " +
+                        "читал-желаю этого, а те кто читал– советую\n" +
                         "ещё раз. Такие произведения никогда не стареют!\n" +
-                        "https://www.litres.ru/book/aleksandr-pushkin/evgeniy-onegin-171966/otzivi/", bookOnegin)).block();
+                        "https://www.litres.ru/book/aleksandr-pushkin/evgeniy-onegin-171966/otzivi/",
+                bookOnegin)).block();
         commentRepo.save(new Comment("Аффтар пеши исчо", bookOnegin)).block();
         commentRepo.save(new Comment("Клёва", bookKnuth)).block();
         commentRepo.save(new Comment("Нудно", bookKnuth)).block();
+    }
 
-        for (int i = 1; i < 15; i++) {
+    private void initAdditionalBooks(BookRepository bookRepo, CommentRepository commentRepo,
+                                     int countBook, int countCommentMax) {
+        for (int i = 1; i < countBook; i++) {
             var book = new Book("Ричард Длинные руки. Опус " + i,
                     authors.get("orlovsky"), genres.get("proza"));
             bookRepo.save(book).block();
-            var couComment = (int) (Math.random() * 20);
+            var couComment = (int) (Math.random() * countCommentMax);
             for (int j = 0; j < couComment; j++) {
                 commentRepo.save(new Comment("Комментарий №" + j, book)).block();
             }
         }
-
     }
-
 
 }

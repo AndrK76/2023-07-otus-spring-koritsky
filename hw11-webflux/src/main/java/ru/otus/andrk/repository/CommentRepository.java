@@ -5,7 +5,7 @@ import reactor.core.publisher.Flux;
 import ru.otus.andrk.model.Comment;
 
 public interface CommentRepository extends ReactiveCrudRepository<Comment, String> {
-    Flux<Comment> findByBook_Id(String bookId);
+    Flux<Comment> findByBookId(String bookId);
 
 
 }

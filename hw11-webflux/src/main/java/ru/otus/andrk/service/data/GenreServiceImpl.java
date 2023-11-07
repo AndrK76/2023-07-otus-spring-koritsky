@@ -6,8 +6,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
-import reactor.core.scheduler.Scheduler;
-import ru.otus.andrk.config.ControllerConfig;
 import ru.otus.andrk.config.DataLayerConfig;
 import ru.otus.andrk.dto.GenreDto;
 import ru.otus.andrk.dto.mapper.DtoMapper;
@@ -40,7 +38,7 @@ public class GenreServiceImpl implements GenreService {
     public Mono<GenreDto> addGenre(String genreName) {
         return repo.save(new Genre(genreName)).publishOn(config.getScheduler())
                 .map(mapper::toDto)
-                .doOnNext(genre->log.debug("Add genre: {}",genre));
+                .doOnNext(genre -> log.debug("Add genre: {}", genre));
     }
 
 
