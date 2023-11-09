@@ -16,4 +16,5 @@
 - **hw07-jpa**  - ДЗ к 13. "Белая магия" Spring Data: Spring Data JPA
 - **hw08-nosql**  - ДЗ к 15. Spring Data для подключения к нереляционным БД
 - **hw09-mvc-classic**  - ДЗ к 18. Spring MVC View
-- **hw10-ajax**  - ДЗ к 19. Современные приложения на Spring MVC 
+- **hw10-ajax**  - ДЗ к 19. Современные приложения на Spring MVC
+- **hw11-webflux**  - ДЗ к 22. Spring WebFlux

@@ -1,0 +1,47 @@
+book-app:
+  default-lang: en
+  thread-pool-size: 2
+  wait-data-ms: 1000
+  list-delay-ms: 100
+  use-error-source: false
+  #use-error-source: true
+  #error-message-index: 1
+  #error-message-index: 10
+
+server:
+  port: 8080
+  error:
+    #include-stacktrace: never
+    include-stacktrace: always
+
+spring:
+  data:
+    mongodb:
+      host: localhost
+      port: 27017
+      database: bookStore
+  messages:
+    basename: messages
+    encoding: UTF-8
+    fallback-to-system-locale: false
+
+mongock:
+  runner-type: "ApplicationRunner"
+  change-logs-scan-package: ru.otus.andrk.changelog
+  mongo-db:
+    write-concern:
+      journal: false
+    read-concern: local
+
+
+
+logging:
+  level:
+    root: error
+    ru.otus.andrk: debug
+    org.springframework.boot.web.embedded.netty.NettyWebServer: info
+    #com.github.cloudyrock: trace
+    com.github.cloudyrock.mongock.runner: info
+    org.springframework.data.mongodb.core.ReactiveMongoTemplate: debug
+
+
