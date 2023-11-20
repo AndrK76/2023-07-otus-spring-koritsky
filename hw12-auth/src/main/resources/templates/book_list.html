@@ -19,16 +19,18 @@
         <main class="col-auto" th:classappend="${delete != null ? 'disabled-main' : ''}">
             <div class="row">
                 <div class="col">
-                    <h1 th:text="#{library.title}">Library</h1>
+                    <h1 th:text="#{library.title}" class="h1 d-inline">Library</h1>
+                    <a href="#" th:href="@{/logout}" class="btn btn-sm btn-outline-secondary d-inline"
+                    th:text="#{action.logout}">Logout</a>
                 </div>
                 <div class="col-auto">
                     <div class="btn-group align-items-end mt-3">
                         <a class="btn btn-sm"
                            th:classappend="${#locale.toString()}=='en'?'btn-secondary':'btn-outline-secondary'"
-                           th:href="@{/(lang=en)}">En</a>
+                           th:href="@{/book(lang=en)}">En</a>
                         <a class="btn btn-sm"
                            th:classappend="${#locale.toString()}=='ru'?'btn-secondary':'btn-outline-secondary'"
-                           th:href="@{/(lang=ru)}">Ru</a>
+                           th:href="@{/book(lang=ru)}">Ru</a>
                     </div>
                 </div>
             </div>

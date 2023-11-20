@@ -1,3 +1,6 @@
+--liquibase formatted sql
+--changeset andrk:2023-11-20-001-create_library_schema
+
 create table books
 (
     id IDENTITY primary key,

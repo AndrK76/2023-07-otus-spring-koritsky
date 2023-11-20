@@ -13,9 +13,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import ru.otus.andrk.dto.BookDto;
 import ru.otus.andrk.exception.NoExistBookException;
-import ru.otus.andrk.service.AuthorService;
-import ru.otus.andrk.service.BookService;
-import ru.otus.andrk.service.GenreService;
+import ru.otus.andrk.service.library.AuthorService;
+import ru.otus.andrk.service.library.BookService;
+import ru.otus.andrk.service.library.GenreService;
 
 import java.util.Optional;
 
@@ -33,7 +33,7 @@ public class BookController {
 
     private final GenreService genreService;
 
-    @GetMapping({"/", "/book"})
+    @GetMapping({"/book"})
     public String index(Model model) {
         var books = bookService.getAllBooks();
         model.addAttribute("books", books);

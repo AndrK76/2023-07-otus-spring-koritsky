@@ -27,7 +27,7 @@
         <checkstyle.config.url>https://raw.githubusercontent.com/OtusTeam/Spring/master/checkstyle.xml
         </checkstyle.config.url>
 
-        <h2.version>2.2.220</h2.version>
+        <h2.version>2.1.210</h2.version>
         <snakeyaml.version>2.0</snakeyaml.version>
         <bootstrap_npm.version>5.3.0-alpha3</bootstrap_npm.version>
         <font_avesome.version>6.4.2</font_avesome.version>
@@ -80,8 +80,14 @@
         <dependency>
             <groupId>com.h2database</groupId>
             <artifactId>h2</artifactId>
+            <version>${h2.version}</version>
             <scope>runtime</scope>
         </dependency>
+        <dependency>
+            <groupId>org.liquibase</groupId>
+            <artifactId>liquibase-core</artifactId>
+        </dependency>
+
         <dependency>
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>

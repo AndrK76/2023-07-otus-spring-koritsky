@@ -1,3 +1,6 @@
+--liquibase formatted sql
+--changeset andrk:2023-11-20-002-insert_initial_library_data
+
 insert into genres (name)
 values ('Не указан'),
        ('Стихи'),

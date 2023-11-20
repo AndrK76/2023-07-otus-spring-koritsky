@@ -14,8 +14,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import ru.otus.andrk.dto.CommentOnBookDto;
 import ru.otus.andrk.exception.NoExistBookException;
 import ru.otus.andrk.exception.NoExistCommentException;
-import ru.otus.andrk.service.BookService;
-import ru.otus.andrk.service.CommentService;
+import ru.otus.andrk.service.library.BookService;
+import ru.otus.andrk.service.library.CommentService;
 
 import java.util.Optional;
 
