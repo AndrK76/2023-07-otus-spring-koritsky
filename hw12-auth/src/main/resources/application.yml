@@ -1,0 +1,24 @@
+server:
+  port: 8080
+
+spring:
+  datasource:
+    url: jdbc:h2:mem:bookdb
+    username: test
+    password: test
+  jpa:
+    show-sql: false
+    generate-ddl: false
+    hibernate:
+      ddl-auto: none
+    open-in-view: false
+  liquibase:
+    change-log: database/changelog/master.yml
+
+logging:
+  level:
+    root: error
+    ru.otus.andrk: info
+    #ru.otus.andrk: debug
+    liquibase.changelog: debug
+    org.springframework.boot.web.embedded.tomcat: info
