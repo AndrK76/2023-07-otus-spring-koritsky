@@ -1,0 +1,16 @@
+version: '3.8'
+
+services:
+  hw13-keycloak:
+    image: keycloak/keycloak:20.0.3
+    container_name: hw13-keycloak
+    environment:
+      KEYCLOAK_ADMIN: admin
+      KEYCLOAK_ADMIN_PASSWORD: admin
+    ports:
+      - '8090:8090'
+    command:
+      - start-dev --http-port 8090
+      - --import-realm
+    volumes:
+      - ./realm.json:/opt/keycloak/data/import/realm.json
