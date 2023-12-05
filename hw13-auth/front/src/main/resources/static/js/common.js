@@ -8,6 +8,7 @@ let localizedMessages = new Map([
     ['error.status.405', 'Method Not Allowed'],
     ['error.status.500', 'Internal Server Error'],
 ]);
+let bookManager = {};
 
 class Manager {
     authenticated = false;
@@ -21,12 +22,12 @@ class Manager {
         if (!this.authenticated) {
             $('#loginBtn').removeClass('invisible');
             $('#logoutBtn').addClass('invisible');
-            $('#logoutBtn').attr('title','');
+            $('#logoutBtn').attr('title', '');
         } else {
             $('#loginBtn').addClass('invisible');
             $('#logoutBtn').removeClass('invisible');
             await keycloak.loadUserInfo();
-            $('#logoutBtn').attr('title',keycloak.userInfo.name);
+            $('#logoutBtn').attr('title', keycloak.userInfo.name);
         }
     }
 
@@ -84,15 +85,62 @@ class Manager {
         return ret;
     }
 
+    async sendJsonData(url, data, method = 'POST') {
+        let ret = {success: true, response: {}, error: {}}
+        let headers = {accept: 'application/json'}
+        try {
+            let response = {};
+            if (this.authenticated) {
+                await this.updateToken();
+                let headers = {accept: 'application/json'};
+                headers.Authorization = `Bearer ${keycloak.token}`;
+                headers['Content-Type'] = 'application/json; charset=utf-8'
+                response = await fetch(url, {
+                    method: method,
+                    body: data,
+                    headers: headers
+                });
+            } else {
+                this.formatFetchErr({message: 'need auth'}, ret, url);
+                return ret;
+            }
+            ret.response.status = response.status;
+            if (response.status === 200) {
+                const respBody = await response.json()
+                ret.response.result = respBody;
+            } else {
+                ret.success = false;
+                const bodyText = await response.text();
+                try {
+                    ret.error = JSON.parse(bodyText);
+                } catch (e) {
+                    ret.error = bodyText;
+                }
+            }
+        } catch (e) {
+            this.formatFetchErr(e, ret, url);
+        }
+        return ret;
+    }
+
+    async updateToken() {
+        await keycloak.updateToken(5).then(function (refreshed) {
+            if (refreshed) {
+                //console.log('Token was successfully refreshed');
+            }
+        }).catch(function () {
+            //console.error('Failed to refresh the token, or the session has expired');
+        });
+    }
+
     formatFetchErr(err, ret, url) {
         ret.success = false;
         ret.response.status = 404;
-        ret.error.path = url;
         ret.error.status = 404;
-        ret.error.statusMessage = 'Not Found';
+        ret.error.statusMessage = {key: 'error.status.404'};
         ret.error.timestamp = (new Date()).toISOString();
-        ret.error.errorMessage = err.message;
-        ret.error.detailMessage = null;
+        ret.error.errorMessage = {message: err.message};
+        ret.error.detailMessage = {message: url};
     }
 
     getLocalizedMsg(errPair) {
@@ -109,7 +157,7 @@ class Manager {
 
     showError(error, errDiv = null) {
         let errContainer = $('#' + (errDiv ?? 'errorContainer'));
-        console.log(error);
+        //console.log(error);
 
         let alertDiv = document.createElement('div');
 
@@ -126,7 +174,6 @@ class Manager {
         alertDiv.innerHTML =
             `<div class="alert alert-danger alert-dismissible fade show pb-0 pt-0" role="alert">
              <strong>${error.status + ': ' + manager.getLocalizedMsg(error.statusMessage)}</strong>
-             ${error.path}
              ${msg}
              ${details}
              <button type="button" class="btn-close btn-sm pt-0 pb-0 mt-0" data-bs-dismiss="alert" aria-label="Close"></button>
@@ -166,14 +213,21 @@ async function init(keyCloakConfig) {
     $('#loginBtn').on('click', manager.login);
     $('#logoutBtn').on('click', manager.logout);
 
+    bookManager = new BookManager();
+    bookManager.apiSettings = apiServerSettings;
+    bookManager.initPage();
+    bookManager.setLocalizedActions();
+
     await manager.checkState();
     return manager.authenticated;
 }
 
 init(keyCloakSettings).then(status => {
-    if (status){
-        console.log('Будем грузить данные');
+    if (status) {
+        bookManager.setBookModifier()
+            .then(_ => bookManager.setCommentModifier())
+            .then(_ => bookManager.getBookList());
     } else {
-        console.log('Очистим');
+        bookManager.clearPage('0');
     }
 })

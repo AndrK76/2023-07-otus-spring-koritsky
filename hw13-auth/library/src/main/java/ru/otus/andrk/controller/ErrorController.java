@@ -1,40 +1,35 @@
 package ru.otus.andrk.controller;
 
 import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.boot.autoconfigure.web.servlet.error.AbstractErrorController;
 import org.springframework.boot.autoconfigure.web.servlet.error.ErrorViewResolver;
 import org.springframework.boot.web.error.ErrorAttributeOptions;
 import org.springframework.boot.web.servlet.error.ErrorAttributes;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.servlet.ModelAndView;
 import ru.otus.andrk.dto.ApiErrorDto;
-import ru.otus.andrk.dto.mapper.ApiErrorDtoMapper;
+import ru.otus.andrk.dto.mapper.ApiErrorDtoConverter;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 
 @Controller
 @Log4j2
 public class ErrorController extends AbstractErrorController {
 
-    private final ApiErrorDtoMapper mapper;
+    private final ApiErrorDtoConverter converter;
 
     public ErrorController(ErrorAttributes errorAttributes,
                            List<ErrorViewResolver> errorViewResolvers,
-                           ApiErrorDtoMapper errMapper) {
+                           ApiErrorDtoConverter converter) {
         super(errorAttributes);
-        this.mapper = errMapper;
+        this.converter = converter;
     }
 
-    @RequestMapping(path = "/error", produces = {MediaType.APPLICATION_JSON_VALUE})
+    @RequestMapping(path = "/error")
     public ResponseEntity<ApiErrorDto> errorData(HttpServletRequest request) {
         final var status = getStatus(request);
         if (status == HttpStatus.NO_CONTENT) {
@@ -42,14 +37,8 @@ public class ErrorController extends AbstractErrorController {
         }
         var errorAttributes = getErrorAttributes(request, ErrorAttributeOptions.defaults());
         log.debug(errorAttributes);
-        return new ResponseEntity<>(mapper.fromErrorAttributes(errorAttributes), status);
+        return new ResponseEntity<>(converter.fromErrorAttributes(errorAttributes), status);
     }
 
-    @RequestMapping(path = "/error", produces = MediaType.TEXT_HTML_VALUE)
-    public String errorHtml(HttpServletRequest request, HttpServletResponse response) {
-        final var status = getStatus(request);
-        var errorAttributes = getErrorAttributes(request, ErrorAttributeOptions.defaults());
-        log.debug(errorAttributes);
-        return "redirect:/";
-    }
+
 }
