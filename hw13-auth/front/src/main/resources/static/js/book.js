@@ -4,6 +4,7 @@ class BookManager {
     authorApi = '/api/v1/author';
     genreApi = '/api/v1/genre';
     validateApi = '/api/v1/validation'
+    commentApi = '/api/v1/comment';
 
     localizedActions = new Map();
     isBookModifier = false;
@@ -13,6 +14,8 @@ class BookManager {
     tbody = document.querySelector('#bookTable tbody');
     totalEl = document.getElementById('booksTotal');
     editBookModal = {}
+    deleteModal = {}
+    editCommentModal = {}
 
 
     setLocalizedActions() {
@@ -66,7 +69,12 @@ class BookManager {
         bookManager.clearPage('???');
         $('#btnAdd').on('click', bookManager.callAddBook);
         bookManager.editBookModal = new bootstrap.Modal(document.getElementById('editBookModal'));
+        bookManager.deleteModal = new bootstrap.Modal(document.getElementById('deleteQuery'));
+        bookManager.editCommentModal = new bootstrap.Modal(document.getElementById('editCommentModal'));
         $('#nameBook').on('blur', bookManager.validateBookName);
+        $('#saveBookBtn').on('click', bookManager.doSaveBook);
+        $('#textComment').on('blur', bookManager.validateCommentText);
+        $('#saveCommentBtn').on('click', bookManager.doSaveComment);
     }
 
     clearPage(couBook) {
@@ -96,6 +104,7 @@ class BookManager {
         if (row === null) {
             row = document.createElement('tr');
             row.setAttribute('id', 'row_' + book.id);
+            row.setAttribute('class', 'main-row');
             bookManager.tbody.append(row);
             let btnCell = '';
             if (bookManager.isBookModifier) {
@@ -131,8 +140,7 @@ class BookManager {
     }
 
     showCountBook() {
-        const couRows = bookManager.tbody.querySelectorAll('tr').length -
-            bookManager.tbody.querySelectorAll('tr.comment-row').length;
+        const couRows = bookManager.tbody.querySelectorAll('tr.main-row').length;
         bookManager.totalEl.innerHTML = couRows.toString();
     }
 
@@ -277,6 +285,7 @@ class BookManager {
         }
         let canContinue = true;
         bookManager.clearBookNameError();
+        $('#errorContainerModalBook').html('');
         await manager.getJson(bookManager.apiSettings.url + bookManager.authorApi)
             .then(data => {
                 manager.applyApiExchangeResult(data, (authors) => {
@@ -323,37 +332,241 @@ class BookManager {
         let ret = false;
         const bookName = $('#nameBook').val();
         const book = {name: bookName}
-        await manager.sendJsonData(bookManager.apiSettings.url + bookManager.validateApi + '/book', book)
-            .then(response => {
-                manager.applyApiExchangeResult(response, (success) => {
-                    ret = true;
-                }, (error) => {
+        await manager.sendJsonData(bookManager.apiSettings.url + bookManager.validateApi + '/book',
+            JSON.stringify(book)).then(response => {
+            manager.applyApiExchangeResult(response, (success) => {
+                ret = true;
+            }, (error) => {
+                if (error.errorMessage !== null && error.errorMessage !== undefined
+                    && error.errorMessage.key === 'error.validation'
+                    && error.details !== null && error.details !== undefined
+                    && error.details.name !== undefined) {
                     const errBookNameDiv = $('#nameBookError');
-                    errBookNameDiv.text(JSON.stringify(error));
+                    let errMsg = error.details.name;
+                    if (localizedMessages.has(errMsg)) {
+                        errMsg = localizedMessages.get(errMsg);
+                    }
+                    errBookNameDiv.html(`<div class="alert alert-danger align-items-center m-0 p-0">${errMsg}</div>`);
                     errBookNameDiv.removeClass('invisible');
-                });
+                } else {
+                    manager.showError(error, 'errorContainerModalBook');
+                }
             });
+        });
         return ret;
     }
 
+    makeBook() {
+        let book = {};
+        if ($('#editBookAction').val() === 'edit') {
+            book.id = parseInt($('#editBookId').val());
+        }
+        book.name = $('#nameBook').val();
+        let authorName = $('#authorName').val();
+        if (authorName !== null && authorName.trim().length > 0) {
+            book.authorName = authorName.trim();
+        }
+        let genreName = $('#genreName').val();
+        if (genreName !== null && genreName.trim().length > 0) {
+            book.genreName = genreName.trim();
+        }
+        return book;
+    }
+
+    async doSaveBook() {
+        if (!await bookManager.validateBookName()) {
+            return;
+        }
+        const book = bookManager.makeBook();
+        let url = bookManager.apiSettings.url + bookManager.bookApi;
+        let method = 'POST';
+        if ($('#editBookAction').val() === 'edit') {
+            method = 'PUT';
+            url = url + '/' + book.id;
+        }
+        manager.sendJsonData(url, JSON.stringify(book), method).then(response => {
+            manager.applyApiExchangeResult(response, (data) => {
+                bookManager.editBookModal.toggle();
+                bookManager.showBook(data);
+                bookManager.showCountBook();
+            }, (error) => {
+                manager.showError(error, 'errorContainerModalBook');
+            });
+        });
+    }
 
     callDeleteBook() {
-        console.log('Delete')
         let row = jQuery(this).parent().parent();
         let id = row.attr('id').replace('row_', '');
-        console.log(id);
+        $('#deleteId').val(id);
+        $('#deleteBtn').off('click');
+        $('#deleteBtn').on('click', bookManager.doDeleteBook);
+        $('#deleteQueryTitle').text(bookManager.getDeleteHeader('book'));
+        $('#errorContainerDeleteQuery').html('');
+        bookManager.deleteModal.toggle();
+    }
+
+    getDeleteHeader(mode) {
+        let ret = localizedMessages.has('action.confirm-delete')
+            ? localizedMessages.get('action.confirm-delete')
+            : 'Confirm delete {0}';
+        if (ret.includes('{0}')) {
+            const subj = localizedMessages.has(mode) ? localizedMessages.get(mode) : mode;
+            ret = ret.replace('{0}', subj);
+        }
+        return ret;
+    }
+
+    async doDeleteBook() {
+        let id = $('#deleteId').val();
+        manager.sendJsonData(bookManager.apiSettings.url + bookManager.bookApi + '/' + id,
+            null, 'DELETE').then(response => {
+            manager.applyApiExchangeResult(response, _ => {
+                bookManager.deleteModal.toggle();
+                const commentsRow = $('#row_comments_' + id);
+                if (commentsRow.length > 0) {
+                    commentsRow[0].remove();
+                }
+                const bookRow = $('#row_' + id);
+                if (bookRow.length > 0) {
+                    bookRow[0].remove();
+                }
+                bookManager.showCountBook();
+            }, (error) => {
+                manager.showError(error, 'errorContainerDeleteQuery');
+            });
+        });
     }
 
     callAddComment(bookId) {
-        console.log('Add comment for ' + bookId);
+        bookManager.showEditCommentDialog(bookId).then();
     }
 
     callEditComment(bookId, commentId) {
-        console.log('Edit comment ' + commentId + ' for ' + bookId);
+        bookManager.showEditCommentDialog(bookId, commentId).then();
+    }
+
+    async showEditCommentDialog(bookId, commentId = null) {
+        const bookRow = $('#row_' + bookId)[0];
+        $('#bookForComment').val(bookRow.cells[1].innerText);
+        $('#editComment_bookId').val(bookId);
+        let titleKey = 'comment.edit-title';
+        let titleVal = 'Edit comment';
+        if (commentId === null) {
+            $('#textComment').val('');
+            $('#editComment_id').val('');
+            $('#editComment_action').val('add');
+            titleKey = 'comment.add-title';
+            titleVal = 'New comment';
+        } else {
+            const commentRow = $('#commentRow_' + commentId)[0];
+            $('#textComment').val(commentRow.cells[1].innerText);
+            $('#editComment_id').val(commentId);
+            $('#editComment_action').val('edit');
+        }
+        titleVal = (localizedMessages.has(titleKey)
+            ? localizedMessages.get(titleKey)
+            : titleVal);
+        $('#editCommentTitle').text(titleVal);
+
+        bookManager.clearCommentTextError();
+        $('#errorContainerModalComment').html('');
+        bookManager.editCommentModal.toggle();
+    }
+
+    clearCommentTextError() {
+        const errCommentTextDiv = $('#textCommentError');
+        errCommentTextDiv.html('');
+        errCommentTextDiv.addClass('invisible');
+    }
+
+    async validateCommentText() {
+        bookManager.clearCommentTextError();
+        let ret = false;
+        const commentText = $('#textComment').val();
+        const comment = {text: commentText}
+        await manager.sendJsonData(bookManager.apiSettings.url + bookManager.validateApi + '/comment',
+            JSON.stringify(comment)).then(response => {
+            manager.applyApiExchangeResult(response, (success) => {
+                ret = true;
+            }, (error) => {
+                if (error.errorMessage !== null && error.errorMessage !== undefined
+                    && error.errorMessage.key === 'error.validation'
+                    && error.details !== null && error.details !== undefined
+                    && error.details.text !== undefined) {
+                    const errCommentTextDiv = $('#textCommentError');
+                    let errMsg = error.details.text;
+                    if (localizedMessages.has(errMsg)) {
+                        errMsg = localizedMessages.get(errMsg);
+                    }
+                    errCommentTextDiv.html(`<div class="alert alert-danger align-items-center m-0 p-0">${errMsg}</div>`);
+                    errCommentTextDiv.removeClass('invisible');
+                } else {
+                    manager.showError(error, 'errorContainerModalComment');
+                }
+            });
+        });
+        return ret;
+    }
+
+    async doSaveComment() {
+        if (!await bookManager.validateCommentText()) {
+            return;
+        }
+        const bookId = $('#editComment_bookId').val();
+        const comment = bookManager.makeComment();
+        let url = bookManager.apiSettings.url + bookManager.bookApi + '/' + bookId + '/comment';
+        let method = 'POST';
+        if ($('#editComment_action').val() === 'edit') {
+            method = 'PUT';
+            url = bookManager.apiSettings.url + bookManager.commentApi + '/' + comment.id;
+        }
+        manager.sendJsonData(url, JSON.stringify(comment), method).then(response => {
+            manager.applyApiExchangeResult(response, (data) => {
+                bookManager.editCommentModal.toggle();
+                bookManager.showComment(bookId, data);
+                bookManager.showCouComments(bookId);
+            }, (error) => {
+                manager.showError(error, 'errorContainerModalComment');
+            });
+        });
+    }
+
+    makeComment() {
+        const includeId = ($('#editComment_action').val() === 'edit');
+        let ret = {};
+        if (includeId) {
+            ret.id = $('#editComment_id').val();
+        }
+        ret.text = $('#textComment').val();
+        return ret;
     }
 
     callDeleteComment(bookId, commentId) {
-        console.log('Delete comment ' + commentId + ' for ' + bookId);
+        $('#deleteId').val(bookId);
+        $('#deleteDopId').val(commentId);
+        $('#deleteBtn').off('click');
+        $('#deleteBtn').on('click', bookManager.doDeleteComment);
+        $('#deleteQueryTitle').text(bookManager.getDeleteHeader('comment'));
+        $('#errorContainerDeleteQuery').html('');
+        bookManager.deleteModal.toggle();
     }
 
+    async doDeleteComment(){
+        const bookId = $('#deleteId').val();
+        const commentId = $('#deleteDopId').val();
+        manager.sendJsonData(bookManager.apiSettings.url + bookManager.commentApi + '/' + commentId,
+            null, 'DELETE').then(response => {
+            manager.applyApiExchangeResult(response, _ => {
+                bookManager.deleteModal.toggle();
+                const commentRow = $('#commentRow_' + commentId);
+                if (commentRow.length > 0) {
+                    commentRow[0].remove();
+                }
+                bookManager.showCouComments(bookId);
+            }, (error) => {
+                manager.showError(error, 'errorContainerDeleteQuery');
+            });
+        });
+    }
 }

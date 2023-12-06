@@ -7,6 +7,7 @@ let localizedMessages = new Map([
     ['error.status.404', 'Not Found'],
     ['error.status.405', 'Method Not Allowed'],
     ['error.status.500', 'Internal Server Error'],
+    ['error.validation', 'Validation error'],
 ]);
 let bookManager = {};
 
@@ -28,6 +29,7 @@ class Manager {
             $('#logoutBtn').removeClass('invisible');
             await keycloak.loadUserInfo();
             $('#logoutBtn').attr('title', keycloak.userInfo.name);
+            $('#userLabel').text(keycloak.userInfo.name);
         }
     }
 

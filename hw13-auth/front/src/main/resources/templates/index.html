@@ -25,6 +25,7 @@
                 <div class="col text-end">
                     <div class="btn-group align-items-end mt-3">
                         <input type="hidden" th:value="${#locale.toString()}" id="lang">
+                        <label class="form-control form-control-sm" id="userLabel" th:text="#{common.noauth-user}">Anonymous</label>
                         <a class="btn btn-sm"
                            th:classappend="${#locale.toString()}=='en'?'btn-secondary':'btn-outline-secondary'"
                            th:href="@{/(lang=en)}">En</a>

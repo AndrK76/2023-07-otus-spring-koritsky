@@ -19,16 +19,14 @@ public class InfoController {
     private final RoleConfig roleConfig;
 
 
-
-    ///api/v1/info/access?action=modify_book
     @GetMapping("/api/v1/info/access")
     public boolean getAccess(@RequestParam(name = "action") String canAction, Authentication auth) {
-        var roles = auth.getAuthorities().stream()
-                .filter(authority -> authority.getAuthority().startsWith("ROLE_"))
-                .map(GrantedAuthority::getAuthority)
-                .map(role->role.replace("ROLE_",""))
-                .collect(Collectors.toSet());
-        return roleConfig.getAppRoles().containsKey(canAction)
-                && roles.contains(roleConfig.getAppRoles().get(canAction));
+        if (roleConfig.isShowUnavailable()) {
+            return true;
+        } else {
+            var roles = roleConfig.getAuthRoles(auth);
+            return roleConfig.getRolesForAction(canAction).stream().anyMatch(roles::contains);
+        }
+
     }
 }

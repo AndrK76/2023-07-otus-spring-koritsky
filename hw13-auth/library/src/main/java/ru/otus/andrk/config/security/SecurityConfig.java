@@ -11,8 +11,8 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
-import ru.otus.andrk.config.handler.CustomAccessDeniedHandler;
-import ru.otus.andrk.config.handler.CustomAuthenticationFailureHandler;
+import ru.otus.andrk.config.security.handler.CustomAccessDeniedHandler;
+import ru.otus.andrk.config.security.handler.CustomAuthenticationFailureHandler;
 import ru.otus.andrk.config.jwt.JwtAuthConverter;
 import ru.otus.andrk.dto.mapper.ApiErrorDtoConverter;
 

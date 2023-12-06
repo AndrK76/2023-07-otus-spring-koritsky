@@ -27,7 +27,7 @@ public class ApiErrorDto implements Serializable {
 
     private MessagePair detailMessage;
 
-    private Serializable details;
+    private Object details;
 
     public record MessagePair(String key, String message) implements Serializable {
     }

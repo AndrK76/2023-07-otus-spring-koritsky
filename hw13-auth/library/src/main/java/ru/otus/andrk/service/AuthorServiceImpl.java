@@ -11,6 +11,7 @@ import ru.otus.andrk.model.Author;
 import ru.otus.andrk.repository.AuthorRepository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -33,10 +34,9 @@ public class AuthorServiceImpl implements AuthorService {
 
     @Override
     @Transactional
-    public AuthorDto addAuthor(String authorName) {
+    public Author addAuthor(String authorName) {
         try {
-            return mapper.toDto(
-                    repo.save(new Author(0, authorName)));
+            return repo.save(new Author(0, authorName));
         } catch (Exception e) {
             log.error(e);
             throw new OtherLibraryManipulationException(e);
@@ -44,18 +44,7 @@ public class AuthorServiceImpl implements AuthorService {
     }
 
     @Override
-    public AuthorDto getAuthorById(long authorId) {
-        try {
-            return repo.findById(authorId).map(mapper::toDto).orElse(null);
-        } catch (Exception e) {
-            log.error(e);
-            throw new OtherLibraryManipulationException(e);
-        }
-    }
-
-    @Override
-    public AuthorDto getAuthorByName(String name) {
-        return repo.findAuthorsByNameIgnoreCase(name).stream().map(mapper::toDto)
-                .findFirst().orElse(null);
+    public Optional<Author> getAuthorByName(String name) {
+        return repo.findAuthorsByNameIgnoreCase(name).stream().findFirst();
     }
 }

@@ -7,7 +7,6 @@ import java.util.List;
 public interface CommentService {
     List<CommentDto> getCommentsForBook(long bookId);
 
-
     CommentDto addCommentToBook(long bookId, CommentDto comment);
 
     CommentDto modifyComment(long commentId, CommentDto comment);

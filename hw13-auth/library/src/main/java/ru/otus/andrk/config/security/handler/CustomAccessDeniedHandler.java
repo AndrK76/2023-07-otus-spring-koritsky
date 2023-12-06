@@ -1,4 +1,4 @@
-package ru.otus.andrk.config.handler;
+package ru.otus.andrk.config.security.handler;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -12,7 +12,6 @@ import ru.otus.andrk.dto.mapper.ApiErrorDtoConverter;
 
 @RequiredArgsConstructor
 @Log4j2
-//TODO: спросить про место
 public class CustomAccessDeniedHandler implements AccessDeniedHandler {
     private final ApiErrorDtoConverter converter;
 

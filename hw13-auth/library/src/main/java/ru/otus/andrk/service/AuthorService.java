@@ -1,16 +1,16 @@
 package ru.otus.andrk.service;
 
 import ru.otus.andrk.dto.AuthorDto;
+import ru.otus.andrk.model.Author;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface AuthorService {
     List<AuthorDto> getAllAuthors();
 
-    AuthorDto addAuthor(String authorName);
+    Author addAuthor(String authorName);
 
-    AuthorDto getAuthorById(long authorId);
-
-    AuthorDto getAuthorByName(String name);
+    Optional<Author> getAuthorByName(String name);
 
 }

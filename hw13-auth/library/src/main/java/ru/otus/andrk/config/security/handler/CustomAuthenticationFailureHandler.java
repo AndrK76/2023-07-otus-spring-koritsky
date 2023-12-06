@@ -1,4 +1,4 @@
-package ru.otus.andrk.config.handler;
+package ru.otus.andrk.config.security.handler;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;

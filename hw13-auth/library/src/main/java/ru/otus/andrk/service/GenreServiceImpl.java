@@ -11,6 +11,7 @@ import ru.otus.andrk.model.Genre;
 import ru.otus.andrk.repository.GenreRepository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -32,10 +33,9 @@ public class GenreServiceImpl implements GenreService {
 
     @Override
     @Transactional
-    public GenreDto addGenre(String genreName) {
+    public Genre addGenre(String genreName) {
         try {
-            return mapper.toDto(
-                    repo.save(new Genre(0, genreName)));
+            return repo.save(new Genre(0, genreName));
         } catch (Exception e) {
             log.error(e);
             throw new OtherLibraryManipulationException(e);
@@ -43,18 +43,7 @@ public class GenreServiceImpl implements GenreService {
     }
 
     @Override
-    public GenreDto getGenreById(long genreId) {
-        try {
-            return repo.findById(genreId).map(mapper::toDto).orElse(null);
-        } catch (Exception e) {
-            log.error(e);
-            throw new OtherLibraryManipulationException(e);
-        }
-    }
-
-    @Override
-    public GenreDto getGenreByName(String name) {
-        return repo.findGenresByNameIgnoreCase(name)
-                .stream().map(mapper::toDto).findFirst().orElse(null);
+    public Optional<Genre> getGenreByName(String name) {
+        return repo.findGenresByNameIgnoreCase(name).stream().findFirst();
     }
 }

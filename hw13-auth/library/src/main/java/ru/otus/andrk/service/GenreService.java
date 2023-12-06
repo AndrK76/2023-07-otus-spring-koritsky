@@ -1,15 +1,15 @@
 package ru.otus.andrk.service;
 
 import ru.otus.andrk.dto.GenreDto;
+import ru.otus.andrk.model.Genre;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface GenreService {
     List<GenreDto> getAllGenres();
 
-    GenreDto addGenre(String genreName);
+    Genre addGenre(String genreName);
 
-    GenreDto getGenreById(long genreId);
-
-    GenreDto getGenreByName(String name);
+    Optional<Genre> getGenreByName(String name);
 }

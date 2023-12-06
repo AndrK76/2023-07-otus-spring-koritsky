@@ -2,6 +2,7 @@ package ru.otus.andrk.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.otus.andrk.dto.BookDto;
@@ -20,6 +21,7 @@ import ru.otus.andrk.repository.GenreRepository;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Function;
 
 @Service
 @RequiredArgsConstructor
@@ -27,9 +29,9 @@ import java.util.Optional;
 public class BookServiceImpl implements BookService {
     private final BookRepository bookRepo;
 
-    private final AuthorRepository authorRepo;
+    private final AuthorService authorService;
 
-    private final GenreRepository genreRepo;
+    private final GenreService genreService;
 
     private final DtoMapper mapper;
 
@@ -45,10 +47,9 @@ public class BookServiceImpl implements BookService {
     }
 
     @Override
-    //@Transactional(readOnly = true)
-    public BookDto getBookById(long id) {
+    public Optional<Book> getBookById(long id) {
         try {
-            return  bookRepo.findById(id).map(mapper::toDto).orElse(null);
+            return bookRepo.findById(id);
         } catch (Exception e) {
             log.error(e);
             throw new OtherLibraryManipulationException(e);
@@ -58,37 +59,41 @@ public class BookServiceImpl implements BookService {
 
     @Override
     @Transactional
-    public BookDto addBook(String bookName, Long authorId, Long genreId) {
-        return saveBook(0, bookName, authorId, genreId);
+    @PreAuthorize("hasAnyRole(@roleConfig.getRolesForAction('modify_book'))")
+    public BookDto addBook(BookDto book) {
+        return saveBook(0, book);
     }
 
     @Override
     @Transactional
-    public BookDto modifyBook(long bookId, String newName, Long newAuthorId, Long newGenreId) {
-        return saveBook(bookId, newName, newAuthorId, newGenreId);
+    @PreAuthorize("hasAnyRole(@roleConfig.getRolesForAction('modify_book'))")
+    public BookDto modifyBook(long bookId, BookDto book) {
+        return saveBook(bookId, book);
     }
 
     @Override
     @Transactional
+    @PreAuthorize("hasAnyRole(@roleConfig.getRolesForAction('modify_book'))")
     public void deleteBook(long id) {
         try {
-            var existBook = bookRepo.findById(id);
-            existBook.ifPresent(bookRepo::delete);
+            bookRepo.deleteById(id);
         } catch (Exception e) {
             log.error(e);
             throw new OtherLibraryManipulationException(e);
         }
     }
 
-    private BookDto saveBook(long oldBookId, String newName, Long newAuthorId, Long newGenreId) {
+    private BookDto saveBook(long oldBookId, BookDto dto) {
         try {
-            Book book = (oldBookId == 0L) ? new Book() :
+            Book book = (oldBookId == 0L) ? new Book(dto.getName()) :
                     bookRepo.findById(oldBookId).orElseThrow(NoExistBookException::new);
-            Author newAuthor = newAuthorId == null ? null :
-                    authorRepo.findById(newAuthorId).orElseThrow(NoExistAuthorException::new);
-            Genre newGenre = newGenreId == null ? null :
-                    genreRepo.findById(newGenreId).orElseThrow(NoExistGenreException::new);
-            book.setName(newName);
+
+            Author newAuthor = dto.getAuthorName() == null ? null :
+                    authorService.getAuthorByName(dto.getAuthorName())
+                            .orElseGet(() -> authorService.addAuthor(dto.getAuthorName()));
+            Genre newGenre = dto.getGenreName() == null ? null :
+                    genreService.getGenreByName(dto.getGenreName())
+                            .orElseGet(() -> genreService.addGenre(dto.getGenreName()));
             book.setAuthor(newAuthor);
             book.setGenre(newGenre);
             var savedBook = Optional.of(bookRepo.save(book));

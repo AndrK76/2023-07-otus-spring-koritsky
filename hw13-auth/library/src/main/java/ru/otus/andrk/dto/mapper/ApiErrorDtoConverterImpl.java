@@ -5,17 +5,22 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
+import org.springframework.validation.FieldError;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.context.request.ServletWebRequest;
 import org.springframework.web.context.request.WebRequest;
 import ru.otus.andrk.dto.ApiErrorDto;
+import ru.otus.andrk.exception.KnownLibraryManipulationException;
 import ru.otus.andrk.exception.OtherLibraryManipulationException;
 import ru.otus.andrk.exception.converter.ExceptionToStringMapper;
 
 import java.io.IOException;
 import java.util.Date;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Component
 @RequiredArgsConstructor
@@ -71,6 +76,24 @@ public class ApiErrorDtoConverterImpl implements ApiErrorDtoConverter {
         ret.setErrorMessage(
                 new ApiErrorDto.MessagePair(exceptionMapper.getExceptionMessage(e), e.getMessage())
         );
+        return ret;
+    }
+
+    @Override
+    public ApiErrorDto fromKnownLibraryManipulationException(KnownLibraryManipulationException e, WebRequest request) {
+        var ret = makeDtoFromWebRequest(400, request);
+        ret.setErrorMessage(
+                new ApiErrorDto.MessagePair(exceptionMapper.getExceptionMessage(e), e.getMessage())
+        );
+        return ret;
+    }
+
+    @Override
+    public ApiErrorDto fromMethodArgumentNotValidException(MethodArgumentNotValidException e, WebRequest request) {
+        var ret = makeDtoFromWebRequest(e.getStatusCode().value(), request);
+        ret.setErrorMessage(new ApiErrorDto.MessagePair("error.validation", "Validation error"));
+        ret.setDetails(e.getFieldErrors().stream().collect(Collectors.toMap(
+                FieldError::getField, DefaultMessageSourceResolvable::getDefaultMessage)));
         return ret;
     }
 

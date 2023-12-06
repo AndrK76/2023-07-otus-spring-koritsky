@@ -1,4 +1,4 @@
-package ru.otus.andrk.controller;
+package ru.otus.andrk.controller.handler;
 
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.log4j.Log4j2;
