@@ -12,8 +12,6 @@ import ru.otus.andrk.dto.mapper.ApiErrorDtoConverter;
 import ru.otus.andrk.exception.KnownLibraryManipulationException;
 import ru.otus.andrk.exception.OtherLibraryManipulationException;
 
-import java.util.Date;
-
 @ControllerAdvice
 @RequiredArgsConstructor
 @Log4j2
@@ -22,19 +20,22 @@ public class CustomErrorHandler {
     private final ApiErrorDtoConverter dtoConverter;
 
     @ExceptionHandler(OtherLibraryManipulationException.class)
-    public ResponseEntity<ApiErrorDto> otherLibraryManipulationErr(OtherLibraryManipulationException e, WebRequest request) {
+    public ResponseEntity<ApiErrorDto> otherLibraryManipulationErr(OtherLibraryManipulationException e,
+                                                                   WebRequest request) {
         var ret = dtoConverter.fromOtherLibraryManipulationException(e, request);
         return ResponseEntity.status(ret.getStatus()).body(ret);
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<ApiErrorDto> MethodArgumentNotValidErr(MethodArgumentNotValidException e, WebRequest request) {
+    public ResponseEntity<ApiErrorDto> methodArgumentNotValidErr(MethodArgumentNotValidException e,
+                                                                 WebRequest request) {
         var ret = dtoConverter.fromMethodArgumentNotValidException(e, request);
         return ResponseEntity.status(ret.getStatus()).body(ret);
     }
 
     @ExceptionHandler(KnownLibraryManipulationException.class)
-    public ResponseEntity<ApiErrorDto> knownLibraryManipulationErr(KnownLibraryManipulationException e, WebRequest request) {
+    public ResponseEntity<ApiErrorDto> knownLibraryManipulationErr(KnownLibraryManipulationException e,
+                                                                   WebRequest request) {
         var ret = dtoConverter.fromKnownLibraryManipulationException(e, request);
         return ResponseEntity.status(ret.getStatus()).body(ret);
     }

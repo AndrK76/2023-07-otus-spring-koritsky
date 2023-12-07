@@ -1,4 +1,4 @@
-package ru.otus.andrk.service;
+package ru.otus.andrk.service.data;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -8,20 +8,15 @@ import org.springframework.transaction.annotation.Transactional;
 import ru.otus.andrk.dto.BookDto;
 import ru.otus.andrk.dto.mapper.DtoMapper;
 import ru.otus.andrk.exception.KnownLibraryManipulationException;
-import ru.otus.andrk.exception.NoExistAuthorException;
 import ru.otus.andrk.exception.NoExistBookException;
-import ru.otus.andrk.exception.NoExistGenreException;
 import ru.otus.andrk.exception.OtherLibraryManipulationException;
 import ru.otus.andrk.model.Author;
 import ru.otus.andrk.model.Book;
 import ru.otus.andrk.model.Genre;
-import ru.otus.andrk.repository.AuthorRepository;
 import ru.otus.andrk.repository.BookRepository;
-import ru.otus.andrk.repository.GenreRepository;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.function.Function;
 
 @Service
 @RequiredArgsConstructor
@@ -34,7 +29,6 @@ public class BookServiceImpl implements BookService {
     private final GenreService genreService;
 
     private final DtoMapper mapper;
-
 
     @Override
     public List<BookDto> getAllBooks() {
@@ -56,24 +50,23 @@ public class BookServiceImpl implements BookService {
         }
     }
 
-
     @Override
     @Transactional
-    @PreAuthorize("hasAnyRole(@roleConfig.getRolesForAction('modify_book'))")
+    @PreAuthorize("hasAnyRole(@roleService.getRolesForAction('modify_book'))")
     public BookDto addBook(BookDto book) {
         return saveBook(0, book);
     }
 
     @Override
     @Transactional
-    @PreAuthorize("hasAnyRole(@roleConfig.getRolesForAction('modify_book'))")
+    @PreAuthorize("hasAnyRole(@roleService.getRolesForAction('modify_book'))")
     public BookDto modifyBook(long bookId, BookDto book) {
         return saveBook(bookId, book);
     }
 
     @Override
     @Transactional
-    @PreAuthorize("hasAnyRole(@roleConfig.getRolesForAction('modify_book'))")
+    @PreAuthorize("hasAnyRole(@roleService.getRolesForAction('modify_book'))")
     public void deleteBook(long id) {
         try {
             bookRepo.deleteById(id);

@@ -1,4 +1,4 @@
-package ru.otus.andrk.service;
+package ru.otus.andrk.service.data;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -30,7 +30,7 @@ public class CommentServiceImpl implements CommentService {
     @Override
     public List<CommentDto> getCommentsForBook(long bookId) {
         try {
-            return repo.findCommentsByBook_Id(bookId).stream()
+            return repo.findCommentsByBookId(bookId).stream()
                     .map(mapper::toDto).toList();
         } catch (Exception ex) {
             throw new OtherLibraryManipulationException(ex);
@@ -39,7 +39,7 @@ public class CommentServiceImpl implements CommentService {
 
     @Override
     @Transactional
-    @PreAuthorize("hasAnyRole(@roleConfig.getRolesForAction('modify_comment'))")
+    @PreAuthorize("hasAnyRole(@roleService.getRolesForAction('modify_comment'))")
     public CommentDto addCommentToBook(long bookId, CommentDto dto) {
         var book = bookService.getBookById(bookId)
                 .orElseThrow(NoExistBookException::new);
@@ -53,7 +53,7 @@ public class CommentServiceImpl implements CommentService {
 
     @Override
     @Transactional
-    @PreAuthorize("hasAnyRole(@roleConfig.getRolesForAction('modify_comment'))")
+    @PreAuthorize("hasAnyRole(@roleService.getRolesForAction('modify_comment'))")
     public CommentDto modifyComment(long commentId, CommentDto dto) {
         try {
             var comment = repo.findById(commentId)
@@ -69,7 +69,7 @@ public class CommentServiceImpl implements CommentService {
 
     @Override
     @Transactional
-    @PreAuthorize("hasAnyRole(@roleConfig.getRolesForAction('modify_comment'))")
+    @PreAuthorize("hasAnyRole(@roleService.getRolesForAction('modify_comment'))")
     public void deleteComment(long id) {
         repo.deleteById(id);
     }

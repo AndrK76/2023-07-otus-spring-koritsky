@@ -17,7 +17,7 @@ public class MainController {
     private final ApiServerConfig apiServerConfig;
 
     @GetMapping("/")
-    public String index(Model model){
+    public String index(Model model) {
         model.addAttribute("keyCloakSettings", keyCloakConfig);
         model.addAttribute("apiServerSettings", apiServerConfig);
         return "index";

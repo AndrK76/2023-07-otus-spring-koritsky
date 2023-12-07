@@ -55,7 +55,10 @@ public class ApiErrorDtoConverterImpl implements ApiErrorDtoConverter {
     }
 
     @Override
-    public ApiErrorDto fromErrorResponse(HttpServletRequest request, HttpServletResponse response, Exception exception, HttpStatus status) {
+    public ApiErrorDto fromErrorResponse(HttpServletRequest request,
+                                         HttpServletResponse response,
+                                         Exception exception,
+                                         HttpStatus status) {
         response.setStatus(status.value());
         var ret = makeDtoFromHttpRequest(status.value(), request);
         ret.setErrorMessage(
@@ -71,7 +74,8 @@ public class ApiErrorDtoConverterImpl implements ApiErrorDtoConverter {
     }
 
     @Override
-    public ApiErrorDto fromOtherLibraryManipulationException(OtherLibraryManipulationException e, WebRequest request) {
+    public ApiErrorDto fromOtherLibraryManipulationException(OtherLibraryManipulationException e,
+                                                             WebRequest request) {
         var ret = makeDtoFromWebRequest(500, request);
         ret.setErrorMessage(
                 new ApiErrorDto.MessagePair(exceptionMapper.getExceptionMessage(e), e.getMessage())
@@ -80,7 +84,8 @@ public class ApiErrorDtoConverterImpl implements ApiErrorDtoConverter {
     }
 
     @Override
-    public ApiErrorDto fromKnownLibraryManipulationException(KnownLibraryManipulationException e, WebRequest request) {
+    public ApiErrorDto fromKnownLibraryManipulationException(KnownLibraryManipulationException e,
+                                                             WebRequest request) {
         var ret = makeDtoFromWebRequest(400, request);
         ret.setErrorMessage(
                 new ApiErrorDto.MessagePair(exceptionMapper.getExceptionMessage(e), e.getMessage())
@@ -89,7 +94,8 @@ public class ApiErrorDtoConverterImpl implements ApiErrorDtoConverter {
     }
 
     @Override
-    public ApiErrorDto fromMethodArgumentNotValidException(MethodArgumentNotValidException e, WebRequest request) {
+    public ApiErrorDto fromMethodArgumentNotValidException(MethodArgumentNotValidException e,
+                                                           WebRequest request) {
         var ret = makeDtoFromWebRequest(e.getStatusCode().value(), request);
         ret.setErrorMessage(new ApiErrorDto.MessagePair("error.validation", "Validation error"));
         ret.setDetails(e.getFieldErrors().stream().collect(Collectors.toMap(
@@ -110,7 +116,9 @@ public class ApiErrorDtoConverterImpl implements ApiErrorDtoConverter {
         var ret = makeDtoBase(status);
         ret.setDetailMessage(
                 new ApiErrorDto.MessagePair("", "path: " +
-                        (request == null ? "" : ((ServletWebRequest) request).getRequest().getRequestURI())
+                        (request == null
+                                ? ""
+                                : ((ServletWebRequest) request).getRequest().getRequestURI())
                 ));
         return ret;
     }

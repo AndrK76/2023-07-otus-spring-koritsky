@@ -13,6 +13,7 @@ app:
         - book-manager
       modify_comment:
         - book-manager
+    #show-unavailable: false
     show-unavailable: true
 
 server:
@@ -47,6 +48,6 @@ spring:
 logging:
   level:
     root: info
-    ru.otus.andrk: debug
-    liquibase.changelog: debug
-    org.springframework.boot.web.embedded.tomcat: info
+    #ru.otus.andrk: debug
+    #liquibase.changelog: debug
+    #org.springframework.boot.web.embedded.tomcat: info

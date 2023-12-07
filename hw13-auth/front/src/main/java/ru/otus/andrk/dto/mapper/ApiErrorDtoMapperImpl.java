@@ -14,6 +14,7 @@ import java.util.Map;
 public class ApiErrorDtoMapperImpl implements ApiErrorDtoMapper {
 
     private final MessageService messageService;
+
     @Override
     public ApiErrorDto fromErrorAttributes(Map<String, Object> errAttrs) {
         Object errTimestamp = errAttrs.get("timestamp");
@@ -39,7 +40,8 @@ public class ApiErrorDtoMapperImpl implements ApiErrorDtoMapper {
         var ret = new ApiErrorDto(new Date(), 500);
         setStatus(ret);
         var messageKey = "other-error";
-        return makeApiErrorDto(e, ret, messageKey);    }
+        return makeApiErrorDto(e, ret, messageKey);
+    }
 
     private String getStatusMessageKey(int status) {
         return "error.status." + status;

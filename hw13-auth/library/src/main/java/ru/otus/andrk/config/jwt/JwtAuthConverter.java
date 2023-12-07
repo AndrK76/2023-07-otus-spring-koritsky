@@ -21,6 +21,7 @@ public class JwtAuthConverter implements Converter<Jwt, AbstractAuthenticationTo
 
     private final JwtGrantedAuthoritiesConverter jwtGrantedAuthoritiesConverter
             = new JwtGrantedAuthoritiesConverter();
+
     private final JwtAuthConverterProperties properties;
 
     public JwtAuthConverter(JwtAuthConverterProperties properties) {

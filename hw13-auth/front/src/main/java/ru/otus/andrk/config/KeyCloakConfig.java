@@ -9,6 +9,8 @@ import org.springframework.stereotype.Component;
 @ConfigurationProperties(prefix = "app.keycloak", ignoreInvalidFields = true)
 public class KeyCloakConfig {
     private String url;
+
     private String realm;
+
     private String client;
 }

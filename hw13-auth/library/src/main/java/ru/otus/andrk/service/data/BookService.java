@@ -1,7 +1,6 @@
-package ru.otus.andrk.service;
+package ru.otus.andrk.service.data;
 
 import ru.otus.andrk.dto.BookDto;
-import ru.otus.andrk.dto.BookWithCommentsDto;
 import ru.otus.andrk.model.Book;
 
 import java.util.List;

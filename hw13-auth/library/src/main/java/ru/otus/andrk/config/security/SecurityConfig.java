@@ -49,7 +49,6 @@ public class SecurityConfig {
         http.sessionManagement(session ->
                 session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
         http.cors(cors -> cors.configurationSource(corsConfigurationSource()));
-        //http.cors(cors->cors.disable());
         http.exceptionHandling(configurer ->
                 configurer.accessDeniedHandler(new CustomAccessDeniedHandler(converter)));
 
