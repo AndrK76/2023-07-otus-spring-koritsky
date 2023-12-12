@@ -82,13 +82,13 @@ public class BookControllerTest {
     private CorsConfig corsConfig;
 
     @SpyBean
-    ApiErrorDtoConverterImpl apiErrorDtoConverter;
+    private ApiErrorDtoConverterImpl apiErrorDtoConverter;
 
     @SpyBean
     private DtoMapper dtoMapper;
 
     @SpyBean
-    ExceptionToStringMapperImpl exceptionToStringMapper;
+    private ExceptionToStringMapperImpl exceptionToStringMapper;
 
     @Autowired
     private ObjectMapper objectMapper;

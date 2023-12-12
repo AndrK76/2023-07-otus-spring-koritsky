@@ -10,14 +10,23 @@ import org.springframework.security.oauth2.server.resource.authentication.JwtAut
 import org.springframework.security.oauth2.server.resource.authentication.JwtGrantedAuthoritiesConverter;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 @Component
 public class JwtAuthConverter implements Converter<Jwt, AbstractAuthenticationToken> {
+
+    private static final String REALM_ACCESS_CLAIM_NAME = "realm_access";
+
+    private static final String RESOURCE_ACCESS_CLAIM_NAME = "resource_access";
+
+    private static final String ROLE_LIST_CLAIM_NAME = "roles";
+
 
     private final JwtGrantedAuthoritiesConverter jwtGrantedAuthoritiesConverter
             = new JwtGrantedAuthoritiesConverter();
@@ -30,17 +39,16 @@ public class JwtAuthConverter implements Converter<Jwt, AbstractAuthenticationTo
 
     @Override
     public AbstractAuthenticationToken convert(Jwt jwt) {
-        Collection<GrantedAuthority> authorities =
-                Stream.concat(
-                                Stream.concat(
-                                        jwtGrantedAuthoritiesConverter.convert(jwt).stream(),
-                                        extractResourceRoles(jwt).stream()),
-                                extractRealmRoles(jwt).stream()
-                        )
-                        .collect(Collectors.toSet());
+        Collection<GrantedAuthority> authorities = Stream.concat(
+                        jwtGrantedAuthoritiesConverter.convert(jwt).stream(),
+                        extractRolesFromKeyCloakRealms(jwt,
+                                List.of(
+                                        List.of(REALM_ACCESS_CLAIM_NAME),
+                                        List.of(RESOURCE_ACCESS_CLAIM_NAME, properties.getResourceId())
+                                )).stream())
+                .collect(Collectors.toSet());
         return new JwtAuthenticationToken(jwt, authorities, getPrincipalClaimName(jwt));
     }
-
 
     private String getPrincipalClaimName(Jwt jwt) {
         String claimName = JwtClaimNames.SUB;
@@ -50,30 +58,31 @@ public class JwtAuthConverter implements Converter<Jwt, AbstractAuthenticationTo
         return jwt.getClaim(claimName);
     }
 
-    private Collection<? extends GrantedAuthority> extractResourceRoles(Jwt jwt) {
-        Map<String, Object> resourceAccess = jwt.getClaim("resource_access");
-        Map<String, Object> resource;
-        Collection<String> resourceRoles;
-        if (resourceAccess == null
-                || (resource = (Map<String, Object>) resourceAccess.get(properties.getResourceId())) == null
-                || (resourceRoles = (Collection<String>) resource.get("roles")) == null) {
-            return Set.of();
+    Collection<? extends GrantedAuthority> extractRolesFromKeyCloakRealms(Jwt jwt, List<List<String>> pathToRoleClaims) {
+        List<String> roleNames = new ArrayList<>();
+        var allClaims = jwt.getClaims();
+        for (var path : pathToRoleClaims) {
+            var roleClaim = getClaimByPath(allClaims, path);
+            if (roleClaim.containsKey(ROLE_LIST_CLAIM_NAME)) {
+                roleNames.addAll((Collection<String>) roleClaim.get(ROLE_LIST_CLAIM_NAME));
+            }
         }
-        return resourceRoles.stream()
+        return roleNames.stream()
                 .map(role -> new SimpleGrantedAuthority("ROLE_" + role))
                 .collect(Collectors.toSet());
     }
 
-    private Collection<? extends GrantedAuthority> extractRealmRoles(Jwt jwt) {
-        Map<String, Object> realmAccess = jwt.getClaim("realm_access");
-        Collection<String> realmRoles;
-        if (realmAccess == null
-                || (realmRoles = (Collection<String>) realmAccess.get("roles")) == null) {
-            return Set.of();
+    Map<String, Object> getClaimByPath(Map<String, Object> claims, List<String> path) {
+        if (!path.isEmpty()) {
+            var subClaims = (Map<String, Object>) claims.get(path.get(0));
+            if (subClaims != null && subClaims.size() > 0) {
+                return path.size() == 1 ? subClaims : getClaimByPath(subClaims, path.subList(1, path.size()));
+            } else {
+                return new HashMap<>();
+            }
+        } else {
+            return claims;
         }
-        return realmRoles.stream()
-                .map(role -> new SimpleGrantedAuthority("ROLE_" + role))
-                .collect(Collectors.toSet());
     }
 
 }
