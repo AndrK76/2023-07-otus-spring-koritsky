@@ -18,4 +18,5 @@
 - **hw09-mvc-classic**  - ДЗ к 18. Spring MVC View
 - **hw10-ajax**  - ДЗ к 19. Современные приложения на Spring MVC
 - **hw11-webflux**  - ДЗ к 22. Spring WebFlux
-- **hw12-auth**  - ДЗ к 27. Spring Security: Механизмы аутентификации
+- **hw12-auth**  - ДЗ к 24. Spring Security: Механизмы аутентификации
+- **hw13-auth**  - ДЗ к 26. Spring Security: ACL
