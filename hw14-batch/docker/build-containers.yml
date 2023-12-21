@@ -20,15 +20,10 @@ services:
     image: mongo:5.0.23-focal
     container_name: hw14-mongo
     restart: no
-    environment:
-      MONGO_INITDB_ROOT_USERNAME: usr
-      MONGO_INITDB_ROOT_PASSWORD: pwd
-      MONGO_INITDB_DATABASE: hw14
     ports:
       - '27017:27017'
     volumes:
       - hw14-mongo-data:/data/db
-      - ./init.js:/docker-entrypoint-initdb.d/mongo-init.js
     networks:
       - hw14-net
 volumes:

@@ -1,1 +1,44 @@
+spring:
+  main:
+    allow-circular-references: true
+  batch:
+    job:
+      enabled: true
+  shell:
+    interactive:
+      enabled: true
+    noninteractive:
+      enabled: false
+    command:
+      version:
+        enabled: false
+  liquibase:
+    change-log: changelog/sql/master.yml
+
+  data:
+    mongodb:
+      host: localhost
+      port: 0
+      database: hw14
+  datasource:
+    url: jdbc:h2:mem:hw14
+    username: test
+    password: test
+
+
+mongock:
+  runner-type: "InitializingBean"
+  change-logs-scan-package:
+    - ru.otus.andrk.changelog.nosql
+  mongo-db:
+    write-concern:
+      journal: false
+    read-concern: local
+de:
+  flapdoodle:
+    mongodb:
+      embedded:
+        version: 4.0.2
+
+
 
