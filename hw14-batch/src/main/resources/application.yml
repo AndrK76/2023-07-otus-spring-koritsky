@@ -3,7 +3,9 @@ spring:
     allow-circular-references: true
   batch:
     job:
-      enabled: true
+      enabled: false
+    jdbc:
+      initialize-schema: always
   shell:
     interactive:
       enabled: true
@@ -39,6 +41,10 @@ de:
     mongodb:
       embedded:
         version: 4.0.2
-
+logging:
+  level:
+    root: error
+    org.springframework.batch.core: info
+    Batch: info
 
 

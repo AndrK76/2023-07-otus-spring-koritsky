@@ -1,4 +1,4 @@
-package ru.otus.andrk.runner;
+package ru.otus.andrk.shell;
 
 import org.h2.tools.Console;
 import org.springframework.boot.ApplicationArguments;
@@ -10,7 +10,7 @@ import org.springframework.stereotype.Component;
 @Component
 @Order(-1)
 @ConditionalOnProperty(value = "spring.h2.console.enabled", havingValue = "true")
-public class H2Console implements ApplicationRunner {
+public class H2ConsoleInitializer implements ApplicationRunner {
     @Override
     public void run(ApplicationArguments args) throws Exception {
         Console.main(args.getSourceArgs());
