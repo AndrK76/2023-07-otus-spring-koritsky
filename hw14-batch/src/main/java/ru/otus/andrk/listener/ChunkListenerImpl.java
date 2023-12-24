@@ -22,9 +22,9 @@ public class ChunkListenerImpl implements ChunkListener {
     public void afterChunk(@NonNull ChunkContext chunkContext) {
         var stepContext = chunkContext.getStepContext();
         var countKey = stepContext.getStepExecutionContext()
-                .keySet().stream().filter(r->r.contains("read.count")).findFirst();
+                .keySet().stream().filter(r -> r.contains("read.count")).findFirst();
         var readCount = 0;
-        if (countKey.isPresent()){
+        if (countKey.isPresent()) {
             readCount = (Integer) stepContext.getStepExecutionContext().get(countKey.get());
         }
         logger.info("Конец пачки, размер: {}", readCount);

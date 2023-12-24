@@ -12,18 +12,21 @@ public class TempColumnManageService {
 
     private final JdbcTemplate template;
 
+    @SuppressWarnings("unused")
     public void addMongoIds() {
         template.update("""
                 alter table authors add column if not exists mongo_id varchar(200);
                 alter table genres add column if not exists mongo_id varchar(200);
+                alter table books add column if not exists mongo_id varchar(200);
                 """);
     }
 
-    public void dropMongoIds(){
+    @SuppressWarnings("unused")
+    public void dropMongoIds() {
         template.update("""
                 alter table authors drop column if exists mongo_id;
                 alter table genres drop column if exists mongo_id;
+                alter table books drop column if exists mongo_id;
                 """);
-
     }
 }

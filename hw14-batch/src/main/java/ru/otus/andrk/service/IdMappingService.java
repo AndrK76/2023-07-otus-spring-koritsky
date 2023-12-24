@@ -16,14 +16,17 @@ public class IdMappingService {
 
     private final Map<String, Map<String, Long>> keyMap =
             Map.of("AUTHOR", new HashMap<>(),
-                    "GENRE", new HashMap<>()
+                    "GENRE", new HashMap<>(),
+                    "BOOK", new HashMap<>()
             );
 
     private final Map<String, String> entityTables =
             Map.of("AUTHOR", "authors",
-                    "GENRE", "genres"
+                    "GENRE", "genres",
+                    "BOOK", "books"
             );
 
+    @SuppressWarnings("unused")
     public void fillMap(String entityName) {
         jdbcTemplate
                 .query(
@@ -32,6 +35,11 @@ public class IdMappingService {
                                 entityTables.get(entityName)),
                         (rs, rowNum) -> Pair.of(rs.getString("mongo_id"), rs.getLong("id")))
                 .forEach(pair -> keyMap.get(entityName).put(pair.getFirst(), pair.getSecond()));
+    }
+
+    @SuppressWarnings("unused")
+    public void clearMaps() {
+        keyMap.values().forEach(Map::clear);
     }
 
     public long getKey(String entityName, String mongoId) {

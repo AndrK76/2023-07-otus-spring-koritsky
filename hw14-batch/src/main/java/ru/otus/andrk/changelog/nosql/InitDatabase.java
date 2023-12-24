@@ -14,6 +14,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 @ChangeLog(order = "001")
+@SuppressWarnings("unused")
 public class InitDatabase {
 
     private final Map<String, GenreMongo> genres = new HashMap<>(

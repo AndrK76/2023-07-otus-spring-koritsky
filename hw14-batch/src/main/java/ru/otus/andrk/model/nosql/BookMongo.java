@@ -30,6 +30,7 @@ public class BookMongo {
         this.genre = genre;
     }
 
+    @SuppressWarnings("unused")
     public BookMongo(String id, String name, AuthorMongo author, GenreMongo genre) {
         this.id = id;
         this.name = name;
