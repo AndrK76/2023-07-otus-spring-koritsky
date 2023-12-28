@@ -11,8 +11,13 @@ import org.springframework.stereotype.Component;
 @Order(-1)
 @ConditionalOnProperty(value = "spring.h2.console.enabled", havingValue = "true")
 public class H2ConsoleInitializer implements ApplicationRunner {
+
+    private final Console console = new Console();
+
     @Override
     public void run(ApplicationArguments args) throws Exception {
-        Console.main(args.getSourceArgs());
+        //Console.main(args.getSourceArgs());
+        console.runTool();
     }
+
 }

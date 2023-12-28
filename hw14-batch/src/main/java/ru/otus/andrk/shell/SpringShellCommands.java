@@ -22,6 +22,7 @@ public class SpringShellCommands {
 
     private final JobRegistry jobRegistry;
 
+
     @ShellMethod(value = "start migration with clear", key = "sm")
     @SuppressWarnings("unused")
     public void startMigrationJobWithClear() throws Exception {
@@ -40,6 +41,12 @@ public class SpringShellCommands {
     public void showInfo() {
         System.out.println(jobExplorer.getJobNames());
         System.out.println(jobExplorer.getLastJobInstance(IMPORT_LIBRARY_JOB_NAME));
+    }
+
+    @ShellMethod(value = "Exit application", key = "quit")
+    @SuppressWarnings("unused")
+    public void shutDown() {
+        System.exit(0);
     }
 
     private void startImportLibraryJob(boolean clear) throws Exception {
