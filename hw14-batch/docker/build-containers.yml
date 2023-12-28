@@ -1,0 +1,40 @@
+version: '3.8'
+
+services:
+  hw14-postge:
+    image: postgres:14.1-alpine
+    container_name: hw14-postgre
+    restart: no
+    environment:
+      - POSTGRES_USER=usr
+      - POSTGRES_PASSWORD=pwd
+      - POSTGRES_DB=hw14
+    ports:
+      - '5432:5432'
+    volumes:
+      - hw14-pg-data:/var/lib/postgresql/data
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+    networks:
+      - hw14-net
+  hw14-mongo:
+    image: mongo:5.0.23-focal
+    container_name: hw14-mongo
+    restart: no
+    ports:
+      - '27017:27017'
+    volumes:
+      - hw14-mongo-data:/data/db
+    networks:
+      - hw14-net
+volumes:
+  hw14-pg-data:
+    name: hw14-pg-data
+    driver: local
+  hw14-mongo-data:
+    name: hw14-mongo-data
+    driver: local
+networks:
+  hw14-net:
+    name: hw14-net
+    driver: bridge
+    

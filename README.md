@@ -20,3 +20,4 @@
 - **hw11-webflux**  - ДЗ к 22. Spring WebFlux
 - **hw12-auth**  - ДЗ к 24. Spring Security: Механизмы аутентификации
 - **hw13-auth**  - ДЗ к 26. Spring Security: ACL
+- **hw14-batch**  - ДЗ к 27. Spring Batch

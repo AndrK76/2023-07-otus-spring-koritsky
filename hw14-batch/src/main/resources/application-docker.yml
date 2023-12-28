@@ -1,0 +1,13 @@
+spring:
+  data:
+    mongodb:
+        host: localhost
+        port: 27017
+        database: hw14
+  datasource:
+    url: jdbc:postgresql://localhost:5432/hw14
+    username: test
+    password: test
+
+  autoconfigure:
+    exclude: de.flapdoodle.embed.mongo.spring.autoconfigure.EmbeddedMongoAutoConfiguration
