@@ -1,1 +1,14 @@
+trouble-source:
+  device-count: 3
+  max-partition-size: 60
+  generation-period-ms: 1200
+register-service:
+  register-timeout-ms: 100
 
+
+logging:
+  level:
+    #root: fatal
+    root: info
+    #org.springframework.integration: debug
+    Registration: info
