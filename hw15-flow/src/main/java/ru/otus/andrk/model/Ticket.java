@@ -1,8 +1,13 @@
 package ru.otus.andrk.model;
 
 import lombok.Getter;
+import lombok.Setter;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
+
+import static ru.otus.andrk.model.TicketStatus.NEW;
 
 @Getter
 public class Ticket {
@@ -18,7 +23,10 @@ public class Ticket {
 
     private final Date dateRegistration;
 
-    private boolean closed;
+    @Setter
+    private TicketStatus status;
+
+    private final List<TicketHistory> history;
 
     public Ticket(DeviceTrouble trouble, long ticketId) {
         this.id = ticketId;
@@ -27,6 +35,7 @@ public class Ticket {
         this.description = trouble.getDescription();
         this.dateEvent = trouble.getDate();
         this.dateRegistration = new Date();
-        this.closed = false;
+        this.status = NEW;
+        this.history = new ArrayList<>();
     }
 }

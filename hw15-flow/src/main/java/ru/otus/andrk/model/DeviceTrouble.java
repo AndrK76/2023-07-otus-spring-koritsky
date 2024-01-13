@@ -9,8 +9,11 @@ import java.util.Date;
 @ToString(of = {"device", "level", "description"})
 public class DeviceTrouble {
     private final Device device;
+
     private final TroubleLevel level;
+
     private final Date date;
+
     private final String description;
 
     public DeviceTrouble(Device device, TroubleLevel level, String description) {
