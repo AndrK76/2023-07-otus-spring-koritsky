@@ -1,0 +1,87 @@
+version: '3.8'
+
+services:
+  hw16-postgre:
+    image: postgres:14.1-alpine
+    container_name: hw16-postgre
+    restart: no
+    environment:
+      - POSTGRES_USER=usr
+      - POSTGRES_PASSWORD=pwd
+      - POSTGRES_DB=postgres
+    ports:
+      - '5432:5432'
+    volumes:
+      - hw16-pg-data:/var/lib/postgresql/data
+      - ./infra-bd/init.sql:/docker-entrypoint-initdb.d/init.sql
+    networks:
+      - hw16-net
+
+  hw16-keycloak:
+    image: bitnami/keycloak:20.0.3
+    container_name: hw16-keycloak
+    restart: no
+    environment:
+      KEYCLOAK_DATABASE_VENDOR: postgresql
+      KEYCLOAK_DATABASE_HOST: hw16-postgre
+      KEYCLOAK_DATABASE_NAME: sec_db
+      KEYCLOAK_DATABASE_USER: keycloak
+      KEYCLOAK_DATABASE_PASSWORD: keycloak
+      KEYCLOAK_DATABASE_SCHEMA: public
+      KEYCLOAK_ADMIN_USER: admin
+      KEYCLOAK_ADMIN_PASSWORD: admin
+      KEYCLOAK_EXTRA_ARGS: "-Dkeycloak.import=/opt/keycloak/data/import/realm.json"
+    ports:
+      - '8090:8080'
+    volumes:
+      - ./infra-oauth/realm.json:/opt/keycloak/data/import/realm.json
+    networks:
+      - hw16-net
+    depends_on:
+      - hw16-postgre
+
+  hw16-back:
+    build:
+      context: ../
+      dockerfile: ./docker/app-back/Dockerfile
+    image: hw16-back:0.0.1
+    container_name: hw16-back
+    restart: no
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://hw16-postgre:5432/lib_db
+      - SPRING_DATASOURCE_USERNAME=librarer
+      - SPRING_DATASOURCE_PASSWORD=librarer
+      - APP_KEYCLOAK_IN-URL=http://hw16-keycloak:8080
+      - APP_KEYCLOAK_EXT-URL=http://localhost:8090
+    ports:
+      - '8082:8082'
+    networks:
+      - hw16-net
+    depends_on:
+      - hw16-postgre
+      - hw16-keycloak
+
+  hw16-front:
+    build:
+      context: ../
+      dockerfile: ./docker/app-front/Dockerfile
+    image: hw16-front:0.0.1
+    container_name: hw16-front
+    restart: no
+    environment:
+      - APP_KEYCLOAK_URL=http://localhost:8090
+      - APP_API-SERVER_URL=http://localhost:8082
+    ports:
+      - '8080:8080'
+    networks:
+      - hw16-net
+
+volumes:
+  hw16-pg-data:
+    name: hw16-pg-data
+    driver: local
+
+networks:
+  hw16-net:
+    name: hw16-net
+    driver: bridge

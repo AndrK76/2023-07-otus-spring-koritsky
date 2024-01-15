@@ -1,0 +1,19 @@
+jwt:
+  auth:
+    converter:
+      resource-id: fake
+      principal-attribute: fake
+
+spring:
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: http://localhost/realms/fake
+          jwk-set-uri: ${spring.security.oauth2.resourceserver.jwt.issuer-uri}/protocol/openid-connect/certs
+
+logging:
+  level:
+    root: info
+    #ru.otus.andrk: debug
+    #org.springframework.security.authentication: debug
