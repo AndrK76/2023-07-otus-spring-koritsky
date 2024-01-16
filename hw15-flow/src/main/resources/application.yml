@@ -1,0 +1,19 @@
+trouble-source:
+  device-count: 3
+  max-partition-size: 30
+  generation-period-ms: 10000
+process-service:
+  apply-low-percent: 80
+  apply-medium-percent: 85
+  apply-high-percent: 95
+  max-process-time-ms: 1000
+
+
+logging:
+  level:
+    root: error
+    #root: info
+    #org.springframework.integration: debug
+    Registration: info
+    AlertSend: info
+    ProcessTicket: info
