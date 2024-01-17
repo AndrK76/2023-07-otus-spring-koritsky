@@ -18,14 +18,6 @@ spring:
     rest:
       base-path: /hateoas
 
-
-logging:
-  level:
-    root: info
-    #ru.otus.andrk: debug
-    #liquibase.changelog: debug
-    #org.springframework.boot.web.embedded.tomcat: info
-
 management:
   server:
     port: 9082
@@ -44,5 +36,12 @@ management:
     configprops:
       show-values: always
 
-
-
+logging:
+  level:
+    root: info
+  file:
+    name: lib-back.log
+  logback:
+    rollingpolicy:
+      file-name-pattern: lib-back.%d{yyyy-MM-dd}.%i.gz
+      max-file-size: 1MB
