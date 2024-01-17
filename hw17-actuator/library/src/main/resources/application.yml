@@ -1,0 +1,48 @@
+server:
+  port: 8082
+
+spring:
+  datasource:
+    url: jdbc:h2:mem:bookdb
+    username: test
+    password: test
+  jpa:
+    show-sql: true
+    generate-ddl: false
+    hibernate:
+      ddl-auto: none
+    open-in-view: false
+  liquibase:
+    change-log: database/changelog/master.yml
+  data:
+    rest:
+      base-path: /hateoas
+
+
+logging:
+  level:
+    root: info
+    #ru.otus.andrk: debug
+    #liquibase.changelog: debug
+    #org.springframework.boot.web.embedded.tomcat: info
+
+management:
+  server:
+    port: 9082
+  endpoints:
+    jmx:
+      exposure:
+        include: "*"
+    web:
+      exposure:
+        include: health,configprops,env,liquibase,loggers,prometheus,metrics,mappings
+  endpoint:
+    env:
+      show-values: always
+    health:
+      show-details: always
+    configprops:
+      show-values: always
+
+
+

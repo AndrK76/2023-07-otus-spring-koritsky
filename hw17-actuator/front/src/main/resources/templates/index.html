@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="ru" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="#{library.title}">Library</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+          th:href="@{/webjars/bootstrap/dist/css/bootstrap.min.css}"
+          rel="stylesheet">
+    <link href="../static/css/site.css"
+          th:href="@{/css/site.css}"
+          rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css"
+          th:href="@{/webjars/font-awesome/css/all.min.css}"
+          rel="stylesheet">
+</head>
+<body>
+<!-- Основной блок-->
+<div class="container">
+    <div class="row">
+        <main class="col">
+            <div class="row">
+                <div class="col">
+                    <h1 th:text="#{library.title}">Library</h1>
+                </div>
+                <div class="col text-end">
+                    <div class="btn-group align-items-end mt-3">
+                        <a class="btn btn-outline-primary btn-sm" href="http://localhost:8082/h2-console/" target="_blank">H2</a>
+                        <a class="btn btn-outline-primary btn-sm" href="http://localhost:9082/actuator" target="_blank">API Status</a>
+                        <a class="btn btn-outline-primary btn-sm me-2" href="http://localhost:8082/hateoas/explorer/index.html#uri=http://localhost:8082/hateoas" target="_blank">HATEOAS</a>
+                        <input type="hidden" th:value="${#locale.toString()}" id="lang">
+                        <a class="btn btn-sm"
+                           th:classappend="${#locale.toString()}=='en'?'btn-secondary':'btn-outline-secondary'"
+                           th:href="@{/(lang=en)}">En</a>
+                        <a class="btn btn-sm"
+                           th:classappend="${#locale.toString()}=='ru'?'btn-secondary':'btn-outline-secondary'"
+                           th:href="@{/(lang=ru)}">Ru</a>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col" id="errorContainer"></div>
+            </div>
+            <table class="table table-hover w-100" id="bookTable">
+                <thead>
+                <tr>
+                    <th>Id</th>
+                    <th th:text="#{book.name}">Name</th>
+                    <th th:text="#{book.author}">Author</th>
+                    <th th:text="#{book.genre}">Genre</th>
+                    <th class="text-end">
+                        <button class="btn btn-outline-secondary btn-sm invisible" id="btnAdd">
+                            <i class="fa fa-add"></i>
+                            <span th:text="#{book.action-add}">Add book</span></button>
+                    </th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:if="false">
+                    <td>1</td>
+                    <td>Book name</td>
+                    <td>Author name</td>
+                    <td>Genre name</td>
+                    <td>
+                        <a class="btn btn-outline-secondary btn-sm" title="Edit book"
+                           href="book_edit.html"> <i class="fa fa-edit"></i></a>
+                        <a class="btn btn-outline-secondary btn-sm" title="View comments"
+                           href="comment_list.html"> <i class="fa fa-comment"></i></a>
+                        <btn class="btn btn-outline-secondary btn-sm" title="Delete book"
+                             onclick="callDeleteBook(1);"><i class="fa fa-remove"></i></btn>
+                    </td>
+                </tr>
+                </tbody>
+                <tfoot>
+                <tr>
+                    <td colspan="4" class="fst-italic" th:text="#{book.total}">
+                        Total books in library:
+                    </td>
+                    <th class="text-end" th:text="0" id="booksTotal">1</th>
+                </tr>
+                </tfoot>
+            </table>
+        </main>
+    </div>
+</div>
+
+<!-- Запрос удаления -->
+<div class="modal fade" id="deleteQuery" tabindex="-1" aria-labelledby="deleteQueryTitle" aria-hidden="true">
+    <input type="hidden" id="deleteId">
+    <input type="hidden" id="deleteDopId">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="deleteQueryTitle">Confirm delete</h5>
+                <button type="button" class="btn-close btn-sm" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body container">
+                <div class="row">
+                    <div class="col" id="errorContainerDeleteQuery"></div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger btn-sm"
+                        th:text="#{action.yes}" id="deleteBtn">Yes, delete
+                </button>
+                <button type="button" class="btn btn-outline-secondary btn-sm" data-bs-dismiss="modal"
+                        th:text="#{action.no}">No, cancel
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Корректировка книги -->
+<div class="modal fade modal-lg" id="editBookModal" tabindex="-1" aria-labelledby="editBookTitle" aria-hidden="true">
+    <input type="hidden" id="editBookId">
+    <input type="hidden" id="editBookAction">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="editBookTitle">Book edit title</h5>
+                <button type="button" class="btn-close btn-sm" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body container">
+                <div class="row">
+                    <div class="col" id="errorContainerModalBook"></div>
+                </div>
+                <div class="row">
+                    <div class="col">
+                        <div class="mb-1">
+                            <label for="nameBook" class="form-label" th:text="#{book.name}">Name</label>
+                            <input type="text"
+                                   class="form-control" id="nameBook" value="Name book" placeholder="Enter book name"
+                                   th:placeholder="#{book.placeholder-name}" th:value="''">
+                            <div id="nameBookError" th:classappend="invisible">
+                                <div class="alert alert-danger align-items-center">Error</div>
+                            </div>
+                        </div>
+                        <div class="mb-1">
+                            <input type="hidden" id="authorId">
+                            <label for="authorName" class="form-label" th:text="#{book.author}">Author</label>
+                            <input
+                                    class="form-control" id="authorName" value="Book author"
+                                    placeholder="Select exist author or enter new"
+                                    th:placeholder="#{book.placeholder-author}"
+                                    th:value="''"
+                                    list="authorList">
+                            <datalist id="authorList">
+                                <option value="Existing author name" th:if="${false}"/>
+                            </datalist>
+                        </div>
+                        <div class="mb-1">
+                            <input type="hidden" id="genreId">
+                            <label for="genreName" class="form-label" th:text="#{book.genre}">Genre</label>
+                            <input
+                                    class="form-control" id="genreName" value="Book genre"
+                                    placeholder="Select exist genre or enter new"
+                                    th:placeholder="#{book.placeholder-genre}"
+                                    th:value="''"
+                                    list="genreList">
+                            <datalist id="genreList">
+                                <option value="Existing genre name" th:if="${false}"/>
+                            </datalist>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary btn-sm"
+                        th:text="#{action.apply}" id="saveBookBtn">Apply
+                </button>
+                <button type="button" class="btn btn-outline-secondary btn-sm" data-bs-dismiss="modal"
+                        th:text="#{action.cancel}">Cancel
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Корректировка комментария -->
+<div class="modal fade modal-lg" id="editCommentModal" tabindex="-1" aria-labelledby="editBookTitle" aria-hidden="true">
+    <input type="hidden" id="editComment_bookId">
+    <input type="hidden" id="editComment_id">
+    <input type="hidden" id="editComment_action">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="editCommentTitle">Comment edit title</h5>
+                <button type="button" class="btn-close btn-sm" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body container">
+                <div class="row">
+                    <div class="col" id="errorContainerModalComment"></div>
+                </div>
+                <div class="row">
+                    <div class="col">
+                        <div class="mb-1">
+                            <label for="bookForComment" class="form-label" th:text="#{comment.book-name}">Book
+                                name</label>
+                            <input id="bookForComment" class="form-control" disabled readonly></input>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col">
+                            <div class="mb-1">
+                                <label for="textComment" class="form-label" th:text="#{comment.text}">Text</label>
+                                <textarea id="textComment" rows="5"
+                                          class="form-control" placeholder="Enter comment"
+                                          th:placeholder="#{comment.placeholder-text}"
+                                          th:text="''">Comment text example</textarea>
+                                <div id="textCommentError" th:classappend="invisible">
+                                    <div class="alert alert-danger align-items-center">Error</div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary btn-sm"
+                            th:text="#{action.apply}" id="saveCommentBtn">Apply
+                    </button>
+                    <button type="button" class="btn btn-outline-secondary btn-sm" data-bs-dismiss="modal"
+                            th:text="#{action.cancel}">Cancel
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+</body>
+
+
+<script>
+    const title = window.document.title;
+    const apiServerSettings = {
+        url: '[[${apiServerSettings.url}]]',
+    };
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"
+        th:src="@{/webjars/bootstrap/dist/js/bootstrap.bundle.min.js}"></script>
+
+<script th:src="@{/webjars/jquery/jquery.min.js}"></script>
+
+<script th:src="@{/js/book.js}" src="../static/js/book.js"></script>
+
+<script th:src="@{/js/common.js}" src="../static/js/common.js"></script>
+
+
+</html>
