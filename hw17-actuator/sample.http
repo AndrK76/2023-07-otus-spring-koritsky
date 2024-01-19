@@ -1,0 +1,34 @@
+###
+
+# curl -i -X POST -H 'Content-Type: application/json' -d '{"configuredLevel": "TRACE"}'
+#  http://localhost:8080/actuator/loggers/com.baeldung.spring.boot.management.logging
+POST http://localhost:9082/actuator/loggers/org.hibernate
+Content-Type: application/json
+
+{
+  "configuredLevel": "TRACE"
+}
+
+###
+
+# curl -i -X POST -H 'Content-Type: application/json' -d '{"configuredLevel": "TRACE"}'
+#  http://localhost:8080/actuator/loggers/com.baeldung.spring.boot.management.logging
+POST http://localhost:9082/actuator/loggers/ROOT
+Content-Type: application/json
+
+{
+  "configuredLevel": "TRACE"
+}
+
+###
+
+# curl -i -X POST -H 'Content-Type: application/json' -d '{"configuredLevel": "TRACE"}'
+#  http://localhost:8080/actuator/loggers/com.baeldung.spring.boot.management.logging
+POST http://localhost:9082/actuator/loggers/ROOT
+Content-Type: application/json
+
+{
+  "configuredLevel": "WARN"
+}
+
+###

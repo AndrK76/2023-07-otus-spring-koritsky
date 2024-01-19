@@ -27,7 +27,7 @@ management:
         include: "*"
     web:
       exposure:
-        include: health,configprops,env,liquibase,loggers,prometheus,metrics,mappings
+        include: health,configprops,env,liquibase,loggers,prometheus,metrics,mappings,logfile
   endpoint:
     env:
       show-values: always
@@ -36,6 +36,7 @@ management:
     configprops:
       show-values: always
 
+
 logging:
   level:
     root: info
@@ -43,5 +44,5 @@ logging:
     name: lib-back.log
   logback:
     rollingpolicy:
-      file-name-pattern: lib-back.%d{yyyy-MM-dd}.%i.gz
+      file-name-pattern: lib-back.%d{yyyy-MM-dd}.%i.log.gz
       max-file-size: 1MB
