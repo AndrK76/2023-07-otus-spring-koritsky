@@ -1,0 +1,21 @@
+app:
+  api-server:
+    url: http://localhost:8082
+  i18n:
+    default-lang: en
+    message-bundle: messages
+
+server:
+  port: 8080
+
+spring:
+  messages:
+    basename: messages
+    encoding: UTF-8
+    fallback-to-system-locale: false
+
+logging:
+  level:
+    root: error
+    ru.otus.andrk: debug
+    org.springframework.boot.web.embedded.tomcat: info

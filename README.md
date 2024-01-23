@@ -21,5 +21,6 @@
 - **hw12-auth**  - ДЗ к 24. Spring Security: Механизмы аутентификации
 - **hw13-auth**  - ДЗ к 26. Spring Security: ACL
 - **hw14-batch**  - ДЗ к 27. Spring Batch
-- **hw15-flow**  - ДЗ к 30. Spring Integration: Endpoints и Flow Components
-- **hw16-docker**  -- ДЗ к 32. Docker, оркестрация
+- **hw15-flow**  - ДЗ к 30. Spring Integration: Endpoints и Flow Components 
+- **hw16-docker**  - ДЗ к 32. Docker, оркестрация
+- **hw17-actuator** - ДЗ к Монолиты vs. Microservices (Round 2), Spring Boot Actuator - must have в микросервисах
