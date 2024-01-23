@@ -1,0 +1,56 @@
+app:
+  cors:
+    origins:
+      - http://localhost:8080
+  keycloak:
+    in-url: http://localhost:8090
+    ext-url: http://localhost:8090
+    realm: book-app
+    client: book-manager
+    principal-attr: preferred_username
+  role-config:
+    app-roles:
+      modify_book:
+        - book-manager
+      modify_comment:
+        - book-manager
+    #show-unavailable: false
+    show-unavailable: true
+
+server:
+  port: 8082
+
+jwt:
+  auth:
+    converter:
+      resource-id: ${app.keycloak.client}
+      principal-attribute: ${app.keycloak.principal-attr}
+
+spring:
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: ${app.keycloak.ext-url}/realms/${app.keycloak.realm}
+          #issuer-uri: ${app.keycloak.url}/realms/${app.keycloak.realm}
+          #jwk-set-uri: ${spring.security.oauth2.resourceserver.jwt.issuer-uri}/protocol/openid-connect/certs
+          jwk-set-uri: ${app.keycloak.in-url}/realms/${app.keycloak.realm}/protocol/openid-connect/certs
+  datasource:
+    url: jdbc:postgresql://localhost:5432/lib_db
+    username: librarer
+    password: librarer
+  jpa:
+    show-sql: true
+    generate-ddl: false
+    hibernate:
+      ddl-auto: none
+    open-in-view: false
+  liquibase:
+    change-log: database/changelog/master.yml
+
+logging:
+  level:
+    root: info
+    #ru.otus.andrk: debug
+    #liquibase.changelog: debug
+    #org.springframework.boot.web.embedded.tomcat: info
