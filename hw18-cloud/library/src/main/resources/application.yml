@@ -1,0 +1,48 @@
+server:
+  port: 8082
+
+spring:
+  datasource:
+    url: jdbc:h2:mem:bookdb
+    username: test
+    password: test
+  jpa:
+    show-sql: true
+    generate-ddl: false
+    hibernate:
+      ddl-auto: none
+    open-in-view: false
+  liquibase:
+    change-log: database/changelog/master.yml
+  data:
+    rest:
+      base-path: /hateoas
+
+management:
+  server:
+    port: 9082
+  endpoints:
+    jmx:
+      exposure:
+        include: "*"
+    web:
+      exposure:
+        include: health,configprops,env,liquibase,loggers,prometheus,metrics,mappings,logfile
+  endpoint:
+    env:
+      show-values: always
+    health:
+      show-details: always
+    configprops:
+      show-values: always
+
+
+logging:
+  level:
+    root: info
+  file:
+    name: lib-back.log
+  logback:
+    rollingpolicy:
+      file-name-pattern: lib-back.%d{yyyy-MM-dd}.%i.log.gz
+      max-file-size: 1MB
