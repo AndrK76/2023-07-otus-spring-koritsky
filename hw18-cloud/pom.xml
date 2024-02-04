@@ -20,6 +20,7 @@
     <modules>
         <module>front</module>
         <module>library</module>
+        <module>discovery-server</module>
     </modules>
 
     <properties>
@@ -30,7 +31,7 @@
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
         <spring-boot.version>3.1.2</spring-boot.version>
-        <spring-cloud.version>2023.0.0</spring-cloud.version>
+        <spring-cloud.version>2022.0.5</spring-cloud.version>
         <spring-cloud-starter-netflix.version>2.2.10.RELEASE</spring-cloud-starter-netflix.version>
 
         <snakeyaml.version>2.0</snakeyaml.version>
