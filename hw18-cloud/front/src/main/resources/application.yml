@@ -2,6 +2,8 @@ app:
   i18n:
     default-lang: en
     message-bundle: messages
+  backend:
+    app-name: library-app
 
 server:
   port: 8080
@@ -13,6 +15,13 @@ spring:
     basename: messages
     encoding: UTF-8
     fallback-to-system-locale: false
+  cloud:
+    openfeign:
+      client:
+        config:
+          default:
+            read-timeout: 2000
+            connect-timeout: 500
 
 
 management:
@@ -39,8 +48,13 @@ resilience4j:
     configs:
       default:
         slidingWindowType: count_based
+        wait-duration-in-open-state: 5s
+        automatic-transition-from-open-to-half-open-enabled: true
+        sliding-window-size: 1
+        permitted-number-of-calls-in-half-open-state: 1
         ignore-exceptions:
           - ru.otus.andrk.exception.ProcessedException
+
     instances:
       libraryServiceBreaker:
         base-config: default
@@ -49,7 +63,7 @@ resilience4j:
       default:
         maxAttempts: 10
         fail-after-max-attempts: true
-        waitDuration: 2000
+        waitDuration: 200
         ignore-exceptions:
           - ru.otus.andrk.exception.ProcessedException
     instances:

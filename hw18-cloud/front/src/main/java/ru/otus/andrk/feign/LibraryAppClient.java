@@ -14,7 +14,7 @@ import ru.otus.andrk.dto.GenreDto;
 
 import java.util.List;
 
-@FeignClient(name = "library-app", configuration = {LibraryAppClientErrorDecoder.class})
+@FeignClient(name = "${app.backend.app-name}", configuration = {LibraryAppClientErrorDecoder.class})
 public interface LibraryAppClient {
 
     @GetMapping("/api/v1/book")

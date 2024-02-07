@@ -22,13 +22,15 @@
                 <div class="col">
                     <h1 th:text="#{library.title}">Library</h1>
                 </div>
-                <div class="col text-end">
+                <div class="col-auto text-end">
                     <div class="btn-group align-items-end mt-3">
-                        <a class="btn btn-outline-primary btn-sm" href="http://localhost:8082/h2-console/" target="_blank">H2</a>
-                        <a class="btn btn-outline-primary btn-sm" href="http://localhost:9082/actuator" target="_blank">API Status</a>
-                        <a class="btn btn-outline-primary btn-sm me-2" href="http://localhost:8082/hateoas/explorer/index.html#uri=http://localhost:8082/hateoas" target="_blank">HATEOAS</a>
+                        <label for="backServer" class="form-label mb-1 me-1">Backend:</label>
+                        <select class="form-select form-select-sm" id="backServer" title="Backend Info"></select>
+                        <a class="btn btn-outline-primary btn-sm invisible" title="H2 Console" id="btH2">H2</a>
+                        <a class="btn btn-outline-primary btn-sm invisible" title="Server actuator" id="btStatus">Status</a>
+                        <a class="btn btn-outline-primary btn-sm invisible" title="Hate OAS" id="btHateOAS">DataRest</a>
                         <input type="hidden" th:value="${#locale.toString()}" id="lang">
-                        <a class="btn btn-sm"
+                        <a class="btn btn-sm ms-2"
                            th:classappend="${#locale.toString()}=='en'?'btn-secondary':'btn-outline-secondary'"
                            th:href="@{/(lang=en)}">En</a>
                         <a class="btn btn-sm"

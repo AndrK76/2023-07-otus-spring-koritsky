@@ -141,6 +141,9 @@ class Manager {
 async function init() {
     manager = new Manager();
     manager.redirectUrl = window.location.href;
+
+    initBackInfo().then();
+
     await manager.getJson('/api/v1/message/' + $('#lang').val())
         .then(data => {
             manager.applyApiExchangeResult(data, manager.applyLocalization)
@@ -162,3 +165,47 @@ init().then(status => {
         bookManager.clearPage('0');
     }
 })
+
+let backEnds = {};
+
+async function initBackInfo() {
+    await manager.getJson('/api/v1/backend/info')
+        .then(data => {
+            const info = data.response.result;
+            let counter = 0;
+            for (const key of Object.keys(info)) {
+                $('#backServer').append($('<option>', {
+                    value: key,
+                    text: (++counter) + ' (' + info[key]['db-type'] + ')'
+                }));
+            }
+            backEnds = info;
+            changeBack();
+            $('#backServer').on('change', changeBack)
+        });
+}
+
+function changeBack() {
+    const id = $('#backServer').val();
+    const btnH2 = $("#btH2");
+    const btStatus = $('#btStatus');
+    const btHateOAS = $('#btHateOAS');
+    const host = backEnds[id]['host'];
+    const port = backEnds[id]['port'];
+    if (backEnds[id]['db-type'] === 'H2') {
+        btnH2.removeClass('invisible');
+    } else {
+        btnH2.addClass('invisible');
+    }
+    btnH2.prop('href', 'http://localhost:' + port + '/h2-console');
+    btnH2.prop('target', 'console_' + id);
+    btStatus.removeClass('invisible');
+    btStatus.prop('href', 'http://' + host + ':' + port + '/actuator');
+    btStatus.prop('target', 'actuator_' + id);
+    btHateOAS.removeClass('invisible');
+    btHateOAS.prop('href', 'http://' + host + ':' + port
+        + '/hateoas/explorer/index.html#uri=http://'+host + ':' + port +'/hateoas');
+    btHateOAS.prop('target', 'hateoas');
+}
+
+
