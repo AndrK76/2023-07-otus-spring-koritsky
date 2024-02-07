@@ -3,21 +3,21 @@
 
 create table books
 (
-    id IDENTITY primary key,
+    id BIGSERIAL primary key,
     name      varchar(255),
-    author_id long,
-    genre_id  long
+    author_id bigInt,
+    genre_id  bigInt
 );
 
 create table genres
 (
-    id IDENTITY primary key,
+    id BIGSERIAL primary key,
     name varchar(255)
 );
 
 create table authors
 (
-    id IDENTITY primary key,
+    id BIGSERIAL primary key,
     name varchar(255)
 );
 
@@ -31,9 +31,9 @@ alter table books
 
 create table comments
 (
-    id IDENTITY primary key,
+    id BIGSERIAL primary key,
     text    varchar(2000),
-    book_id long not null
+    book_id bigInt not null
 );
 
 alter table comments

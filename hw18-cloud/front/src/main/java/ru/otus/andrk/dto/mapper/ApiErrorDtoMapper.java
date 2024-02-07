@@ -8,4 +8,6 @@ public interface ApiErrorDtoMapper {
     ApiErrorDto fromErrorAttributes(Map<String, Object> errAttrs);
 
     ApiErrorDto fromOtherError(RuntimeException e);
+
+    ApiErrorDto fromFeignError(RuntimeException e);
 }

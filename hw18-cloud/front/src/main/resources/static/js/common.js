@@ -6,6 +6,7 @@ let localizedMessages = new Map([
     ['error.status.404', 'Not Found'],
     ['error.status.405', 'Method Not Allowed'],
     ['error.status.500', 'Internal Server Error'],
+    ['error.status.503', 'Service Unavailable'],
     ['error.validation', 'Validation error'],
 ]);
 let bookManager = {};
@@ -146,8 +147,6 @@ async function init() {
         });
 
     bookManager = new BookManager();
-    bookManager.apiSettings = apiServerSettings;
-    console.log('11111')
     bookManager.initPage();
     bookManager.setLocalizedActions();
 

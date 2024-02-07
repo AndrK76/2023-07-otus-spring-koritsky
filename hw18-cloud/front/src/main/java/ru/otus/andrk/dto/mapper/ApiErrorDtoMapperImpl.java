@@ -1,5 +1,6 @@
 package ru.otus.andrk.dto.mapper;
 
+import feign.FeignException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
@@ -8,6 +9,7 @@ import ru.otus.andrk.service.i18n.MessageService;
 
 import java.util.Date;
 import java.util.Map;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -40,6 +42,21 @@ public class ApiErrorDtoMapperImpl implements ApiErrorDtoMapper {
         var ret = new ApiErrorDto(new Date(), 500);
         setStatus(ret);
         var messageKey = "other-error";
+        return makeApiErrorDto(e, ret, messageKey);
+    }
+
+    @Override
+    public ApiErrorDto fromFeignError(RuntimeException e) {
+        Optional<FeignException> fe = (e instanceof FeignException)
+                ? Optional.of((FeignException) e)
+                : Optional.empty();
+        var status = fe.map(FeignException::status).orElse(500);
+        if (status < 0) {
+            status = 500;
+        }
+        var ret = new ApiErrorDto(new Date(), status);
+        setStatus(ret);
+        var messageKey = "other-error-api";
         return makeApiErrorDto(e, ret, messageKey);
     }
 

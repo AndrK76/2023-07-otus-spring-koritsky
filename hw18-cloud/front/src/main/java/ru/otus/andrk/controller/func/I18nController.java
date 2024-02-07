@@ -1,4 +1,4 @@
-package ru.otus.andrk.controller.rest;
+package ru.otus.andrk.controller.func;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;

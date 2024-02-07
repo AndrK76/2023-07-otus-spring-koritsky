@@ -1,5 +1,4 @@
 class BookManager {
-    apiSettings;
     bookApi = '/api/v1/book';
     authorApi = '/api/v1/author';
     genreApi = '/api/v1/genre';
@@ -76,7 +75,7 @@ class BookManager {
 
     getBookList() {
         $('#btnAdd').addClass('invisible');
-        manager.getJson(bookManager.apiSettings.url + bookManager.bookApi).then(data => {
+        manager.getJson(bookManager.bookApi).then(data => {
             manager.applyApiExchangeResult(data, bookManager.paintBookList);
         });
     }
@@ -143,7 +142,7 @@ class BookManager {
         let id = row.attr('id').replace('row_', '');
         if (tag === 'closed') {
             btn.off('click');
-            manager.getJson(bookManager.apiSettings.url + bookManager.bookApi + '/' + id + '/comment')
+            manager.getJson(bookManager.bookApi + '/' + id + '/comment')
                 .then(data => {
                     manager.applyApiExchangeResult(data, (comment) => bookManager.showComments(id, comment));
                 });
@@ -278,7 +277,7 @@ class BookManager {
         let canContinue = true;
         bookManager.clearBookNameError();
         $('#errorContainerModalBook').html('');
-        await manager.getJson(bookManager.apiSettings.url + bookManager.authorApi)
+        await manager.getJson(bookManager.authorApi)
             .then(data => {
                 manager.applyApiExchangeResult(data, (authors) => {
                     const authorList = $('#authorList');
@@ -293,7 +292,7 @@ class BookManager {
                     manager.showError(error);
                 });
             });
-        await manager.getJson(bookManager.apiSettings.url + bookManager.genreApi)
+        await manager.getJson(bookManager.genreApi)
             .then(data => {
                 manager.applyApiExchangeResult(data, (genres) => {
                     const genreList = $('#genreList');
@@ -324,7 +323,7 @@ class BookManager {
         let ret = false;
         const bookName = $('#nameBook').val();
         const book = {name: bookName}
-        await manager.sendJsonData(bookManager.apiSettings.url + bookManager.validateApi + '/book',
+        await manager.sendJsonData(bookManager.validateApi + '/book',
             JSON.stringify(book)).then(response => {
             manager.applyApiExchangeResult(response, (success) => {
                 ret = true;
@@ -370,7 +369,7 @@ class BookManager {
             return;
         }
         const book = bookManager.makeBook();
-        let url = bookManager.apiSettings.url + bookManager.bookApi;
+        let url = bookManager.bookApi;
         let method = 'POST';
         if ($('#editBookAction').val() === 'edit') {
             method = 'PUT';
@@ -411,7 +410,7 @@ class BookManager {
 
     async doDeleteBook() {
         let id = $('#deleteId').val();
-        manager.sendJsonData(bookManager.apiSettings.url + bookManager.bookApi + '/' + id,
+        manager.sendJsonData(bookManager.bookApi + '/' + id,
             null, 'DELETE').then(response => {
             manager.applyApiExchangeResult(response, _ => {
                 bookManager.deleteModal.toggle();
@@ -477,7 +476,7 @@ class BookManager {
         let ret = false;
         const commentText = $('#textComment').val();
         const comment = {text: commentText}
-        await manager.sendJsonData(bookManager.apiSettings.url + bookManager.validateApi + '/comment',
+        await manager.sendJsonData(bookManager.validateApi + '/comment',
             JSON.stringify(comment)).then(response => {
             manager.applyApiExchangeResult(response, (success) => {
                 ret = true;
@@ -507,11 +506,11 @@ class BookManager {
         }
         const bookId = $('#editComment_bookId').val();
         const comment = bookManager.makeComment();
-        let url = bookManager.apiSettings.url + bookManager.bookApi + '/' + bookId + '/comment';
+        let url = bookManager.bookApi + '/' + bookId + '/comment';
         let method = 'POST';
         if ($('#editComment_action').val() === 'edit') {
             method = 'PUT';
-            url = bookManager.apiSettings.url + bookManager.commentApi + '/' + comment.id;
+            url = bookManager.commentApi + '/' + comment.id;
         }
         manager.sendJsonData(url, JSON.stringify(comment), method).then(response => {
             manager.applyApiExchangeResult(response, (data) => {
@@ -544,10 +543,10 @@ class BookManager {
         bookManager.deleteModal.toggle();
     }
 
-    async doDeleteComment(){
+    async doDeleteComment() {
         const bookId = $('#deleteId').val();
         const commentId = $('#deleteDopId').val();
-        manager.sendJsonData(bookManager.apiSettings.url + bookManager.commentApi + '/' + commentId,
+        manager.sendJsonData(bookManager.commentApi + '/' + commentId,
             null, 'DELETE').then(response => {
             manager.applyApiExchangeResult(response, _ => {
                 bookManager.deleteModal.toggle();

@@ -85,6 +85,7 @@ public class BookServiceImpl implements BookService {
                             .orElseGet(() -> genreService.addGenre(dto.getGenreName()));
             book.setAuthor(newAuthor);
             book.setGenre(newGenre);
+            book.setName(dto.getName());
             var savedBook = Optional.of(bookRepo.save(book));
             return savedBook.map(mapper::toDto)
                     .orElse(null);

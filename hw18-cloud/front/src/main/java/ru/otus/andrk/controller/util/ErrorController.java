@@ -1,4 +1,4 @@
-package ru.otus.andrk.controller;
+package ru.otus.andrk.controller.util;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;

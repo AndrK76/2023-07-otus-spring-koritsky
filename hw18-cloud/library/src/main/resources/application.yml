@@ -4,8 +4,9 @@ server:
 spring:
   application:
     name: library-app
+  profiles:
+    default: postgres
   datasource:
-    url: jdbc:h2:mem:bookdb
     username: test
     password: test
   jpa:
@@ -27,7 +28,7 @@ management:
         include: "*"
     web:
       exposure:
-        include: health,configprops,env,liquibase,loggers,prometheus,metrics,mappings,logfile
+        include: health,configprops,loggers,prometheus,metrics,mappings,logfile,info
   endpoint:
     env:
       show-values: always
@@ -35,6 +36,7 @@ management:
       show-details: always
     configprops:
       show-values: always
+
 
 eureka:
   client:
