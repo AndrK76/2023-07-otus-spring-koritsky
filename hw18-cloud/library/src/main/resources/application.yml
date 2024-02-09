@@ -1,0 +1,60 @@
+server:
+  port: 0
+
+spring:
+  application:
+    name: library-app
+  profiles:
+    default: postgres
+  datasource:
+    username: test
+    password: test
+  jpa:
+    show-sql: true
+    generate-ddl: false
+    hibernate:
+      ddl-auto: none
+    open-in-view: false
+  liquibase:
+    change-log: database/changelog/master.yml
+  data:
+    rest:
+      base-path: /hateoas
+
+management:
+  endpoints:
+    jmx:
+      exposure:
+        include: "*"
+    web:
+      exposure:
+        include: health,configprops,loggers,prometheus,metrics,mappings,logfile,info
+  endpoint:
+    env:
+      show-values: always
+    health:
+      show-details: always
+    configprops:
+      show-values: always
+
+
+eureka:
+  client:
+    registerWithEureka: true
+    fetchRegistry: true
+    serviceUrl:
+      defaultZone: http://localhost:8761/eureka
+  instance:
+    prefer-ip-address: false
+    instance-id: ${spring.application.name}:${random.value}
+
+
+logging:
+  level:
+    root: info
+  file:
+    name: lib-back.log
+  logback:
+    rollingpolicy:
+      file-name-pattern: lib-back.%d{yyyy-MM-dd}.%i.log.gz
+      max-file-size: 1MB

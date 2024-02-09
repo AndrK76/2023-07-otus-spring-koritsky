@@ -1,0 +1,27 @@
+version: '3.8'
+
+services:
+  hw18-postge:
+    image: postgres:14.1-alpine
+    container_name: hw18-postgre
+    restart: "no"
+    environment:
+      - POSTGRES_USER=usr
+      - POSTGRES_PASSWORD=pwd
+      - POSTGRES_DB=hw18
+    ports:
+      - '5432:5432'
+    volumes:
+      - hw18-pg-data:/var/lib/postgresql/data
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+    networks:
+      - hw18-net
+volumes:
+  hw18-pg-data:
+    name: hw18-pg-data
+    driver: local
+networks:
+  hw18-net:
+    name: hw18-net
+    driver: bridge
+    
